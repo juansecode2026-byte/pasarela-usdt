@@ -14,6 +14,17 @@ Servicio reutilizable multi-proyecto: el comercio cobra en pesos, el cliente pag
 - Hellominus y Zuhay lo consumen solo por **API con llave por proyecto y webhooks firmados**. Es lo único que se comparte entre proyectos.
 - El viajero paga dentro de Hellominus (QR, dirección, monto, cuenta regresiva).
 
+## Decisión clave: quién recibe el dinero
+
+- Decidido por Juan el 4 de octubre de 2026: el dinero de cada pago llega a la **cuenta de Hellominus**. El `merchant` de las órdenes de Hellominus es Hellominus mismo, no cada anfitrión ni Zuhay.
+- El reparto posterior a los anfitriones y a Zuhay queda **fuera de la pasarela** (lo manejan Hellominus y Zuhay).
+- Sigue pendiente de abogado y contador si este esquema (equivale al modelo C o B) basta ante la UIAF y la DIAN. Ver `DECISIONES.md`.
+
+## Empresas que atiende (4 de octubre de 2026)
+
+- Se van a crear **SAS nuevas**. El proyecto atiende a dos empresas: **Hellominus** y la del **CRM de ventas** (Zuhay). Cada una es una entidad legal (`legal_entity_id`) con su proyecto (`project_id`).
+- **Hellominus construye** la pasarela. Construirla no implica que su SAS sea la que opera ante UIAF y DIAN ni la dueña de las cuentas de Binance y banco: eso sigue abierto (`DECISIONES.md`, #1 y #2).
+
 ## Reglas de este proyecto
 
 - **No construir el módulo de pagos antes de cerrar el modelo legal y el reparto del dinero** (Fase 0). Mientras tanto, solo el primer tramo independiente: entidad legal y proyecto, vinculación, bitácora encadenada por hash y expediente por operación.
