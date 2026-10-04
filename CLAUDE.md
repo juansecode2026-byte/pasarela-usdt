@@ -23,7 +23,7 @@ Servicio reutilizable multi-proyecto: el comercio cobra en pesos, el cliente pag
 - Una revisión de cumplimiento no se explica al cliente.
 - Claves de billeteras, llaves del exchange y datos bancarios: cifrado a nivel de aplicación, nunca en el repo ni en el chat. API de Binance sin permiso de retiros y con lista de IP.
 - RLS desde el primer día. Datos personales bajo la Ley 1581 de 2012.
-- Nada se sube ni se hace push sin que Juan lo pida.
+- Nada se sube ni se hace push sin que Juan lo pida. Repositorio: `github.com/juansecode2026-byte/pasarela-usdt` (privado). La protección de ramas no está activa (requiere GitHub Pro u organización): hasta entonces, nunca push directo a `main`; se trabaja en ramas.
 - Este proyecto es su propia raíz: no leer archivos de Hellominus ni de Zuhay; se sincroniza por el contrato de la API.
 
 ## Estructura
