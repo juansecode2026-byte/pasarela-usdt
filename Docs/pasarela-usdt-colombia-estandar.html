@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pasarela de pago USDT en Colombia: estándar reutilizable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0e1420;
+  --bg-2:#121a2a;
+  --surface:#161f31;
+  --surface-2:#1b2639;
+  --line:#2a364d;
+  --text:#e6ecf6;
+  --muted:#9aa9c2;
+  --teal:#52d1c6;
+  --teal-dim:#1d4a4d;
+  --amber:#f4be5b;
+  --amber-dim:#4a3a1a;
+  --coral:#f27c74;
+  --coral-dim:#4a2427;
+  --blue:#86a8ff;
+  --display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--display);font-size:17px;line-height:1.6;-webkit-text-size-adjust:100%}
+a{color:var(--teal)}
+:focus-visible{outline:2px solid var(--teal);outline-offset:3px;border-radius:4px}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:0;max-width:1240px;margin:0 auto}
+nav.toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:32px 20px 32px 28px;border-right:1px solid var(--line);font-size:14.5px}
+nav.toc p{margin:0 0 14px;color:var(--muted);font-size:13px}
+nav.toc a{display:block;color:var(--muted);text-decoration:none;padding:5px 0;line-height:1.35}
+nav.toc a:hover{color:var(--text)}
+nav.toc a.sub{padding-left:14px;font-size:13.5px}
+main{padding:0 48px 96px;min-width:0}
+header.hero{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+h1{font-size:clamp(34px,5.2vw,56px);line-height:1.04;font-weight:700;letter-spacing:-0.025em;margin:0 0 20px;max-width:15em}
+.lede{font-size:19px;color:#c3cee0;max-width:40em;margin:0 0 36px}
+h2{font-size:clamp(26px,3.4vw,34px);line-height:1.15;font-weight:700;letter-spacing:-0.015em;margin:72px 0 8px}
+h3{font-size:21px;line-height:1.3;font-weight:600;margin:40px 0 8px}
+h4{font-size:17px;font-weight:600;margin:26px 0 6px;color:#d4deee}
+p{margin:0 0 14px;max-width:46em}
+ul,ol{margin:0 0 16px;padding-left:22px;max-width:46em}
+li{margin-bottom:6px}
+.section-intro{color:var(--muted);max-width:42em;margin-bottom:24px}
+code{font-family:var(--mono);font-size:.86em;background:var(--surface-2);padding:1px 6px;border-radius:4px}
+pre{position:relative;margin:18px 0 24px;background:#0a0f1a;border:1px solid var(--line);border-radius:8px;padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.65;color:#d7e1f1;tab-size:2}
+pre code{background:none;padding:0;font-size:inherit}
+.copy{position:absolute;top:8px;right:8px;background:var(--surface-2);color:var(--muted);border:1px solid var(--line);border-radius:6px;font:500 12px var(--display);padding:4px 10px;cursor:pointer}
+.copy:hover{color:var(--text)}
+.table-wrap{overflow-x:auto;margin:16px 0 28px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:560px}
+th,td{padding:10px 14px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+th{background:var(--surface);font-weight:600;color:#d4deee;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td code{white-space:nowrap}
+.note{border-left:4px solid var(--teal);background:var(--surface);padding:14px 18px;border-radius:0 8px 8px 0;margin:22px 0;max-width:48em}
+.note strong:first-child{display:block;margin-bottom:2px}
+.note.legal{border-color:var(--amber);background:#1d1b17}
+.note.risk{border-color:var(--coral);background:#1f1a1d}
+.note p:last-child{margin-bottom:0}
+
+/* hero pipeline */
+.pipeline{display:flex;flex-wrap:wrap;gap:0;margin-top:8px}
+.pipeline .step{flex:1 1 150px;min-width:140px;background:var(--surface);border:1px solid var(--line);padding:14px 16px;position:relative;margin:0 -1px -1px 0}
+.pipeline .step b{display:block;font-size:16px;margin-bottom:2px}
+.pipeline .step span{font-size:13.5px;color:var(--muted);line-height:1.4;display:block}
+.pipeline .step:first-child{border-radius:8px 0 0 0}
+.pipeline .step:last-child{border-radius:0 8px 0 0}
+.band{border:1px solid var(--amber-dim);background:#1a1912;color:#e9d7a8;padding:12px 16px;font-size:14.5px;border-radius:0 0 8px 8px;margin-top:-1px}
+.band b{color:var(--amber)}
+
+/* flow steps */
+.flow{list-style:none;padding:0;margin:20px 0 28px;max-width:none;counter-reset:s}
+.flow li{counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);margin:0}
+.flow li::before{content:counter(s);width:34px;height:34px;border-radius:50%;background:var(--teal-dim);color:var(--teal);display:grid;place-items:center;font-weight:700;font-size:15px}
+.flow li b{display:block;font-size:17.5px;margin-bottom:2px}
+.flow li p{margin:0;color:#c3cee0;font-size:16px}
+.flow li .who{display:block;margin-top:6px;font-size:13.5px;color:var(--muted)}
+
+/* grid cards for modules */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:20px 0 28px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.card h4{margin:0 0 6px;font-size:17px;color:var(--text)}
+.card p{margin:0;font-size:15px;color:#c3cee0}
+.card.core{border-color:var(--teal-dim)}
+.card.adapter{border-color:#2d3a63}
+.card.proj{border-color:var(--amber-dim)}
+
+/* simulator */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:22px;margin:22px 0 30px}
+.states-title{font-size:14px;color:var(--muted);margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.chip{font-family:var(--mono);font-size:12.5px;padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--bg-2);transition:background .25s,color .25s,border-color .25s}
+.chip.visited{color:#c3cee0;border-color:#3a4a68}
+.chip.current{background:var(--teal);color:#06231f;border-color:var(--teal);font-weight:500}
+.chip.current.bad{background:var(--coral);border-color:var(--coral);color:#2a0a0a}
+.sim-actions{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0}
+.btn{font:500 15px var(--display);background:var(--surface-2);color:var(--text);border:1px solid #3a4a68;border-radius:8px;padding:9px 14px;cursor:pointer}
+.btn:hover{border-color:var(--teal)}
+.btn.primary{background:var(--teal);color:#06231f;border-color:var(--teal)}
+.btn.ghost{background:transparent;color:var(--muted)}
+.sim-log{background:#0a0f1a;border:1px solid var(--line);border-radius:8px;padding:12px 14px;max-height:220px;overflow-y:auto;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:#c3cee0;min-height:70px}
+.sim-log div{padding:2px 0}
+.sim-log .fx{color:var(--muted)}
+.cur{font-size:15px;margin:0 0 4px;color:var(--muted)}
+.cur b{font-family:var(--mono);color:var(--teal);font-size:18px}
+
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 18px;margin-bottom:18px}
+.form-grid label{display:flex;flex-direction:column;gap:6px;font-size:14.5px;color:var(--muted)}
+.form-grid select,.form-grid input{font:inherit;font-size:15px;color:var(--text);background:var(--bg-2);border:1px solid #3a4a68;border-radius:8px;padding:8px 10px}
+.verdict{display:grid;gap:10px}
+.verdict div{background:var(--bg-2);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:0 8px 8px 0;padding:10px 14px;font-size:15.5px;color:#c3cee0}
+.verdict div.warn{border-left-color:var(--amber)}
+.verdict div.stop{border-left-color:var(--coral)}
+.verdict b{display:block;color:var(--text);margin-bottom:2px}
+details.faq{border:1px solid var(--line);border-radius:10px;background:var(--surface);margin:10px 0;max-width:50em}
+details.faq summary{cursor:pointer;padding:14px 18px;font-weight:600;font-size:17px;list-style:none;display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+details.faq summary::-webkit-details-marker{display:none}
+details.faq summary::after{content:'+';color:var(--teal);font-size:22px;line-height:1;flex-shrink:0}
+details.faq[open] summary::after{content:'−'}
+details.faq[open] summary{border-bottom:1px solid var(--line)}
+details.faq .ans{padding:14px 18px 6px;color:#c3cee0}
+details.faq .ans p,details.faq .ans li{font-size:16px}
+details.faq .table-wrap{margin:12px 0 16px}
+footer{margin-top:80px;padding-top:24px;border-top:1px solid var(--line);color:var(--muted);font-size:14.5px;max-width:46em}
+
+@media (max-width:960px){
+  .layout{grid-template-columns:1fr}
+  nav.toc{position:static;height:auto;border-right:none;border-bottom:1px solid var(--line);padding:18px 20px;display:flex;flex-wrap:wrap;gap:4px 18px}
+  nav.toc p{width:100%;margin:0 0 4px}
+  nav.toc a.sub{display:none}
+  main{padding:0 20px 72px}
+  header.hero{padding-top:36px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .chip{transition:none}
+}
+@media print{
+  :root{color-scheme:light}
+  body{background:#fff;color:#111}
+  nav.toc,.copy,.sim-actions{display:none}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc" aria-label="Contenido">
+  <p>Contenido</p>
+  <a href="#resumen">Resumen y objetivo</a>
+  <a href="#rol">Rol legal: define todo</a>
+  <a href="#arquitectura">Arquitectura estándar</a>
+  <a href="#flujo">Flujo del pago</a>
+  <a href="#estados">Máquina de estados</a>
+  <a class="sub" href="#simulador">Simulador</a>
+  <a class="sub" href="#transiciones">Tabla de transiciones</a>
+  <a href="#reglas">Reglas de negocio</a>
+  <a href="#binance">Conversión con Binance</a>
+  <a class="sub" href="#binance-flujo">Flujo con Binance</a>
+  <a class="sub" href="#binance-limites">Qué permite y qué validar</a>
+  <a class="sub" href="#binance-estados">Trabajo de conversión</a>
+  <a class="sub" href="#binance-contable">Contabilidad</a>
+  <a class="sub" href="#binance-codigo">Código y datos</a>
+  <a href="#datos">Modelo de datos</a>
+  <a href="#contabilidad">Contabilidad</a>
+  <a href="#api">API y webhooks</a>
+  <a href="#cumplimiento">Cumplimiento Colombia</a>
+  <a class="sub" href="#uiaf">UIAF</a>
+  <a class="sub" href="#dian">DIAN (CARF)</a>
+  <a class="sub" href="#expediente">Expediente por operación</a>
+  <a class="sub" href="#bancos">Relación con bancos</a>
+  <a href="#contador">Contador por proyecto</a>
+  <a class="sub" href="#contador-global">Ingresos del exterior</a>
+  <a class="sub" href="#clasificador">Clasificador de ingresos</a>
+  <a class="sub" href="#contador-datos">Datos y configuración</a>
+  <a class="sub" href="#contador-agente">El contador como agente</a>
+  <a href="#declarar">Qué se declara y cómo</a>
+  <a class="sub" href="#declarar-lista">Lista de declaraciones</a>
+  <a class="sub" href="#declarar-preguntas">Preguntas frecuentes</a>
+  <a href="#seguridad">Seguridad y datos</a>
+  <a href="#operacion">Operación diaria</a>
+  <a href="#multiproyecto">Estándar multi-proyecto</a>
+  <a class="sub" href="#config">Configuración por proyecto</a>
+  <a class="sub" href="#adaptadores">Contratos de adaptadores</a>
+  <a class="sub" href="#plugin">Empaquetado como plugin</a>
+  <a href="#checklist">Checklist de nuevo proyecto</a>
+  <a href="#fases">Fases de construcción</a>
+  <a href="#pendientes">Decisiones y validaciones</a>
+</nav>
+
+<main>
+<header class="hero" id="resumen">
+  <h1>Pasarela de pago USDT en Colombia, construida una vez y reutilizada en cada proyecto</h1>
+  <p class="lede">El comercio cobra en pesos, el cliente paga en USDT, la plataforma convierte y dispersa a una cuenta bancaria, y cada operación queda documentada para la UIAF y la DIAN. Este documento define el proceso completo, la lógica, los datos y la estructura que se repite en todos los proyectos.</p>
+  <div class="pipeline" role="list">
+    <div class="step" role="listitem"><b>Orden</b><span>Monto en COP, cotización bloqueada</span></div>
+    <div class="step" role="listitem"><b>Depósito</b><span>Dirección única por orden</span></div>
+    <div class="step" role="listitem"><b>Confirmación</b><span>On-chain más screening AML</span></div>
+    <div class="step" role="listitem"><b>Conversión</b><span>USDT a COP con tasa registrada</span></div>
+    <div class="step" role="listitem"><b>Dispersión</b><span>Transferencia bancaria al comercio</span></div>
+    <div class="step" role="listitem"><b>Reporte</b><span>UIAF mensual, DIAN anual</span></div>
+  </div>
+  <div class="band"><b>Capa de cumplimiento en cada paso:</b> KYC del comercio, análisis de la billetera de origen, bitácora inmutable, expediente por operación, retención de datos por cinco años.</div>
+</header>
+
+<section>
+  <h2>Qué resuelve este estándar</h2>
+  <p class="section-intro">Cada proyecto nuevo no debería reinventar el cobro en USDT ni el cumplimiento. La idea es un núcleo común y piezas intercambiables.</p>
+  <ul>
+    <li><b>Un solo núcleo</b> con la máquina de estados, el libro contable, las cotizaciones y el motor de reportes.</li>
+    <li><b>Adaptadores</b> para lo que cambia: red blockchain, proveedor de liquidez, banco, KYC, analítica on-chain.</li>
+    <li><b>Configuración por proyecto</b> en un archivo, sin tocar el código del núcleo.</li>
+    <li><b>Trazabilidad completa</b>: de cada peso que sale del banco se puede demostrar de qué USDT vino y quién lo pagó.</li>
+  </ul>
+</section>
+
+<section id="rol">
+  <h2>Rol legal: la decisión que define todo</h2>
+  <p class="section-intro">Antes de escribir código hay que saber quién es el proveedor frente a la ley. Cambia las obligaciones, los registros y la arquitectura.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Modelo</th><th>Qué hace la plataforma</th><th>Obligaciones</th></tr></thead>
+    <tbody>
+      <tr><td><b>A. Proveedor directo</b></td><td>Recibe USDT por cuenta de terceros, lo convierte y dispersa pesos.</td><td>Queda como proveedor de servicios de activos virtuales (UIAF) y de criptoactivos (DIAN): SIREL, SARLAFT, reportes mensuales y anuales, RUT actualizado.</td></tr>
+      <tr><td><b>B. Orquestador</b></td><td>Coordina el flujo, pero la custodia y la conversión las hace un exchange o proveedor ya registrado.</td><td>Carga más liviana, pero depende contractualmente del tercero y debe poder entregarle datos completos. Hay que validar si la orquestación sola evita la condición de proveedor.</td></tr>
+      <tr><td><b>C. Cobro propio</b></td><td>Cada proyecto recibe USDT como pago de sus propias ventas y los convierte en Binance a nombre propio.</td><td>El proyecto actúa como usuario de un proveedor (Binance), no como proveedor. En principio no le aplican los reportes de proveedor ante UIAF y DIAN, pero sí factura, IVA, renta y patrimonio. Validar con abogado.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note legal">
+    <strong>Validar con abogado y tributarista</strong>
+    <p>Qué modelo aplica a cada proyecto, y qué entidad figura como responsable ante la UIAF y la DIAN. Si los proyectos pertenecen a empresas distintas, puede que cada una necesite su propio registro, o que una sola entidad opere para todas. Este documento diseña para ambos casos con el campo <code>legal_entity_id</code>.</p>
+  </div>
+</section>
+
+<section id="arquitectura">
+  <h2>Arquitectura estándar</h2>
+  <p class="section-intro">Tres capas. Solo la tercera cambia de un proyecto a otro.</p>
+
+  <div class="cards">
+    <div class="card core"><h4>Núcleo (igual en todos)</h4><p>Máquina de estados de la orden, cotizaciones, libro contable de doble partida, motor de reglas, bitácora de auditoría, generador de reportes y expediente.</p></div>
+    <div class="card adapter"><h4>Adaptadores (intercambiables)</h4><p>Red blockchain (TRON, Polygon…), liquidez (exchange u OTC), dispersión bancaria, KYC/KYB, análisis on-chain, formato de reporte UIAF y DIAN.</p></div>
+    <div class="card proj"><h4>Proyecto (solo configuración)</h4><p>Comisiones, redes habilitadas, tolerancias, umbrales de revisión, webhooks, entidad legal, cuenta bancaria de dispersión.</p></div>
+  </div>
+
+  <h3>Módulos del núcleo</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Módulo</th><th>Responsabilidad</th></tr></thead>
+    <tbody>
+      <tr><td><code>orders</code></td><td>Crea órdenes, aplica la máquina de estados, expira y cancela.</td></tr>
+      <tr><td><code>chain-watcher</code></td><td>Detecta depósitos, cuenta confirmaciones, maneja reorganizaciones de cadena y evita procesar dos veces la misma transacción.</td></tr>
+      <tr><td><code>screening</code></td><td>Analiza la billetera de origen y el riesgo antes de aceptar fondos.</td></tr>
+      <tr><td><code>quotes</code></td><td>Calcula USDT esperado, bloquea la tasa por un tiempo y guarda spread.</td></tr>
+      <tr><td><code>conversion</code></td><td>Ejecuta USDT a COP con el proveedor y guarda la tasa efectiva.</td></tr>
+      <tr><td><code>payouts</code></td><td>Dispersa al banco del comercio y concilia el comprobante.</td></tr>
+      <tr><td><code>ledger</code></td><td>Asientos de doble partida por cada evento, con saldos por proyecto y comercio.</td></tr>
+      <tr><td><code>compliance</code></td><td>KYC, casos en revisión, ROS, extracción de datos para UIAF y DIAN, expediente.</td></tr>
+      <tr><td><code>webhooks</code></td><td>Notifica al proyecto con firma HMAC y reintentos.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="flujo">
+  <h2>Flujo del pago, paso a paso</h2>
+  <p class="section-intro">El proceso completo, desde que el comercio se registra hasta el reporte regulatorio.</p>
+
+  <h3>Antes del primer pago: alta del comercio</h3>
+  <ol class="flow">
+    <li><div><b>KYB/KYC del comercio</b><p>Razón social, NIT o documento, representante legal, beneficiario final, residencia fiscal, actividad económica, origen de fondos. Se consulta contra listas restrictivas.</p><span class="who">Responsable: cumplimiento</span></div></li>
+    <li><div><b>Cuenta bancaria en COP a nombre del comercio</b><p>Se valida la titularidad. La plataforma nunca dispersa a terceros distintos del comercio aprobado.</p><span class="who">Responsable: operaciones</span></div></li>
+    <li><div><b>Perfil de riesgo y límites</b><p>Se asigna nivel de riesgo (bajo, medio, alto) y topes por operación y por mes. A mayor riesgo, más revisión manual.</p><span class="who">Responsable: oficial de cumplimiento</span></div></li>
+  </ol>
+
+  <h3>Durante el pago</h3>
+  <ol class="flow">
+    <li><div><b>El proyecto crea la orden</b><p>Envía monto en COP, referencia propia, comercio y red. La plataforma responde con la dirección de depósito, el monto exacto en USDT y la hora límite.</p><span class="who">Sistema: <code>POST /v1/orders</code></span></div></li>
+    <li><div><b>Cotización bloqueada</b><p>Se fija la tasa COP por USDT con el spread configurado. Normalmente de 10 a 15 minutos. Pasado ese plazo, la orden expira.</p><span class="who">Sistema: <code>quotes</code></span></div></li>
+    <li><div><b>El cliente paga en USDT</b><p>Envía desde su billetera a la dirección única de la orden, por la red indicada. Una dirección por orden evita confundir pagos.</p><span class="who">Cliente</span></div></li>
+    <li><div><b>Detección y análisis de la billetera de origen</b><p>Al ver la transacción se consulta al proveedor de analítica. Si el riesgo supera el umbral, la orden pasa a revisión de cumplimiento y no avanza.</p><span class="who">Sistema: <code>chain-watcher</code> y <code>screening</code></span></div></li>
+    <li><div><b>Confirmaciones y verificación del monto</b><p>Se espera el número de confirmaciones de la red. Luego se compara lo recibido con lo esperado: exacto, de menos o de más.</p><span class="who">Sistema</span></div></li>
+    <li><div><b>Conversión USDT a COP</b><p>Se ejecuta con el proveedor de liquidez. Se guarda tasa efectiva, comisión y referencia del proveedor.</p><span class="who">Sistema: <code>conversion</code></span></div></li>
+    <li><div><b>Dispersión al comercio</b><p>Se calcula el neto (monto menos comisión de la plataforma) y se transfiere a su cuenta. Se guarda el comprobante bancario.</p><span class="who">Sistema: <code>payouts</code></span></div></li>
+    <li><div><b>Notificación y asientos contables</b><p>Se envía el webhook <code>order.settled</code> al proyecto y se cierran los asientos de la operación.</p><span class="who">Sistema: <code>webhooks</code> y <code>ledger</code></span></div></li>
+  </ol>
+
+  <h3>Después: reportes y conciliación</h3>
+  <ol class="flow">
+    <li><div><b>Conciliación diaria en tres vías</b><p>Saldo on-chain contra saldo del libro contable contra saldo bancario. Cualquier diferencia abre un caso.</p><span class="who">Responsable: operaciones</span></div></li>
+    <li><div><b>Reportes periódicos</b><p>Los datos ya están estructurados por operación, por lo que los reportes de UIAF y DIAN se generan desde la base de datos, sin reconstruir nada.</p><span class="who">Responsable: cumplimiento</span></div></li>
+  </ol>
+</section>
+
+<section id="estados">
+  <h2>Máquina de estados de la orden</h2>
+  <p class="section-intro">Toda la lógica de negocio sale de aquí. Una orden solo puede estar en un estado y solo se mueve por eventos permitidos. Cualquier otro evento se rechaza y queda registrado.</p>
+
+  <h3 id="simulador">Simulador</h3>
+  <p>Prueba el flujo: elige eventos y mira cómo cambia el estado, qué se registra y qué se notifica. Esta tabla de transiciones es la misma que usa el código de abajo.</p>
+
+  <div class="sim" id="sim">
+    <p class="cur">Estado actual: <b id="sim-current">CREATED</b></p>
+    <p class="states-title">Camino normal</p>
+    <div class="chips" id="chips-happy"></div>
+    <p class="states-title">Excepciones</p>
+    <div class="chips" id="chips-exc"></div>
+    <p class="states-title">Eventos permitidos ahora</p>
+    <div class="sim-actions" id="sim-actions"></div>
+    <div class="sim-actions">
+      <button class="btn primary" id="sim-auto" type="button">Reproducir camino normal</button>
+      <button class="btn ghost" id="sim-reset" type="button">Reiniciar</button>
+    </div>
+    <div class="sim-log" id="sim-log" aria-live="polite"></div>
+  </div>
+
+  <h3 id="transiciones">Tabla de transiciones</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Estado</th><th>Evento</th><th>Nuevo estado</th><th>Qué ocurre</th></tr></thead>
+    <tbody id="tt-body"></tbody>
+  </table></div>
+
+  <h3>Implementación de referencia</h3>
+  <pre><code>export type OrderState =
+  | 'CREATED' | 'AWAITING_PAYMENT' | 'PAYMENT_DETECTED' | 'CONFIRMING'
+  | 'CONFIRMED' | 'CONVERTING' | 'CONVERTED' | 'SETTLING' | 'SETTLED'
+  | 'UNDERPAID' | 'HELD_COMPLIANCE' | 'REJECTED'
+  | 'REFUND_PENDING' | 'REFUNDED'
+  | 'FAILED_CONVERSION' | 'FAILED_PAYOUT'
+  | 'EXPIRED' | 'CANCELLED';
+
+export type OrderEvent = string;
+
+const TRANSITIONS: Record&lt;string, Record&lt;string, OrderState&gt;&gt; = {
+  CREATED:            { activate: 'AWAITING_PAYMENT', cancel: 'CANCELLED' },
+  AWAITING_PAYMENT:   { tx_detected: 'PAYMENT_DETECTED', expire: 'EXPIRED', cancel: 'CANCELLED' },
+  PAYMENT_DETECTED:   { screen_pass: 'CONFIRMING', screen_flag: 'HELD_COMPLIANCE' },
+  CONFIRMING:         { confirmed_ok: 'CONFIRMED', confirmed_under: 'UNDERPAID', tx_dropped: 'AWAITING_PAYMENT' },
+  UNDERPAID:          { topup_received: 'CONFIRMING', grace_expired: 'REFUND_PENDING' },
+  HELD_COMPLIANCE:    { approve: 'CONFIRMING', reject: 'REJECTED' },
+  CONFIRMED:          { start_conversion: 'CONVERTING' },
+  CONVERTING:         { conversion_ok: 'CONVERTED', conversion_fail: 'FAILED_CONVERSION' },
+  FAILED_CONVERSION:  { retry: 'CONVERTING', abort: 'REFUND_PENDING' },
+  CONVERTED:          { start_payout: 'SETTLING' },
+  SETTLING:           { payout_ok: 'SETTLED', payout_fail: 'FAILED_PAYOUT' },
+  FAILED_PAYOUT:      { retry: 'SETTLING' },
+  REFUND_PENDING:     { refund_sent: 'REFUNDED' },
+  EXPIRED:            { late_tx: 'REFUND_PENDING' },
+  // terminales: SETTLED, REFUNDED, REJECTED, CANCELLED
+};
+
+export function transition(order, event, actor) {
+  const next = TRANSITIONS[order.state]?.[event];
+  if (!next) {
+    audit('INVALID_TRANSITION', { orderId: order.id, from: order.state, event, actor });
+    throw new Error(`Evento ${event} no permitido en ${order.state}`);
+  }
+  // Una sola transacción de base de datos: estado + historial + asientos + eventos de cumplimiento
+  return db.tx(async (t) =&gt; {
+    await t.orders.updateState(order.id, order.state, next);   // bloqueo optimista: falla si otro proceso cambió el estado
+    await t.history.insert({ orderId: order.id, from: order.state, to: next, event, actor });
+    await ledger.postFor(t, order, event);                      // asientos de doble partida
+    await compliance.recordFor(t, order, event);               // ROS, UIAF, CARF según corresponda
+    await webhooks.enqueue(t, order, event);                   // se envía después del commit
+    return { ...order, state: next };
+  });
+}</code></pre>
+
+  <h3>Clasificación del monto recibido</h3>
+  <pre><code>// Montos en unidades mínimas: USDT con 6 decimales (1 USDT = 1_000_000n)
+export function classifyAmount(received: bigint, expected: bigint,
+                               tol: { underBps: number; overBps: number }) {
+  const min = expected - (expected * BigInt(tol.underBps)) / 10_000n;
+  const max = expected + (expected * BigInt(tol.overBps)) / 10_000n;
+  if (received &lt; min) return 'UNDER';   // evento confirmed_under
+  if (received &gt; max) return 'OVER';    // confirmed_ok + excedente a devolver o abonar
+  return 'EXACT';                       // evento confirmed_ok
+}
+
+// Cotización: COP en centavos y tasa en centavos de COP por 1 USDT (spread incluido)
+export function usdtForOrder(amountCopMinor: bigint, rateMinor: bigint): bigint {
+  const num = amountCopMinor * 1_000_000n;
+  return (num + rateMinor - 1n) / rateMinor;   // redondeo hacia arriba: nunca cobrar de menos
+}
+// Ej.: 1.000.000 COP = 100_000_000n centavos; tasa 4.000,00 = 400_000n
+//      usdtForOrder(100_000_000n, 400_000n) = 250_000_000n = 250,000000 USDT</code></pre>
+
+  <h3>Idempotencia del detector on-chain</h3>
+  <pre><code>// La misma transacción puede llegar dos veces (reconexión, reorg, webhook duplicado).
+// La unicidad (network, tx_hash, log_index) en la base de datos es la defensa final.
+async function onObservedTx(tx) {
+  const inserted = await db.onchainTxs.insertIfAbsent(tx);   // ON CONFLICT DO NOTHING
+  if (!inserted) return;                                     // ya procesada
+  const order = await db.orders.findByDepositAddress(tx.to);
+  if (!order) return quarantine(tx);                         // pago sin orden: se revisa a mano
+  await transition(order, 'tx_detected', 'chain-watcher');
+}</code></pre>
+</section>
+
+<section id="reglas">
+  <h2>Reglas de negocio</h2>
+  <p class="section-intro">Los valores son ejemplos iniciales. Cada proyecto los ajusta en su configuración.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Regla</th><th>Comportamiento estándar</th><th>Configurable</th></tr></thead>
+    <tbody>
+      <tr><td>Expiración</td><td>La orden vence a los 15 minutos. La tasa deja de ser válida.</td><td><code>quote_ttl_seconds</code></td></tr>
+      <tr><td>Pago de menos</td><td>Pasa a <code>UNDERPAID</code>. Se espera un complemento durante un plazo de gracia. Si no llega, se devuelve.</td><td><code>tolerance.under_bps</code>, <code>underpaid_grace_minutes</code></td></tr>
+      <tr><td>Pago de más</td><td>Se procesa el monto esperado y el excedente se registra para devolver o abonar según política del proyecto.</td><td><code>tolerance.over_bps</code>, <code>overpay_policy</code></td></tr>
+      <tr><td>Pago tardío</td><td>Llega a una orden vencida. Por defecto se devuelve. Opcional: recotizar y aceptar.</td><td><code>late_payment_policy</code></td></tr>
+      <tr><td>Confirmaciones</td><td>Se exige un mínimo por red antes de dar el pago por válido. Se calibra con el proveedor y el riesgo de reorganización.</td><td><code>networks[].min_confirmations</code></td></tr>
+      <tr><td>Reorganización de cadena</td><td>Si una transacción desaparece, la orden vuelve a <code>AWAITING_PAYMENT</code> y se alerta.</td><td>No</td></tr>
+      <tr><td>Revisión reforzada</td><td>Operaciones sobre un umbral, comercios de riesgo alto o billeteras con alertas pasan a revisión manual.</td><td><code>review.over_usd</code>, <code>review.risk_score</code></td></tr>
+      <tr><td>Devoluciones</td><td>Solo a la billetera de origen y solo si cumplimiento lo autoriza. Fondos sospechosos no se devuelven sin guía legal.</td><td>No</td></tr>
+      <tr><td>Redondeo</td><td>Todo en enteros (centavos de COP, unidades de 6 decimales de USDT). Nunca decimales flotantes.</td><td>No</td></tr>
+      <tr><td>Reintentos</td><td>Conversión y dispersión se reintentan con retroceso exponencial y un número máximo. Después, a revisión manual.</td><td><code>retry.max_attempts</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note risk">
+    <strong>Fondos de origen dudoso</strong>
+    <p>Si una transacción se marca como sospechosa, la plataforma no avanza, no devuelve automáticamente y no avisa al cliente del motivo. El oficial de cumplimiento decide si se libera o se rechaza y si corresponde un ROS inmediato.</p>
+  </div>
+</section>
+
+<section id="binance">
+  <h2>Modelo de conversión con Binance</h2>
+  <p class="section-intro">Binance entra como proveedor de liquidez: recibe los USDT, los vende por pesos y permite retirar COP hacia un banco colombiano. Se implementa como un adaptador más, sin tocar la máquina de estados de la orden.</p>
+
+  <div class="note">
+    <strong>Lo que cambia frente al diseño base</strong>
+    <p>Binance no le paga al comercio. El retiro de pesos va a la cuenta bancaria de la entidad operadora, y desde ahí el banco dispersa a cada comercio. Son dos saltos: Binance al banco de la entidad, y banco de la entidad al comercio.</p>
+  </div>
+
+  <h3 id="binance-flujo">Flujo con Binance</h3>
+  <ol class="flow">
+    <li><div><b>Cobro y confirmación en direcciones propias</b><p>Igual que en el diseño base: una dirección por orden, análisis AML y confirmaciones. La atribución del pago a la orden se resuelve aquí, porque la dirección de depósito de Binance pertenece a la cuenta y no distingue órdenes.</p><span class="who">Sistema: <code>chain-watcher</code></span></div></li>
+    <li><div><b>Barrido a Binance</b><p>El USDT confirmado se envía a la dirección de depósito de la cuenta corporativa en la misma red, por orden o por lote. Se espera a que Binance acredite el depósito.</p><span class="who">Sistema: <code>conversion</code></span></div></li>
+    <li><div><b>Venta USDT a COP</b><p>Orden en el par USDT/COP o cotización con precio fijo mediante Convert. Se guarda identificador de la orden, monto ejecutado, comisión y tasa efectiva.</p><span class="who">Sistema: adaptador Binance</span></div></li>
+    <li><div><b>Retiro de COP al banco de la entidad</b><p>Por Transfiya, Bre-B o ACH. Con Transfiya, el retiro hay que aceptarlo en la app del banco, así que este paso se modela como tarea con doble aprobación hasta confirmar que se puede automatizar.</p><span class="who">Responsable: finanzas</span></div></li>
+    <li><div><b>Conciliación del retiro</b><p>Se compara el crédito en el extracto bancario con el historial de órdenes fiat de Binance y con el monto esperado del lote.</p><span class="who">Sistema: conciliación diaria</span></div></li>
+    <li><div><b>Dispersión al comercio desde el banco de la entidad</b><p>Se paga el neto del comercio. Puede hacerse apenas la venta queda confirmada, con un colchón de pesos propio, o cuando el retiro llega al banco.</p><span class="who">Sistema: <code>payouts</code></span></div></li>
+  </ol>
+
+  <h3>Dos decisiones de diseño</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Decisión</th><th>Opción</th><th>Cómo funciona</th><th>Ventaja</th><th>Riesgo</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="2">Liquidación</td><td>Por orden</td><td>Una venta y un retiro por cada orden.</td><td>Trazabilidad uno a uno y expediente simple.</td><td>Más comisiones y más tareas manuales.</td></tr>
+      <tr><td>Por lote</td><td>Se agrupan órdenes confirmadas y se vende y retira cada cierto tiempo. El resultado se reparte proporcionalmente.</td><td>Menos operaciones y mejor ejecución en montos mayores.</td><td>Exposición al precio mientras se acumula; el reparto debe quedar documentado.</td></tr>
+      <tr><td rowspan="2">Fondeo del pago al comercio</td><td>Con colchón propio</td><td>Se paga desde un saldo en pesos del banco y Binance lo repone después.</td><td>El comercio recibe rápido.</td><td>Requiere capital de trabajo y un saldo mínimo vigilado.</td></tr>
+      <tr><td>Contra retiro</td><td>Se paga cuando los pesos llegan al banco.</td><td>No exige capital propio.</td><td>Más lento y sujeto a la aceptación de Transfiya o a los tiempos de ACH.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="binance-limites">Qué permite Binance y qué hay que validar</h3>
+  <p>Resumen de lo que se encontró en documentación y guías públicas. Las condiciones de Binance cambian, así que cada punto se confirma con Binance antes de construir.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Tema</th><th>Qué se encontró</th><th>Qué hacer</th></tr></thead>
+    <tbody>
+      <tr><td>Retiro de pesos</td><td>Se puede retirar COP a un banco colombiano, pero primero hay que convertir los USDT a COP dentro de Binance.</td><td>Diseñar la venta como paso previo obligatorio.</td></tr>
+      <tr><td>Destino del retiro</td><td>Con Transfiya solo se retira a la cuenta asociada al celular del titular de la cuenta de Binance, y el retiro se acepta desde la app del banco.</td><td>Retirar siempre a la cuenta de la entidad operadora y dispersar desde ahí.</td></tr>
+      <tr><td>Rieles y tiempos</td><td>Transfiya es inmediato y ACH puede tardar hasta tres días hábiles según una guía de Binance. Una fuente reporta retiro directo por Bre-B desde el 10 de febrero de 2026.</td><td>Confirmar rieles vigentes, límites y horarios con Binance.</td></tr>
+      <tr><td>API de venta</td><td>Existen las API de Spot y de Convert. El par USDT/COP lo menciona una guía, no la documentación oficial.</td><td>Confirmar que el par y los límites existen para la cuenta antes de fijar el diseño.</td></tr>
+      <tr><td>API de retiro en pesos</td><td>El conector oficial consultado lista retiro fiat por API para BRL, ARS y MXN. COP no aparece.</td><td>Asumir paso manual con doble aprobación hasta que Binance confirme lo contrario.</td></tr>
+      <tr><td>Tipo de cuenta</td><td>Para usar la API fiat se exige KYC o KYB completado y el servicio fiat activado.</td><td>Abrir cuenta corporativa a nombre de la entidad operadora. No operar el flujo desde una cuenta personal.</td></tr>
+      <tr><td>Costos de referencia</td><td>Comisión de operación spot de 0,1 %. El retiro de COP por Transfiya sin comisión de Binance.</td><td>Verificar tarifas de la cuenta y tomar la comisión real de cada ejecución.</td></tr>
+      <tr><td>Mercado P2P</td><td>Es la vía más común para personas, con contraparte individual.</td><td>No usarlo como motor de la pasarela: no escala, hay pagos de terceros y riesgo de bloqueo bancario. Solo contingencia manual con aprobación de cumplimiento.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note legal">
+    <strong>Binance no reemplaza las obligaciones de la entidad</strong>
+    <p>Si la entidad recibe USDT por cuenta de los comercios y los cambia a pesos, sigue siendo quien presta el servicio ante la UIAF y la DIAN (modelo A del apartado de rol legal), aunque la conversión ocurra en Binance. Las fuentes consultadas no permiten confirmar si Binance está registrado ante la UIAF, y la UIAF indica que sus reportes aplican a los obligados domiciliados en Colombia. Hay que verificarlo directamente y no apoyarse en el reporte de un tercero.</p>
+  </div>
+
+  <div class="note risk">
+    <strong>Riesgos propios de usar un exchange</strong>
+    <p>Contraparte (fondos depositados en Binance), precio y deslizamiento entre la confirmación y la venta, liquidez limitada del par, limitación o cierre de la cuenta por parte de Binance o del banco receptor, cambios en rieles y productos, y caída de la API. Mitigación: mantener saldo mínimo en Binance, vender apenas se acredite, pausar si la tasa efectiva se aleja de la cotización más de un umbral, y tener un segundo proveedor de liquidez detrás del mismo contrato de adaptador.</p>
+  </div>
+
+  <h3 id="binance-estados">Estados del trabajo de conversión</h3>
+  <p>La orden sigue usando la misma máquina de estados. Dentro de <code>CONVERTING</code> corre un trabajo de conversión con su propia máquina, que puede abarcar una orden o un lote.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Estado</th><th>Evento</th><th>Nuevo estado</th><th>Qué ocurre</th></tr></thead>
+    <tbody>
+      <tr><td><code>PENDING_SWEEP</code></td><td><code>sweep_sent</code></td><td><code>SWEEP_SENT</code></td><td>Se envía el USDT a la dirección de depósito de Binance y se guarda el hash.</td></tr>
+      <tr><td><code>SWEEP_SENT</code></td><td><code>deposit_credited</code></td><td><code>AT_EXCHANGE</code></td><td>Binance acredita el depósito.</td></tr>
+      <tr><td><code>SWEEP_SENT</code></td><td><code>sweep_failed</code></td><td><code>MANUAL_REQUIRED</code></td><td>Depósito no acreditado en el tiempo esperado. Caso para operaciones.</td></tr>
+      <tr><td><code>AT_EXCHANGE</code></td><td><code>sell_placed</code></td><td><code>SELL_PLACED</code></td><td>Se envía la orden de venta con identificador propio (idempotencia).</td></tr>
+      <tr><td><code>SELL_PLACED</code></td><td><code>filled</code></td><td><code>SOLD</code></td><td>Se guardan pesos obtenidos, comisión y tasa efectiva. Se revisa el deslizamiento.</td></tr>
+      <tr><td><code>SELL_PLACED</code></td><td><code>sell_failed</code></td><td><code>MANUAL_REQUIRED</code></td><td>Rechazo, ejecución parcial sin completar o deslizamiento sobre el umbral.</td></tr>
+      <tr><td><code>SOLD</code></td><td><code>withdraw_requested</code></td><td><code>FIAT_WITHDRAW_REQUESTED</code></td><td>Se crea la tarea de retiro de COP (manual con doble aprobación o por API si está disponible).</td></tr>
+      <tr><td><code>FIAT_WITHDRAW_REQUESTED</code></td><td><code>bank_credited</code></td><td><code>FIAT_RECEIVED</code></td><td>Se concilia el crédito en el banco con el retiro.</td></tr>
+      <tr><td><code>FIAT_WITHDRAW_REQUESTED</code></td><td><code>withdraw_failed</code></td><td><code>MANUAL_REQUIRED</code></td><td>Retiro rechazado o sin acreditar. Caso para finanzas.</td></tr>
+    </tbody>
+  </table></div>
+  <p>La orden pasa de <code>CONVERTING</code> a <code>CONVERTED</code> (evento <code>conversion_ok</code>) cuando el trabajo llega a <code>SOLD</code> si el pago al comercio se hace con colchón propio, o a <code>FIAT_RECEIVED</code> si se paga contra retiro. Se controla con <code>conversion_ok_at</code> en la configuración.</p>
+
+  <h3 id="binance-contable">Contabilidad con Binance</h3>
+  <p>Mismo ejemplo de la sección contable: orden de 1.000.000 COP (250 USDT). El costo de conversión de 5.000 COP se desglosa, a modo ilustrativo, en 1.000 de comisión de operación (0,1 %) y 4.000 de deslizamiento.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Evento</th><th>Cuenta</th><th>Débito (COP)</th><th>Crédito (COP)</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="2">Pago confirmado</td><td>USDT en custodia propia (activo)</td><td>1.000.000</td><td></td></tr>
+      <tr><td>Por pagar a comercios (pasivo)</td><td></td><td>1.000.000</td></tr>
+      <tr><td rowspan="2">Barrido a Binance</td><td>USDT en Binance (activo)</td><td>1.000.000</td><td></td></tr>
+      <tr><td>USDT en custodia propia</td><td></td><td>1.000.000</td></tr>
+      <tr><td rowspan="3">Venta en Binance</td><td>COP en Binance (activo)</td><td>995.000</td><td></td></tr>
+      <tr><td>Costo de conversión (gasto)</td><td>5.000</td><td></td></tr>
+      <tr><td>USDT en Binance</td><td></td><td>1.000.000</td></tr>
+      <tr><td rowspan="2">Retiro de COP al banco</td><td>Bancos COP (activo)</td><td>995.000</td><td></td></tr>
+      <tr><td>COP en Binance</td><td></td><td>995.000</td></tr>
+      <tr><td rowspan="2">Comisión reconocida</td><td>Por pagar a comercios</td><td>15.000</td><td></td></tr>
+      <tr><td>Ingreso por comisión</td><td></td><td>15.000</td></tr>
+      <tr><td rowspan="2">Dispersión al comercio</td><td>Por pagar a comercios</td><td>985.000</td><td></td></tr>
+      <tr><td>Bancos COP</td><td></td><td>985.000</td></tr>
+    </tbody>
+  </table></div>
+  <p>Al cerrar, "Por pagar a comercios" queda en cero y el banco retiene 10.000 COP (15.000 de comisión menos 5.000 de costo). Con colchón propio, la dispersión ocurre antes del retiro y el saldo bancario baja temporalmente: esa diferencia es el capital de trabajo que se vigila. Los saldos de "USDT en Binance" y "COP en Binance" deben cerrar en cero al final del día en la conciliación; si no, hay saldo ocioso o una diferencia.</p>
+
+  <div class="note legal">
+    <strong>Validar con el contador</strong>
+    <p>Tratamiento de la comisión y del deslizamiento como costo, y cómo se registran los saldos mantenidos en un exchange extranjero o en uno con presencia local, incluidos los saldos al cierre del año para efectos de patrimonio.</p>
+  </div>
+
+  <h3 id="binance-codigo">Código y datos</h3>
+  <h4>Contrato del adaptador de exchange</h4>
+  <p>El adaptador declara qué puede hacer por API. El núcleo se adapta: si no puede retirar pesos por API, crea una tarea manual en lugar de fallar.</p>
+  <pre><code>export interface ExchangeCapabilities {
+  sellViaApi: boolean;
+  fiatWithdrawViaApi: boolean;   // COP en Binance: asumir false hasta confirmarlo
+  quoteLock: boolean;            // cotización con precio fijo (Convert)
+}
+
+export interface ExchangeAdapter extends LiquidityAdapter {
+  capabilities: ExchangeCapabilities;
+  depositAddress(network: string): Promise&lt;string&gt;;      // dirección de la cuenta, no de la orden
+  getDeposit(txHash: string): Promise&lt;{ credited: boolean }&gt;;
+  sell(p: { usdtUnits: bigint; symbol: string; clientOrderId: string }): Promise&lt;SellResult&gt;;
+  requestFiatWithdraw?(p: { copMinor: bigint; rail: string; ref: string }): Promise&lt;WithdrawResult&gt;;
+  getFiatWithdrawStatus(ref: string): Promise&lt;'pending' | 'done' | 'failed'&gt;;
+}</code></pre>
+
+  <h4>Avance del trabajo de conversión</h4>
+  <pre><code>// Cada llamada externa usa job.id como identificador propio: reintentar nunca duplica una venta.
+async function advanceConversionJob(job) {
+  const ex = adapters.exchange(job.projectId);
+  switch (job.status) {
+    case 'SWEEP_SENT': {
+      const d = await ex.getDeposit(job.sweepTxHash);
+      return d.credited ? save(job, 'AT_EXCHANGE') : waitOrEscalate(job);
+    }
+    case 'AT_EXCHANGE': {
+      const fill = await ex.sell({ usdtUnits: job.usdtUnits, symbol: 'USDTCOP', clientOrderId: job.id });
+      const slipBps = deviationBps(fill.rateMinor, job.quotedRateMinor);
+      if (slipBps &gt; job.config.maxSlippageBps) return save(job, 'MANUAL_REQUIRED', { reason: 'SLIPPAGE' });
+      await save(job, 'SOLD', { copMinor: fill.copMinor, feeCopMinor: fill.feeMinor, effectiveRateMinor: fill.rateMinor });
+      return job.config.conversionOkAt === 'SOLD' ? fireOrderEvents(job, 'conversion_ok') : null;
+    }
+    case 'SOLD': {
+      if (!ex.capabilities.fiatWithdrawViaApi) {
+        return queueManualTask(job, 'RETIRO_COP_BINANCE');   // doble aprobación
+      }
+      return requestWithdraw(job);
+    }
+    case 'FIAT_WITHDRAW_REQUESTED': {
+      const s = await ex.getFiatWithdrawStatus(job.fiatWithdrawId);
+      if (s === 'done' &amp;&amp; bankCreditMatches(job)) {
+        await save(job, 'FIAT_RECEIVED');
+        return job.config.conversionOkAt === 'FIAT_RECEIVED' ? fireOrderEvents(job, 'conversion_ok') : null;
+      }
+      return s === 'failed' ? save(job, 'MANUAL_REQUIRED', { reason: 'WITHDRAW_FAILED' }) : null;
+    }
+  }
+}
+
+// Reparto de un lote: proporcional a los USDT de cada orden; la última absorbe el redondeo.
+function allocate(job, orders) {
+  let left = job.copMinor;
+  return orders.map((o, i) =&gt; {
+    const share = i === orders.length - 1 ? left : (job.copMinor * o.usdtUnits) / job.usdtUnits;
+    left -= share;
+    return { orderId: o.id, copMinorAllocated: share };
+  });
+}</code></pre>
+
+  <h4>Configuración del proyecto</h4>
+  <p>Se agrega este bloque al <code>config.json</code> del proyecto. Valores de ejemplo.</p>
+  <pre><code>"liquidity": {
+  "provider": "binance",
+  "account": "cuenta-corporativa-entidad-operadora",
+  "pair": "USDTCOP",
+  "method": "spot_market",
+  "settlement_mode": "batched",
+  "batch_every_minutes": 60,
+  "max_slippage_bps": 40,
+  "fiat_withdraw": { "rail": "transfiya", "mode": "manual_two_approvals" },
+  "payout_funding": "prefunded_float",
+  "float_min_cop": 20000000,
+  "conversion_ok_at": "SOLD",
+  "api_key_policy": { "withdrawals_enabled": false, "ip_allowlist": true }
+}</code></pre>
+  <p>Valores posibles: <code>method</code> es <code>spot_market</code> o <code>convert</code>; <code>settlement_mode</code> es <code>per_order</code> o <code>batched</code>; <code>payout_funding</code> es <code>prefunded_float</code> o <code>after_fiat_received</code>; <code>conversion_ok_at</code> es <code>SOLD</code> o <code>FIAT_RECEIVED</code>. La llave de API debe tener solo lectura y trading, con retiros desactivados y lista de IP permitidas.</p>
+
+  <h4>Tablas adicionales</h4>
+  <pre><code>create table exchange_accounts (
+  id uuid primary key default gen_random_uuid(),
+  legal_entity_id uuid not null references legal_entities(id),
+  provider text not null,               -- binance
+  label text not null,
+  api_key_ref text not null,            -- referencia al gestor de secretos
+  status text not null default 'active'
+);
+
+create table conversion_jobs (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references projects(id),
+  exchange_account_id uuid not null references exchange_accounts(id),
+  mode text not null check (mode in ('per_order','batched')),
+  status text not null,
+  usdt_units bigint not null,
+  quoted_rate_minor bigint,
+  cop_minor bigint,
+  fee_cop_minor bigint,
+  effective_rate_minor bigint,
+  sweep_tx_hash text,
+  exchange_deposit_id text,
+  exchange_order_id text,
+  fiat_withdraw_id text,
+  bank_credit_ref text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table conversion_job_orders (
+  job_id uuid not null references conversion_jobs(id),
+  order_id uuid not null references orders(id),
+  usdt_units bigint not null,            -- parte de la venta que corresponde a la orden
+  cop_minor_allocated bigint,            -- reparto proporcional del resultado
+  primary key (job_id, order_id)
+);
+
+create table manual_tasks (
+  id uuid primary key default gen_random_uuid(),
+  job_id uuid references conversion_jobs(id),
+  kind text not null,                    -- RETIRO_COP_BINANCE, REVISION_DESLIZAMIENTO
+  status text not null default 'open',   -- open, approved_1, approved_2, done, cancelled
+  requested_by text not null,
+  approved_by text[] not null default '{}',
+  created_at timestamptz not null default now()
+);</code></pre>
+  <p>Al cerrar un lote se crea una fila en <code>conversions</code> por cada orden con su parte del resultado. Así la vista <code>v_carf_annual</code>, el expediente y los reportes UIAF y DIAN siguen funcionando sin cambios.</p>
+
+  <h4>Qué suma al expediente de cada operación</h4>
+  <ul>
+    <li>Hash del barrido y comprobante del depósito en Binance.</li>
+    <li>Identificador de la orden de venta, monto ejecutado, comisión y tasa efectiva.</li>
+    <li>Identificador del retiro de pesos y el extracto bancario donde aparece el crédito.</li>
+    <li>Si fue por lote, el detalle del reparto a cada orden.</li>
+  </ul>
+  <p>Estos soportes también responden la pregunta del banco sobre el origen de los pesos que recibe de un exchange.</p>
+</section>
+
+<section id="datos">
+  <h2>Modelo de datos</h2>
+  <p class="section-intro">Esquema para PostgreSQL. Cada tabla operativa lleva <code>project_id</code>, de modo que un mismo núcleo atiende varios proyectos sin mezclar información ni saldos.</p>
+
+  <pre><code>-- Quién responde ante UIAF y DIAN
+create table legal_entities (
+  id uuid primary key default gen_random_uuid(),
+  legal_name text not null,
+  nit text not null,
+  rut_resp_67_updated_at date,       -- actualización del RUT para el reporte de criptoactivos
+  uiaf_sirel_user text               -- código/usuario de SIREL
+);
+
+create table projects (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  legal_entity_id uuid not null references legal_entities(id),
+  config jsonb not null,             -- ver sección de configuración
+  status text not null default 'active'
+);
+
+create table merchants (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references projects(id),
+  legal_name text not null,
+  doc_type text not null,            -- NIT, CC, CE, PAS
+  doc_number text not null,
+  fiscal_residence text not null default 'CO',
+  kyc_status text not null check (kyc_status in ('pending','review','approved','rejected')),
+  risk_level text not null default 'medium',
+  beneficial_owners jsonb,
+  bank_account jsonb not null,       -- cifrado a nivel de aplicación
+  unique (project_id, doc_type, doc_number)
+);
+
+create table orders (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references projects(id),
+  merchant_id uuid not null references merchants(id),
+  external_ref text not null,        -- referencia del proyecto
+  state text not null,
+  amount_cop_minor bigint not null,  -- centavos de COP
+  network text not null,
+  token text not null default 'USDT',
+  deposit_address text not null unique,
+  usdt_expected_units bigint not null,   -- 6 decimales
+  usdt_received_units bigint not null default 0,
+  quote_id uuid,
+  expires_at timestamptz not null,
+  version int not null default 0,    -- bloqueo optimista
+  created_at timestamptz not null default now(),
+  unique (project_id, external_ref)
+);
+
+create table order_state_history (
+  id bigserial primary key,
+  order_id uuid not null references orders(id),
+  from_state text not null, to_state text not null,
+  event text not null, actor text not null,
+  at timestamptz not null default now()
+);
+
+create table onchain_txs (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid references orders(id),
+  network text not null,
+  tx_hash text not null,
+  log_index int not null default 0,
+  from_address text not null,
+  to_address text not null,
+  amount_units bigint not null,
+  confirmations int not null default 0,
+  status text not null,              -- seen, confirmed, dropped
+  seen_at timestamptz not null default now(),
+  unique (network, tx_hash, log_index)   -- idempotencia
+);
+
+create table aml_screenings (
+  id uuid primary key default gen_random_uuid(),
+  onchain_tx_id uuid not null references onchain_txs(id),
+  provider text not null,
+  risk_score numeric,
+  result text not null,              -- pass, flag, block
+  raw jsonb,
+  created_at timestamptz not null default now()
+);
+
+create table quotes (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null references orders(id),
+  rate_cop_per_usdt_minor bigint not null,
+  spread_bps int not null,
+  source text not null,
+  locked_until timestamptz not null
+);
+
+create table conversions (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null references orders(id),
+  provider text not null, provider_ref text,
+  usdt_units bigint not null,
+  cop_minor bigint not null,
+  effective_rate_minor bigint not null,
+  status text not null,              -- pending, done, failed
+  executed_at timestamptz
+);
+
+create table payouts (
+  id uuid primary key default gen_random_uuid(),
+  order_id uuid not null references orders(id),
+  merchant_id uuid not null references merchants(id),
+  amount_cop_minor bigint not null,
+  rail text not null,                -- transferencia, ACH, etc.
+  bank_ref text,
+  status text not null,
+  settled_at timestamptz
+);
+
+-- Libro contable de doble partida
+create table ledger_accounts (code text primary key, name text not null, type text not null);
+create table ledger_entries (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references projects(id),
+  order_id uuid references orders(id),
+  event text not null,
+  created_at timestamptz not null default now()
+);
+create table ledger_lines (
+  entry_id uuid not null references ledger_entries(id),
+  account_code text not null references ledger_accounts(code),
+  debit_cop_minor bigint not null default 0,
+  credit_cop_minor bigint not null default 0,
+  native_amount bigint, currency text      -- USDT o COP
+);
+-- Restricción diferida: por entrada, suma de débitos = suma de créditos
+
+-- Cumplimiento
+create table compliance_events (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references projects(id),
+  order_id uuid references orders(id),
+  kind text not null,                -- ROS, UIAF_TX, UIAF_CLIENT, CARF_USER
+  payload jsonb not null,
+  report_batch_id uuid,
+  reported_at timestamptz
+);
+
+-- Bitácora inmutable encadenada por hash
+create table audit_log (
+  id bigserial primary key,
+  actor text not null, action text not null,
+  entity text not null, entity_id uuid,
+  prev_hash text, hash text not null,
+  at timestamptz not null default now()
+);
+
+-- Base del reporte anual de criptoactivos por usuario
+create view v_carf_annual as
+select o.project_id, m.id as merchant_id, m.doc_type, m.doc_number, o.token,
+       date_part('year', c.executed_at) as tax_year,
+       count(*) as n_transactions,
+       sum(c.usdt_units) / 1000000.0 as usdt_total,
+       sum(c.cop_minor) / 100.0 as cop_value
+from conversions c
+join orders o on o.id = c.order_id
+join merchants m on m.id = o.merchant_id
+where c.status = 'done'
+group by 1,2,3,4,5,6;</code></pre>
+
+  <div class="note legal">
+    <strong>Definición pendiente del contador</strong>
+    <p>La vista <code>v_carf_annual</code> usa el valor en COP de la conversión como valor de la transacción. Cómo se define el "valor razonable" para el reporte, y qué campos exactos exige el anexo técnico de la DIAN, se confirma contra el anexo vigente antes de implementar el generador de XML.</p>
+  </div>
+</section>
+
+<section id="contabilidad">
+  <h2>Contabilidad de la operación</h2>
+  <p class="section-intro">Cada evento genera asientos balanceados. Ejemplo ilustrativo: orden de 1.000.000 COP, tasa de 4.000 COP por USDT (250 USDT), comisión de plataforma de 1,5 % y costo de conversión de 5.000 COP.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Evento</th><th>Cuenta</th><th>Débito (COP)</th><th>Crédito (COP)</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="2">Pago confirmado</td><td>USDT en custodia (activo)</td><td>1.000.000</td><td></td></tr>
+      <tr><td>Por pagar a comercios (pasivo)</td><td></td><td>1.000.000</td></tr>
+      <tr><td rowspan="3">Conversión ejecutada</td><td>Bancos COP (activo)</td><td>995.000</td><td></td></tr>
+      <tr><td>Costo de conversión (gasto)</td><td>5.000</td><td></td></tr>
+      <tr><td>USDT en custodia (activo)</td><td></td><td>1.000.000</td></tr>
+      <tr><td rowspan="2">Comisión reconocida</td><td>Por pagar a comercios</td><td>15.000</td><td></td></tr>
+      <tr><td>Ingreso por comisión</td><td></td><td>15.000</td></tr>
+      <tr><td rowspan="2">Dispersión al comercio</td><td>Por pagar a comercios</td><td>985.000</td><td></td></tr>
+      <tr><td>Bancos COP</td><td></td><td>985.000</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Al final, la cuenta "Por pagar a comercios" queda en cero y el banco retiene 10.000 COP: la comisión de 15.000 menos el costo de conversión de 5.000. Esa verificación se automatiza en la conciliación diaria.</p>
+
+  <div class="note legal">
+    <strong>Validar con el contador</strong>
+    <p>Los códigos de cuenta del ejemplo son ilustrativos y deben mapearse al PUC. También queda por definir el tratamiento de IVA sobre la comisión, retenciones, ICA y la facturación electrónica de la comisión, y cómo se registran los USDT en custodia por cuenta de terceros.</p>
+  </div>
+</section>
+
+<section id="api">
+  <h2>API y webhooks</h2>
+  <p class="section-intro">La misma interfaz en todos los proyectos. Cada proyecto tiene su propia llave de API.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Endpoint</th><th>Uso</th></tr></thead>
+    <tbody>
+      <tr><td><code>POST /v1/merchants</code></td><td>Registra un comercio y dispara el KYB.</td></tr>
+      <tr><td><code>GET /v1/merchants/{id}</code></td><td>Estado del KYC, límites y nivel de riesgo.</td></tr>
+      <tr><td><code>POST /v1/orders</code></td><td>Crea una orden y devuelve dirección, monto en USDT y vencimiento.</td></tr>
+      <tr><td><code>GET /v1/orders/{id}</code></td><td>Estado actual e historial.</td></tr>
+      <tr><td><code>POST /v1/orders/{id}/cancel</code></td><td>Cancela una orden aún sin pago.</td></tr>
+      <tr><td><code>GET /v1/settlements</code></td><td>Dispersiones por comercio y periodo, con comprobantes.</td></tr>
+    </tbody>
+  </table></div>
+
+  <pre><code>POST /v1/orders
+Idempotency-Key: 7c1f9a52-3b8e-4d1a-9f0e-2a6b1c4d8e10
+Authorization: Bearer &lt;api_key_del_proyecto&gt;
+
+{
+  "merchant_id": "mrc_01H...",
+  "external_ref": "PEDIDO-48213",
+  "amount_cop": 1000000,
+  "network": "tron",
+  "metadata": { "cliente": "..." }
+}
+
+201 Created
+{
+  "id": "ord_01H...",
+  "state": "AWAITING_PAYMENT",
+  "deposit_address": "T...",
+  "network": "tron",
+  "token": "USDT",
+  "usdt_amount": "250.000000",
+  "rate_cop_per_usdt": "4000.00",
+  "expires_at": "2026-10-03T15:30:00Z"
+}</code></pre>
+
+  <h3>Webhooks</h3>
+  <p>Eventos: <code>order.payment_detected</code>, <code>order.confirmed</code>, <code>order.converted</code>, <code>order.settled</code>, <code>order.expired</code>, <code>order.held</code>, <code>order.refunded</code>. No se revela el motivo de una retención de cumplimiento.</p>
+  <pre><code>X-Signature: t=1760000000,v1=&lt;hmac_sha256(secret, t + "." + body)&gt;
+
+// Receptor: verificar firma, rechazar si t tiene más de 5 minutos,
+// responder 2xx rápido y procesar de forma idempotente por event_id.
+// Reintentos: 1 min, 5 min, 30 min, 2 h, 12 h; luego alerta al equipo.</code></pre>
+</section>
+
+<section id="cumplimiento">
+  <h2>Cumplimiento en Colombia</h2>
+  <p class="section-intro">Dos regímenes distintos: la UIAF vigila lavado de activos y financiación del terrorismo; la DIAN recibe información tributaria sobre criptoactivos. Ambos se alimentan de los mismos datos.</p>
+
+  <h3 id="uiaf">UIAF: Resolución 314 de 2021</h3>
+  <p>Aplica a personas y empresas que prestan servicios de activos virtuales: intercambio entre activos virtuales y moneda fiat, entre activos virtuales, transferencias y custodia. Los reportes se envían por el sistema SIREL, para lo cual hay que darse de alta y solicitar código y usuario.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Obligación</th><th>Frecuencia</th><th>De dónde sale el dato</th></tr></thead>
+    <tbody>
+      <tr><td>Reporte de operaciones sospechosas (ROS)</td><td>Inmediato al detectarse</td><td><code>compliance_events</code> tipo <code>ROS</code></td></tr>
+      <tr><td>Reporte de transacciones con activos virtuales (individuales y múltiples)</td><td>Mensual</td><td><code>conversions</code>, <code>onchain_txs</code>, <code>orders</code></td></tr>
+      <tr><td>Reporte de clientes (activos, inactivos, desvinculados)</td><td>Mensual</td><td><code>merchants</code></td></tr>
+      <tr><td>Reporte de ausencia de transacciones</td><td>Dentro de los primeros 20 días calendario del mes siguiente, cuando no hubo operaciones</td><td>Control de periodo vacío</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note legal">
+    <strong>Confirmar en los anexos técnicos de la UIAF</strong>
+    <p>Los umbrales vigentes para transacciones individuales y múltiples, los formatos y los plazos exactos. Además, la UIAF espera un sistema de administración del riesgo de lavado (SARLAFT) con oficial de cumplimiento, manual y capacitación, que va más allá del software.</p>
+  </div>
+
+  <h3 id="dian">DIAN: Resolución 000240 de 2025 (CARF)</h3>
+  <p>Los proveedores de servicios de criptoactivos deben reportar a la DIAN desde el año gravable 2026, siguiendo el Marco de Reporte de Criptoactivos de la OCDE. Se reporta información de los usuarios reportables y el tipo de criptoactivo, con valor razonable y número de transacciones.</p>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>Obligación</th><th>Plazo</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td>Actualizar el RUT (Responsabilidad 67)</td><td>Antes del primer reporte</td><td>Campo <code>rut_resp_67_updated_at</code> en <code>legal_entities</code>.</td></tr>
+      <tr><td>Reporte del año gravable 2026</td><td>Último día hábil de mayo de 2027</td><td>Formato XML según anexo técnico. Cada año, el último día hábil de mayo del año siguiente.</td></tr>
+      <tr><td>Reporte en cero</td><td>Mismo plazo</td><td>Si no hay usuarios reportables, igual se presenta.</td></tr>
+      <tr><td>Debida diligencia continua</td><td>Permanente</td><td>Datos del usuario: nombre, dirección, residencia, NIT o equivalente, fecha y lugar de nacimiento si es persona natural.</td></tr>
+      <tr><td>Conservación</td><td>Mínimo 5 años</td><td>Información reportada, usuarios no reportables y soportes de debida diligencia.</td></tr>
+      <tr><td>Sanciones</td><td>Por incumplimiento</td><td>Multa de hasta 7.500 UVT por no reportar a tiempo. Y una UVT por cada día de retraso en actualizar el RUT.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="expediente">Expediente por operación</h3>
+  <p>La forma de "declarar" la salida de USDT hacia el banco es poder demostrarla. Por cada dispersión, el sistema arma automáticamente un expediente que une la cadena completa:</p>
+  <ol>
+    <li>KYC del comercio y soporte de beneficiario final.</li>
+    <li>Orden: monto, cotización y tasa bloqueada.</li>
+    <li>Transacción on-chain: hash, billetera de origen, confirmaciones.</li>
+    <li>Resultado del análisis AML de la billetera.</li>
+    <li>Conversión: proveedor, referencia, tasa efectiva.</li>
+    <li>Comprobante de la transferencia bancaria.</li>
+    <li>Factura electrónica de la comisión y asientos contables.</li>
+  </ol>
+  <p>El expediente se exporta en PDF y JSON, se firma con hash y se guarda al menos cinco años. Es el documento que se entrega al banco, al auditor o a la autoridad si lo piden.</p>
+
+  <h3 id="bancos">Relación con los bancos</h3>
+  <div class="note risk">
+    <strong>Riesgo operativo real</strong>
+    <p>Los bancos pueden cerrar o limitar cuentas que reciben fondos vinculados a criptoactivos. Mitigación: una cuenta dedicada por entidad legal, conversación temprana con el oficial de cumplimiento del banco, entregarle el expediente y el manual SARLAFT, y evitar dispersar a terceros o fraccionar montos.</p>
+  </div>
+
+  <h3>Otros temas a validar con especialista</h3>
+  <ul>
+    <li>Régimen cambiario y si la conversión o la dispersión tiene implicaciones frente al Banco de la República.</li>
+    <li>Impuestos del lado del comercio y del lado de la plataforma: renta, IVA, retenciones, ICA, impuesto al patrimonio sobre saldos en criptoactivos.</li>
+    <li>Regla de viaje (travel rule) y si aplica a la operación.</li>
+    <li>Tratamiento de datos personales conforme a la Ley 1581 de 2012: autorizaciones, finalidades y transferencias a proveedores.</li>
+  </ul>
+</section>
+
+<section id="contador">
+  <h2>Contador por proyecto</h2>
+  <p class="section-intro">Cada proyecto que cobra en USDT tiene su propio contador: un módulo que lleva los libros del proyecto, clasifica cada ingreso según de dónde viene el pagador, prepara los borradores tributarios y regulatorios, y le entrega todo listo a un contador público, que revisa y firma.</p>
+
+  <div class="note">
+    <strong>Por qué uno por proyecto</strong>
+    <p>Cada proyecto tiene clientes, países, tratamiento de IVA y calendario distintos. Mezclarlos en un solo libro impide cerrar el mes por proyecto y complica demostrar el origen de cada ingreso. El núcleo es el mismo; lo que cambia es la configuración contable de cada uno.</p>
+  </div>
+
+  <h3>Qué hace el contador de cada proyecto</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Función</th><th>Detalle</th></tr></thead>
+    <tbody>
+      <tr><td>Libros propios</td><td>Asientos de doble partida separados por <code>project_id</code>, con su propio plan de cuentas mapeado al PUC.</td></tr>
+      <tr><td>Captura automática</td><td>Cada evento de la orden genera su asiento: pago confirmado, barrido, venta, retiro, comisión, dispersión, devolución.</td></tr>
+      <tr><td>Clasificación del ingreso</td><td>Por país del pagador, tipo de cliente y tratamiento de IVA (nacional, exportación exenta o gravada).</td></tr>
+      <tr><td>Valoración</td><td>Moneda funcional en COP con el valor real de la conversión, y referencia en USD con la TRM del día para análisis.</td></tr>
+      <tr><td>Conciliación</td><td>Diaria en tres vías (on-chain, libro, banco) más Binance si se usa como proveedor.</td></tr>
+      <tr><td>Cierre mensual</td><td>Bloquea el periodo, genera balance de prueba y estado de resultados del proyecto.</td></tr>
+      <tr><td>Borradores</td><td>Datos para facturas, IVA, información exógena, reportes UIAF y CARF. Nunca presenta nada por sí solo.</td></tr>
+      <tr><td>Alertas</td><td>Pagadores cerca de umbrales, ventas al exterior sin soportes, diferencias de conciliación, periodos sin cerrar.</td></tr>
+      <tr><td>Paquete para el contador público</td><td>Exportación mensual con libros, soportes, expedientes y lista de pendientes.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="contador-global">Qué cambia con ingresos de todo el mundo</h3>
+  <p>Hasta ahora el diseño identificaba bien al comercio, pero el pagador era solo una billetera. Con clientes en muchos países, el pagador pasa a ser un sujeto que el contador debe conocer.</p>
+
+  <h4>IVA en ventas a clientes del exterior</h4>
+  <p>Los servicios prestados desde Colombia y usados exclusivamente en el exterior por empresas o personas sin negocios ni actividades en el país están exentos de IVA, siempre que el prestador esté inscrito como exportador de servicios en el RUT y conserve los soportes que prueban la exportación. Si falta un requisito, el servicio se factura con IVA aunque el cliente esté en el exterior. No hay una factura distinta para extranjeros: es la misma factura electrónica, cambiando la identificación del comprador y el tratamiento del impuesto. Para software dirigido al mercado internacional, la norma lo considera exportación aunque se pueda acceder a él desde Colombia.</p>
+
+  <h4>Identificación del pagador (CARF)</h4>
+  <p>El Marco de Reporte de Criptoactivos incluye los pagos minoristas: transferencias de criptoactivos para comprar bienes o servicios por encima de USD 50.000, caso en el que hay que identificar al cliente del comercio. El umbral no exime los pagos menores: debajo de él, el pago se sigue reportando como una transferencia corriente. Las fuentes no coinciden en si el umbral se mide por operación o acumulado anual por cliente, así que el diseño acumula por pagador y por año, que cubre ambas lecturas.</p>
+  <p>Por eso el contador captura datos del pagador en dos niveles: siempre billetera, país declarado y país detectado; y datos completos (nombre, dirección, residencia fiscal, número de identificación tributaria y, si es persona, fecha y lugar de nacimiento) cuando el acumulado se acerca al umbral o cumplimiento lo pide.</p>
+
+  <h4>Jurisdicciones y sanciones</h4>
+  <p>Con pagadores globales aparece el riesgo geográfico: pagos desde países sancionados se bloquean antes de crear la orden, y los de jurisdicciones de alto riesgo pasan por debida diligencia reforzada. Las listas usadas y su fecha quedan registradas en el expediente.</p>
+
+  <div class="note legal">
+    <strong>Validar con el contador público y un especialista cambiario</strong>
+    <p>El tratamiento de ingresos del exterior pagados en USDT frente al régimen cambiario (los mecanismos de reintegro están pensados para divisas, no para criptoactivos), la renta del proyecto por ventas al exterior, la diferencia en cambio si se mantienen USDT, y cómo adopta la DIAN el umbral de pagos minoristas. Para bienes físicos exportados aplica además el régimen aduanero.</p>
+  </div>
+
+  <h3 id="clasificador">Clasificador de ingresos</h3>
+  <p>Prueba cómo el contador clasifica una venta. Es la misma función que corre en el sistema; su resultado es una orientación para el contador público, no una conclusión tributaria.</p>
+
+  <div class="sim">
+    <div class="form-grid">
+      <label>Residencia del pagador
+        <select id="c-residence"><option value="EXT">Exterior</option><option value="CO">Colombia</option></select>
+      </label>
+      <label>¿Tiene negocios o actividades en Colombia?
+        <select id="c-business"><option value="no">No</option><option value="si">Sí</option></select>
+      </label>
+      <label>¿El servicio se usa exclusivamente en el exterior?
+        <select id="c-abroad"><option value="si">Sí</option><option value="no">No</option></select>
+      </label>
+      <label>¿El proyecto está inscrito como exportador en el RUT?
+        <select id="c-rut"><option value="si">Sí</option><option value="no">No</option></select>
+      </label>
+      <label>¿Hay soportes de la exportación?
+        <select id="c-evidence"><option value="si">Sí</option><option value="no">No</option></select>
+      </label>
+      <label>Jurisdicción del pagador
+        <select id="c-jur"><option value="normal">Sin alertas</option><option value="alto_riesgo">Alto riesgo</option><option value="sancionada">Sancionada</option></select>
+      </label>
+      <label>Acumulado anual del pagador (USD)
+        <input id="c-usd" type="number" min="0" step="1000" value="12000" inputmode="numeric">
+      </label>
+    </div>
+    <div class="verdict" id="c-out" aria-live="polite"></div>
+  </div>
+
+  <pre><code id="classify-src"></code></pre>
+
+  <h3>Panel del contador de cada proyecto</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Indicador</th><th>Para qué sirve</th></tr></thead>
+    <tbody>
+      <tr><td>Ingresos por país del pagador</td><td>Ver de dónde viene el dinero y detectar concentraciones o países nuevos.</td></tr>
+      <tr><td>Ingresos por tratamiento de IVA</td><td>Separar nacional, exportación exenta y exterior gravado; vigilar exportaciones sin soportes.</td></tr>
+      <tr><td>Pagadores cerca del umbral CARF</td><td>Pedir los datos completos antes de que el acumulado lo cruce.</td></tr>
+      <tr><td>Estado de conciliación</td><td>Diferencias abiertas entre cadena, libro, Binance y banco.</td></tr>
+      <tr><td>Costo de conversión</td><td>Comisión y deslizamiento acumulados contra lo presupuestado en el spread.</td></tr>
+      <tr><td>Calendario</td><td>Cierre mensual, IVA, UIAF y CARF con su estado.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Ciclo del contador</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Cuándo</th><th>Qué hace el sistema</th><th>Qué hace el contador público</th></tr></thead>
+    <tbody>
+      <tr><td>Diario</td><td>Asientos automáticos, conciliación, clasificación de ventas, alertas.</td><td>Revisa alertas abiertas.</td></tr>
+      <tr><td>Semanal</td><td>Lista de pagadores cerca del umbral y ventas al exterior sin soportes.</td><td>Decide qué datos o soportes pedir.</td></tr>
+      <tr><td>Mensual</td><td>Cierre del periodo, balance de prueba, paquete del mes, borrador UIAF.</td><td>Revisa, ajusta y aprueba el cierre.</td></tr>
+      <tr><td>Por periodo de IVA</td><td>Borrador con ventas nacionales, exentas y gravadas al exterior.</td><td>Presenta la declaración.</td></tr>
+      <tr><td>Anual</td><td>Base CARF, información exógena, saldos al cierre para patrimonio.</td><td>Presenta renta, exógena y reportes; firma estados financieros.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="contador-datos">Datos y configuración</h3>
+  <h4>Tablas nuevas</h4>
+  <pre><code>create table payers (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references projects(id),
+  kind text not null default 'unknown',       -- person, company, unknown
+  legal_name text,
+  declared_country char(2),
+  detected_country char(2),                   -- geolocalización al momento del pago
+  tax_residence char(2),
+  tin text,                                    -- identificación tributaria de su país
+  birth_date date,
+  birth_place text,
+  address text,
+  has_business_in_co boolean,
+  kyc_level text not null default 'minimal',  -- minimal, standard, enhanced
+  risk_level text not null default 'medium',
+  created_at timestamptz not null default now()
+);
+
+create table payer_wallets (
+  payer_id uuid not null references payers(id),
+  network text not null,
+  address text not null,
+  primary key (payer_id, network, address)
+);
+
+alter table orders add column payer_id uuid references payers(id);
+
+create table sales_documents (
+  id uuid primary key default gen_random_uuid(),
+  project_id uuid not null references projects(id),
+  order_id uuid not null references orders(id),
+  payer_id uuid references payers(id),
+  doc_type text not null,                -- factura_electronica, nota_credito
+  number text,
+  cufe text,
+  iva_treatment text not null,           -- gravado, exento_exportacion, excluido
+  iva_minor bigint not null default 0,
+  export_evidence jsonb,                 -- contrato y prueba de uso en el exterior
+  value_cop_minor bigint not null,
+  value_usd_ref_minor bigint,            -- referencia con la TRM del día
+  issued_at timestamptz
+);
+
+create table fx_rates (
+  day date not null,
+  pair text not null,                    -- USDCOP (TRM), USDTCOP (ejecución)
+  rate numeric(18,6) not null,
+  source text not null,
+  primary key (day, pair, source)
+);
+
+create table accounting_periods (
+  project_id uuid not null references projects(id),
+  period char(7) not null,               -- 2026-10
+  status text not null default 'open',   -- open, review, closed
+  closed_by text,
+  closed_at timestamptz,
+  primary key (project_id, period)
+);
+
+-- Acumulado por pagador y año: base para el umbral de pagos minoristas
+create view v_payer_annual as
+select o.project_id, o.payer_id,
+       date_part('year', c.executed_at) as year,
+       count(*) as n_payments,
+       sum(c.usdt_units) / 1000000.0 as usdt_total,   -- USDT como aproximación al USD
+       sum(c.cop_minor) / 100.0 as cop_total
+from conversions c
+join orders o on o.id = c.order_id
+where c.status = 'done' and o.payer_id is not null
+group by 1, 2, 3;</code></pre>
+
+  <h4>Bloque de configuración del proyecto</h4>
+  <pre><code>"accounting": {
+  "functional_currency": "COP",
+  "reference_currency": "USD",
+  "chart_of_accounts": "puc-mapeo-proyecto",
+  "iva_responsible": true,
+  "rut_service_exporter": true,
+  "default_sale_type": "servicios_digitales",
+  "carf_retail_threshold_usd": 50000,
+  "carf_warn_ratio": 0.8,
+  "blocked_jurisdictions_list": "lista-sanciones-vigente",
+  "high_risk_jurisdictions_list": "lista-alto-riesgo-vigente",
+  "period_close_day": 5,
+  "public_accountant": { "name": "por-asignar", "email": "por-asignar" }
+}</code></pre>
+
+  <h3 id="contador-agente">El contador como agente</h3>
+  <p>El módulo puede correr como un agente por proyecto con herramientas acotadas. Su trabajo es preparar y alertar; las decisiones tributarias y las firmas siguen siendo humanas.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Puede hacer</th><th>No hace</th></tr></thead>
+    <tbody>
+      <tr><td>Leer libros, órdenes, pagadores y conciliaciones del proyecto.</td><td>Leer datos de otros proyectos.</td></tr>
+      <tr><td>Clasificar ventas y proponer el tratamiento de IVA.</td><td>Presentar declaraciones o reportes ante la DIAN o la UIAF.</td></tr>
+      <tr><td>Pedir al pagador los datos que faltan, con plantilla aprobada.</td><td>Cambiar el tratamiento tributario sin aprobación del contador público.</td></tr>
+      <tr><td>Abrir casos de conciliación y de cumplimiento.</td><td>Liberar fondos retenidos o decidir sobre un ROS.</td></tr>
+      <tr><td>Armar el paquete mensual y los borradores.</td><td>Reabrir un periodo cerrado.</td></tr>
+    </tbody>
+  </table></div>
+  <p>En el plugin de Claude Code esto se agrega como el skill <code>contador-proyecto</code>, con un hook que impide asientos en periodos cerrados y otro que exige <code>project_id</code> en toda consulta del agente.</p>
+</section>
+
+<section id="declarar">
+  <h2>Qué se declara y cómo</h2>
+  <p class="section-intro">Supuesto de trabajo: el USDT se convierte a pesos apenas llega y termina en el banco. Esto simplifica mucho: casi no hay saldo en cripto al cierre del año, la diferencia por variación de precio es mínima y cada ingreso queda soportado en pesos.</p>
+
+  <div class="note">
+    <strong>Primero: ¿el proyecto cobra para sí mismo o para otros?</strong>
+    <p>Si cada proyecto recibe USDT como pago de sus propias ventas y lo convierte en Binance a nombre propio (modelo C), el proyecto es usuario de un proveedor, no proveedor. Sus obligaciones son las de cualquier empresa que vende: factura, IVA, renta, patrimonio y exógena. Si una sola entidad cobra para varios proyectos o empresas distintas, esa entidad presta el servicio y suma las obligaciones de proveedor ante la UIAF y la DIAN. La lista de abajo marca cuál aplica en cada caso.</p>
+  </div>
+
+  <h3 id="declarar-lista">Lista de lo que se declara</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Obligación</th><th>Quién</th><th>Cuándo</th><th>Qué incluye</th><th>Dato en el sistema</th></tr></thead>
+    <tbody>
+      <tr><td>Factura electrónica</td><td>Proyecto vendedor</td><td>En cada venta</td><td>Precio en COP, comprador identificado (incluido el extranjero) y tratamiento de IVA.</td><td><code>sales_documents</code></td></tr>
+      <tr><td>Declaración de IVA</td><td>Proyecto, si es responsable</td><td>Cada periodo de IVA</td><td>Ventas nacionales gravadas, exportaciones de servicios exentas y ventas al exterior gravadas por no cumplir requisitos.</td><td><code>sales_documents</code></td></tr>
+      <tr><td>Declaración de renta</td><td>Proyecto</td><td>Anual</td><td>Ingresos por ventas en COP, costo de conversión y comisiones como gasto con soporte, y cualquier diferencia por haber mantenido USDT.</td><td><code>ledger_lines</code></td></tr>
+      <tr><td>Patrimonio en la renta</td><td>Proyecto</td><td>Saldo al 31 de diciembre</td><td>USDT o pesos que queden en Binance o en billeteras al cierre. Con conversión inmediata debería ser cercano a cero.</td><td>Saldos del libro</td></tr>
+      <tr><td>Información exógena</td><td>Proyecto, si está obligado</td><td>Anual</td><td>Terceros con los que operó, incluidos clientes del exterior.</td><td><code>payers</code>, <code>sales_documents</code></td></tr>
+      <tr><td>Soporte de costos con proveedores del exterior</td><td>Proyecto</td><td>Por cada costo</td><td>Comisiones de Binance y otros proveedores que no facturan en Colombia (validar si aplica documento soporte).</td><td><code>conversion_jobs</code></td></tr>
+      <tr><td>RUT actualizado</td><td>Proyecto</td><td>Al iniciar o cambiar</td><td>Actividad económica, responsabilidad de IVA y exportador de servicios si vende al exterior.</td><td><code>legal_entities</code></td></tr>
+      <tr><td>Reportes UIAF</td><td>Solo si presta servicios de activos virtuales</td><td>Mensual e inmediato (ROS)</td><td>Transacciones, clientes, ausencia y operaciones sospechosas.</td><td><code>compliance_events</code></td></tr>
+      <tr><td>Reporte CARF a la DIAN</td><td>Solo si es proveedor de servicios de criptoactivos</td><td>Anual, último día hábil de mayo</td><td>Usuarios reportables, operaciones y pagos minoristas.</td><td><code>v_carf_annual</code>, <code>v_payer_annual</code></td></tr>
+      <tr><td>Activos en el exterior</td><td>Proyecto (validar)</td><td>Anual</td><td>Si los saldos en un exchange extranjero cuentan como activos en el exterior al 1 de enero.</td><td>Saldos del libro</td></tr>
+      <tr><td>Régimen cambiario</td><td>Proyecto (validar)</td><td>Por operación</td><td>Si un ingreso del exterior pagado en USDT requiere algún registro o canalización.</td><td>Expediente</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 id="declarar-preguntas">Preguntas frecuentes</h3>
+  <p>Respuestas de orientación basadas en la doctrina pública de la DIAN y en el diseño de esta pasarela. Cada proyecto las confirma con su contador público.</p>
+
+  <details class="faq" open>
+    <summary>Si alguien de otro país paga en USDT, ¿cómo se declara?</summary>
+    <div class="ans">
+      <p>Ejemplo: un cliente en España paga 250 USDT por un servicio de 1.000.000 COP. El proyecto convierte de inmediato en Binance y recibe 995.000 COP en el banco.</p>
+      <ol>
+        <li><b>Identificar al pagador.</b> País declarado y detectado, billetera y, según el monto acumulado, datos completos.</li>
+        <li><b>Facturar en pesos.</b> Factura electrónica por 1.000.000 COP a nombre del cliente extranjero. Es la misma factura de siempre, con la identificación del comprador del exterior.</li>
+        <li><b>Definir el IVA.</b> Exenta si es exportación de servicios y se cumplen los requisitos; gravada si falta alguno.</li>
+        <li><b>Registrar el ingreso.</b> Ingreso por venta de 1.000.000 COP. El USDT recibido entra como activo por los minutos que dura en la billetera.</li>
+        <li><b>Registrar la conversión.</b> Entran 995.000 COP y salen los USDT. Los 5.000 COP de diferencia son costo de conversión.</li>
+        <li><b>Retiro al banco.</b> Es un traslado entre cuentas propias: no genera ingreso nuevo.</li>
+        <li><b>Al año.</b> El ingreso va a la renta del proyecto como ingreso ordinario, la venta va en la declaración de IVA del periodo, y el cliente aparece en exógena si el proyecto está obligado.</li>
+      </ol>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Momento</th><th>Débito</th><th>Crédito</th></tr></thead>
+        <tbody>
+          <tr><td>Cobro</td><td>USDT (activo) 1.000.000</td><td>Ingreso por venta 1.000.000</td></tr>
+          <tr><td>Conversión</td><td>COP en Binance 995.000 y costo de conversión 5.000</td><td>USDT 1.000.000</td></tr>
+          <tr><td>Retiro</td><td>Bancos 995.000</td><td>COP en Binance 995.000</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </details>
+
+  <details class="faq">
+    <summary>¿El ingreso es lo que dice la factura o lo que llega al banco?</summary>
+    <div class="ans">
+      <p>Lo que dice la factura: el precio pactado en pesos. Lo que llega al banco puede ser algo menos por la comisión del exchange y el movimiento del precio; esa diferencia se registra aparte como costo de conversión, con el extracto de Binance como soporte. Así el ingreso coincide con la factura y el costo queda visible.</p>
+    </div>
+  </details>
+
+  <details class="faq">
+    <summary>¿Hay que pagar ganancia ocasional por el USDT?</summary>
+    <div class="ans">
+      <p>En este modelo, normalmente no. La DIAN trata como ganancia ocasional la venta de un criptoactivo poseído como activo fijo por más de dos años; si se tuvo menos tiempo, el resultado es renta ordinaria. Como el USDT se vende minutos después de recibirlo, cualquier diferencia es ordinaria y queda dentro de la renta del proyecto.</p>
+    </div>
+  </details>
+
+  <details class="faq">
+    <summary>¿La venta del USDT en Binance tiene IVA?</summary>
+    <div class="ans">
+      <p>No. La DIAN ha dicho que la venta de criptoactivos no está gravada con IVA, por ser un activo intangible no relacionado con la propiedad industrial. El IVA que importa es el de la venta del bien o servicio al cliente, no el de cambiar el USDT a pesos.</p>
+    </div>
+  </details>
+
+  <details class="faq">
+    <summary>¿Hay que declarar el USDT como patrimonio?</summary>
+    <div class="ans">
+      <p>Solo lo que se tenga al 31 de diciembre. Los residentes que tengan criptoactivos deben incluirlos en el patrimonio de su declaración de renta. Con conversión inmediata, el saldo al cierre debería ser cero o muy pequeño (pagos en tránsito). El contador toma el saldo exacto del libro a esa fecha.</p>
+    </div>
+  </details>
+
+  <details class="faq">
+    <summary>¿Hay que reintegrar divisas o llenar un formulario cambiario?</summary>
+    <div class="ans">
+      <p>No está resuelto de forma clara. Los mecanismos de canalización están diseñados para divisas, y el pago llega en USDT, que no es una divisa. Pero que un servicio exportado se pague en cripto y se convierta en un exchange es justo el tipo de caso que un especialista cambiario debe revisar antes de operar a escala. Mientras tanto, el expediente de cada operación guarda toda la trazabilidad por si se requiere.</p>
+    </div>
+  </details>
+
+  <details class="faq">
+    <summary>¿Tengo que identificar a cada pagador extranjero?</summary>
+    <div class="ans">
+      <p>Siempre se guardan billetera, país declarado y país detectado, porque se necesitan para la factura, la exógena y el control de sanciones. Los datos completos se piden cuando el acumulado del pagador se acerca a USD 50.000, cuando la jurisdicción es de alto riesgo o cuando cumplimiento lo pide. Si el proyecto es proveedor (no cobro propio), el umbral de pagos minoristas del CARF también aplica.</p>
+    </div>
+  </details>
+
+  <details class="faq">
+    <summary>¿Qué pasa si el precio cambia entre el pago y la conversión?</summary>
+    <div class="ans">
+      <p>La diferencia es ganancia o pérdida ordinaria. Por eso la regla es convertir apenas el depósito se acredite y pausar si la tasa se aleja más del umbral configurado. El sistema guarda la tasa de la cotización y la tasa de ejecución para que el contador vea cada diferencia.</p>
+    </div>
+  </details>
+
+  <details class="faq">
+    <summary>¿Cómo se declara una devolución a un cliente del exterior?</summary>
+    <div class="ans">
+      <p>Con una nota crédito que anula total o parcialmente la factura. Si la devolución se hace en USDT, el proyecto compra USDT con pesos y lo envía: esa compra es otra operación con criptoactivos que queda en el libro y en el expediente.</p>
+    </div>
+  </details>
+
+  <details class="faq">
+    <summary>¿Qué reporta Binance y qué reporto yo?</summary>
+    <div class="ans">
+      <p>Binance, como plataforma, tiene sus propias obligaciones de reporte según su situación en cada país. El proyecto no se apoya en ese reporte: declara su factura, IVA, renta, patrimonio y exógena con sus propios datos. Si la DIAN recibe información de Binance sobre las ventas de USDT del proyecto, las cifras deben cuadrar con las del libro; la conciliación diaria está pensada para eso.</p>
+    </div>
+  </details>
+
+  <div class="note legal">
+    <strong>Alcance</strong>
+    <p>Estas respuestas resumen doctrina pública de la DIAN y la lógica del sistema. No reemplazan el concepto del contador público y del abogado de cada proyecto, sobre todo en tratamiento cambiario, exportación de servicios y condición de proveedor.</p>
+  </div>
+</section>
+
+<section id="seguridad">
+  <h2>Seguridad y protección de datos</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Área</th><th>Práctica</th></tr></thead>
+    <tbody>
+      <tr><td>Custodia</td><td>Direcciones derivadas por orden desde una clave extendida pública del proyecto. Las claves privadas viven en un custodio o módulo de seguridad, nunca en el servidor de la aplicación. Barrido periódico a billetera fría.</td></tr>
+      <tr><td>Separación de fondos</td><td>Billeteras y cuentas bancarias separadas por entidad legal, y saldos separados por proyecto en el libro contable.</td></tr>
+      <tr><td>Accesos</td><td>Roles mínimos: operaciones, cumplimiento, finanzas, ingeniería. Cambios de configuración y aprobación de retiros con doble aprobación.</td></tr>
+      <tr><td>Secretos</td><td>Gestor de secretos, rotación periódica, llaves de API por proyecto con permisos limitados.</td></tr>
+      <tr><td>Auditoría</td><td>Bitácora inmutable encadenada por hash. Toda decisión manual de cumplimiento queda con autor y motivo.</td></tr>
+      <tr><td>Datos personales</td><td>Cifrado en tránsito y en reposo; datos bancarios y documentos cifrados a nivel de aplicación; acceso registrado.</td></tr>
+      <tr><td>Resiliencia</td><td>Respaldos probados, plan de recuperación, límites de velocidad y alertas por comportamiento anómalo.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="operacion">
+  <h2>Operación diaria y calendario</h2>
+  <h3>Rutina diaria</h3>
+  <ul>
+    <li>Conciliación en tres vías: on-chain, libro contable y banco.</li>
+    <li>Revisión de órdenes en <code>HELD_COMPLIANCE</code>, <code>UNDERPAID</code>, <code>FAILED_CONVERSION</code> y <code>FAILED_PAYOUT</code>.</li>
+    <li>Pagos recibidos sin orden (cuarentena) y devoluciones pendientes.</li>
+    <li>Alertas: diferencia de saldos, tasa fuera de rango, caída del proveedor, cola de webhooks atascada.</li>
+  </ul>
+  <h3>Calendario de cumplimiento</h3>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Cuándo</th><th>Qué</th></tr></thead>
+    <tbody>
+      <tr><td>Inmediato</td><td>ROS ante la UIAF por operaciones sospechosas.</td></tr>
+      <tr><td>Mensual</td><td>Reporte UIAF de transacciones y de clientes; reporte de ausencia si no hubo operaciones (primeros 20 días del mes siguiente).</td></tr>
+      <tr><td>Antes del primer reporte DIAN</td><td>Actualizar RUT con la responsabilidad de criptoactivos.</td></tr>
+      <tr><td>Anual</td><td>Reporte DIAN de criptoactivos, último día hábil de mayo del año siguiente (el del año gravable 2026 vence en mayo de 2027).</td></tr>
+      <tr><td>Permanente</td><td>Conservación de información y soportes por mínimo 5 años.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="multiproyecto">
+  <h2>Estándar multi-proyecto</h2>
+  <p class="section-intro">Cómo usar la misma pasarela en varios proyectos sin copiar código ni mezclar fondos.</p>
+
+  <h3>Modelo de despliegue</h3>
+  <p>Un solo núcleo multi-tenant, con aislamiento lógico por <code>project_id</code>, llaves de API por proyecto, billeteras y cuentas por entidad legal, y libro contable separado por proyecto. Si un cliente exige aislamiento total, el mismo código se despliega en una instancia dedicada con su propia base de datos.</p>
+
+  <h3 id="config">Configuración por proyecto</h3>
+  <p>Todo lo que cambia entre proyectos vive en un archivo. Valores de ejemplo.</p>
+  <pre><code>{
+  "project": "proyecto-ejemplo",
+  "legal_entity": "entidad-operadora",
+  "networks": [
+    { "name": "tron",    "token": "USDT", "min_confirmations": 20 },
+    { "name": "polygon", "token": "USDT", "min_confirmations": 30 }
+  ],
+  "quote": { "ttl_seconds": 900, "spread_bps": 80 },
+  "tolerance": { "under_bps": 30, "over_bps": 100 },
+  "underpaid_grace_minutes": 30,
+  "overpay_policy": "refund",
+  "late_payment_policy": "refund",
+  "fees": { "platform_bps": 150, "min_fee_cop": 2000 },
+  "review": { "over_usd": 3000, "max_risk_score": 60 },
+  "payout": { "rail": "bank_transfer", "schedule": "immediate", "min_cop": 20000 },
+  "retry": { "max_attempts": 5 },
+  "webhooks": { "url": "https://proyecto.example/hooks/usdt", "secret_ref": "kms://..." },
+  "reports": { "uiaf": true, "dian_carf": true }
+}</code></pre>
+
+  <h3 id="adaptadores">Contratos de adaptadores</h3>
+  <p>El núcleo solo conoce estas interfaces. Cambiar de red, banco o proveedor es escribir un adaptador nuevo, no tocar la lógica.</p>
+  <pre><code>export interface ChainAdapter {
+  network: string;
+  newDepositAddress(orderId: string): Promise&lt;string&gt;;
+  subscribe(address: string, cb: (tx: ObservedTx) =&gt; void): void;
+  getConfirmations(txHash: string): Promise&lt;number&gt;;
+}
+export interface ScreeningAdapter {
+  screen(tx: ObservedTx): Promise&lt;{ score: number; flags: string[]; result: 'pass'|'flag'|'block' }&gt;;
+}
+export interface LiquidityAdapter {
+  quote(usdtUnits: bigint): Promise&lt;Quote&gt;;
+  execute(q: Quote): Promise&lt;Conversion&gt;;
+}
+export interface PayoutAdapter {
+  send(p: PayoutRequest): Promise&lt;PayoutResult&gt;;   // idempotente por p.reference
+}
+export interface KycAdapter {
+  verify(m: MerchantInput): Promise&lt;KycResult&gt;;
+}
+export interface ReportAdapter {
+  build(period: Period): Promise&lt;ReportFile&gt;;      // uiaf-sirel, dian-carf-xml, expediente-pdf
+}</code></pre>
+
+  <h3 id="plugin">Empaquetado como plugin</h3>
+  <p>Para que cualquier proyecto nuevo arranque con la misma estructura, el estándar se distribuye como paquete y como plugin de Claude Code.</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Pieza</th><th>Contenido</th></tr></thead>
+    <tbody>
+      <tr><td><code>usdt-gateway-core</code></td><td>Estados, libro contable, cotizaciones, reglas, reportes, esquema SQL.</td></tr>
+      <tr><td><code>adapters/*</code></td><td>Uno por red, proveedor de liquidez, banco, KYC y analítica.</td></tr>
+      <tr><td><code>compliance/*</code></td><td>Generadores de reportes UIAF y DIAN, expediente de operación.</td></tr>
+      <tr><td><code>projects/&lt;nombre&gt;/config.json</code></td><td>La configuración de cada proyecto.</td></tr>
+      <tr><td>Skills del plugin</td><td><code>onboard-project</code> (crea el proyecto y su config), <code>add-network</code>, <code>reconcile-daily</code>, <code>build-uiaf-report</code>, <code>build-carf-report</code>, <code>operation-file</code>.</td></tr>
+      <tr><td>Hooks del plugin</td><td>Bloquear cambios a la tabla de transiciones sin pruebas, y verificar que toda migración conserve <code>project_id</code> y la bitácora.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="checklist">
+  <h2>Checklist para sumar un proyecto nuevo</h2>
+  <ol>
+    <li>Definir la entidad legal responsable y el modelo (proveedor directo u orquestador).</li>
+    <li>Confirmar registro en SIREL, SARLAFT vigente y RUT con la responsabilidad de criptoactivos.</li>
+    <li>Abrir cuenta bancaria dedicada y presentar el manual de cumplimiento al banco.</li>
+    <li>Crear el proyecto y su <code>config.json</code>; definir redes, comisiones y umbrales.</li>
+    <li>Generar billeteras o claves extendidas propias del proyecto y registrarlas en el custodio.</li>
+    <li>Configurar webhooks y llave de API; probar la firma.</li>
+    <li>Cargar el KYB de los primeros comercios y aprobarlos.</li>
+    <li>Ejecutar el ciclo completo en pruebas: pago exacto, pago de menos, pago de más, pago tardío, billetera marcada, falla de conversión y de dispersión.</li>
+    <li>Revisar el expediente de una operación de prueba con el contador y el oficial de cumplimiento.</li>
+    <li>Activar la conciliación diaria y el calendario de reportes.</li>
+    <li>Salir con montos bajos durante una semana antes de subir límites.</li>
+  </ol>
+</section>
+
+<section id="fases">
+  <h2>Fases de construcción</h2>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Fase</th><th>Entrega</th></tr></thead>
+    <tbody>
+      <tr><td>Base</td><td>Modelo de datos, máquina de estados con pruebas, libro contable, bitácora, API de órdenes.</td></tr>
+      <tr><td>Cadena</td><td>Adaptador de una red (por ejemplo TRON), detector con idempotencia y reorganizaciones, análisis AML.</td></tr>
+      <tr><td>Dinero</td><td>Cotizaciones, conversión con un proveedor, dispersión bancaria, conciliación en tres vías.</td></tr>
+      <tr><td>Cumplimiento</td><td>KYB, casos en revisión, ROS, reportes UIAF, expediente de operación.</td></tr>
+      <tr><td>DIAN</td><td>Vista anual, generador del XML según anexo técnico, calendario y alertas.</td></tr>
+      <tr><td>Estándar</td><td>Extraer configuración y adaptadores, empaquetar el plugin y migrar el segundo proyecto como prueba de reutilización.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="pendientes">
+  <h2>Decisiones y validaciones pendientes</h2>
+  <div class="note legal">
+    <strong>Antes de construir</strong>
+    <ol>
+      <li>Modelo legal (proveedor directo u orquestador) y qué entidad responde en cada proyecto.</li>
+      <li>Proveedor de custodia, de liquidez y de analítica on-chain.</li>
+      <li>Banco para la dispersión y su postura frente a flujos de criptoactivos.</li>
+      <li>Tratamiento contable y tributario: PUC, IVA, retenciones, ICA, facturación electrónica, patrimonio.</li>
+      <li>Aplicabilidad del régimen cambiario y de la regla de viaje.</li>
+      <li>Anexos técnicos vigentes de UIAF y DIAN: formatos, umbrales y definición de valor razonable.</li>
+      <li>Si cada proyecto cobra para sí mismo (modelo C, usuario de Binance) o una entidad cobra para varios (proveedor), porque cambia la lista de declaraciones.</li>
+      <li>Contador público asignado a cada proyecto o entidad, y tratamiento de IVA de cada tipo de venta al exterior (requisitos de exportación de servicios y soportes).</li>
+      <li>Ingresos del exterior pagados en USDT: implicaciones cambiarias, renta y diferencia en cambio; y si la DIAN mide el umbral de pagos minoristas por operación o acumulado anual.</li>
+      <li>Binance: aprobación del KYB de la entidad operadora, disponibilidad del par USDT/COP y límites, si el retiro de COP se puede automatizar por API, rieles vigentes (Transfiya, Bre-B, ACH) y su estado de registro frente a la UIAF.</li>
+    </ol>
+  </div>
+</section>
+
+<footer>
+  <p>Este documento es una guía técnica y de diseño, no constituye asesoría legal, tributaria ni contable. La información regulatoria citada corresponde a la Resolución 314 de 2021 de la UIAF y a la Resolución 000240 de 2025 de la DIAN, según fuentes públicas consultadas; debe contrastarse con el texto oficial y los anexos técnicos vigentes con un especialista antes de operar. Las condiciones de Binance (rieles, comisiones, API, límites) se tomaron de documentación y guías públicas y cambian con frecuencia: confírmalas con Binance antes de implementar.</p>
+</footer>
+</main>
+</div>
+
+<script>
+/* ---------- Tabla de transiciones (fuente única para simulador y tabla) ---------- */
+const T = {
+  CREATED:           { activate:'AWAITING_PAYMENT', cancel:'CANCELLED' },
+  AWAITING_PAYMENT:  { tx_detected:'PAYMENT_DETECTED', expire:'EXPIRED', cancel:'CANCELLED' },
+  PAYMENT_DETECTED:  { screen_pass:'CONFIRMING', screen_flag:'HELD_COMPLIANCE' },
+  CONFIRMING:        { confirmed_ok:'CONFIRMED', confirmed_under:'UNDERPAID', tx_dropped:'AWAITING_PAYMENT' },
+  UNDERPAID:         { topup_received:'CONFIRMING', grace_expired:'REFUND_PENDING' },
+  HELD_COMPLIANCE:   { approve:'CONFIRMING', reject:'REJECTED' },
+  CONFIRMED:         { start_conversion:'CONVERTING' },
+  CONVERTING:        { conversion_ok:'CONVERTED', conversion_fail:'FAILED_CONVERSION' },
+  FAILED_CONVERSION: { retry:'CONVERTING', abort:'REFUND_PENDING' },
+  CONVERTED:         { start_payout:'SETTLING' },
+  SETTLING:          { payout_ok:'SETTLED', payout_fail:'FAILED_PAYOUT' },
+  FAILED_PAYOUT:     { retry:'SETTLING' },
+  REFUND_PENDING:    { refund_sent:'REFUNDED' },
+  EXPIRED:           { late_tx:'REFUND_PENDING' }
+};
+const FX = {
+  activate:         'Se asigna dirección de depósito y se bloquea la cotización.',
+  cancel:           'Se libera la dirección. Webhook order.cancelled.',
+  tx_detected:      'Se guarda la transacción (idempotente). Webhook order.payment_detected.',
+  expire:           'Vence la cotización. Webhook order.expired.',
+  screen_pass:      'Análisis AML aprobado. Empieza el conteo de confirmaciones.',
+  screen_flag:      'Billetera marcada. Caso para el oficial de cumplimiento. Webhook order.held sin revelar el motivo.',
+  confirmed_ok:     'Monto dentro de tolerancia. Asiento: USDT en custodia contra por pagar a comercios. Excedente, si hay, se registra.',
+  confirmed_under:  'Monto menor a la tolerancia. Se abre plazo de gracia para complemento.',
+  tx_dropped:       'Reorganización de cadena: la transacción desapareció. Se alerta.',
+  topup_received:   'Llega complemento. Se vuelve a verificar el monto total.',
+  grace_expired:    'Vence el plazo de gracia. Se prepara la devolución.',
+  approve:          'Cumplimiento libera la operación. Queda la decisión en la bitácora.',
+  reject:           'Cumplimiento rechaza. Se evalúa ROS inmediato ante la UIAF. Fondos retenidos hasta guía legal.',
+  start_conversion: 'Se solicita la conversión al proveedor de liquidez.',
+  conversion_ok:    'Se guarda tasa efectiva. Asiento: bancos y costo de conversión contra USDT en custodia.',
+  conversion_fail:  'Se registra el error y se programa reintento.',
+  retry:            'Reintento con retroceso exponencial.',
+  abort:            'Se desiste tras agotar reintentos. Se prepara la devolución.',
+  start_payout:     'Se calcula el neto (monto menos comisión) y se envía la dispersión.',
+  payout_ok:        'Comprobante bancario guardado. Asientos de comisión y dispersión. Se arma el expediente. Webhook order.settled.',
+  payout_fail:      'Se registra el rechazo del banco y se programa reintento o revisión.',
+  refund_sent:      'Devolución a la billetera de origen. Webhook order.refunded.',
+  late_tx:          'Pago a una orden vencida. Por defecto se devuelve.'
+};
+const HAPPY = ['CREATED','AWAITING_PAYMENT','PAYMENT_DETECTED','CONFIRMING','CONFIRMED','CONVERTING','CONVERTED','SETTLING','SETTLED'];
+const EXC   = ['UNDERPAID','HELD_COMPLIANCE','REJECTED','REFUND_PENDING','REFUNDED','FAILED_CONVERSION','FAILED_PAYOUT','EXPIRED','CANCELLED'];
+const BAD   = new Set(['UNDERPAID','HELD_COMPLIANCE','REJECTED','REFUND_PENDING','REFUNDED','FAILED_CONVERSION','FAILED_PAYOUT','EXPIRED','CANCELLED']);
+const HAPPY_PATH = ['activate','tx_detected','screen_pass','confirmed_ok','start_conversion','conversion_ok','start_payout','payout_ok'];
+
+/* tabla */
+(function(){
+  const body = document.getElementById('tt-body');
+  let html = '';
+  Object.keys(T).forEach(function(from){
+    Object.keys(T[from]).forEach(function(ev){
+      html += '<tr><td><code>'+from+'</code></td><td><code>'+ev+'</code></td><td><code>'+T[from][ev]+'</code></td><td>'+(FX[ev]||'')+'</td></tr>';
+    });
+  });
+  body.innerHTML = html;
+})();
+
+/* simulador */
+(function(){
+  let state, visited, timer = null;
+  const cur = document.getElementById('sim-current');
+  const happy = document.getElementById('chips-happy');
+  const exc = document.getElementById('chips-exc');
+  const actions = document.getElementById('sim-actions');
+  const log = document.getElementById('sim-log');
+
+  function chip(s){ return '<span class="chip'+(visited.has(s)?' visited':'')+(s===state?' current'+(BAD.has(s)?' bad':''):'')+'">'+s+'</span>'; }
+  function render(){
+    cur.textContent = state;
+    happy.innerHTML = HAPPY.map(chip).join('');
+    exc.innerHTML = EXC.map(chip).join('');
+    actions.innerHTML = '';
+    const evs = T[state] ? Object.keys(T[state]) : [];
+    if(!evs.length){
+      const p = document.createElement('span');
+      p.style.cssText = 'color:var(--muted);font-size:15px';
+      p.textContent = 'Estado terminal: no hay más eventos.';
+      actions.appendChild(p);
+    }
+    evs.forEach(function(ev){
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'btn'; b.textContent = ev;
+      b.addEventListener('click', function(){ fire(ev); });
+      actions.appendChild(b);
+    });
+  }
+  function write(text, cls){
+    const d = document.createElement('div');
+    if(cls) d.className = cls;
+    d.textContent = text;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+  function fire(ev){
+    const next = T[state] && T[state][ev];
+    if(!next){ write('Evento rechazado: '+ev+' no está permitido en '+state, 'fx'); return; }
+    write(state+'  --'+ev+'-->  '+next);
+    if(FX[ev]) write('   '+FX[ev], 'fx');
+    state = next; visited.add(state); render();
+  }
+  function reset(){
+    if(timer){ clearInterval(timer); timer = null; }
+    state = 'CREATED'; visited = new Set([state]);
+    log.innerHTML = ''; write('Orden creada. Elige un evento.', 'fx');
+    render();
+  }
+  document.getElementById('sim-reset').addEventListener('click', reset);
+  document.getElementById('sim-auto').addEventListener('click', function(){
+    reset(); let i = 0;
+    const slow = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function step(){ if(i >= HAPPY_PATH.length){ clearInterval(timer); timer = null; return; } fire(HAPPY_PATH[i++]); }
+    if(slow){ timer = setInterval(step, 700); } else { while(i < HAPPY_PATH.length) step(); }
+  });
+  reset();
+})();
+
+/* clasificador de ingresos del contador */
+function classifyIncome(s) {
+  const out = [];
+  if (s.jurisdiction === 'sancionada') {
+    out.push({ level: 'stop', title: 'No aceptar el pago',
+      text: 'Jurisdicción sancionada. El pago se bloquea antes de crear la orden y el intento queda registrado para cumplimiento.' });
+    return out;
+  }
+  if (s.jurisdiction === 'alto_riesgo') {
+    out.push({ level: 'warn', title: 'Debida diligencia reforzada',
+      text: 'Pagador en jurisdicción de alto riesgo: identificación completa y aprobación de cumplimiento antes de aceptar.' });
+  }
+
+  // IVA
+  if (s.residence === 'CO') {
+    out.push({ level: 'ok', title: 'IVA: venta nacional',
+      text: 'Se factura con el tratamiento normal del bien o servicio.' });
+  } else {
+    const missing = [];
+    if (s.businessInCO === 'si') missing.push('el comprador tiene negocios o actividades en Colombia');
+    if (s.usedAbroad === 'no') missing.push('el servicio no se usa exclusivamente en el exterior');
+    if (s.rutExporter === 'no') missing.push('el proyecto no está inscrito como exportador de servicios en el RUT');
+    if (s.evidence === 'no') missing.push('faltan los soportes de la exportación');
+    if (missing.length === 0) {
+      out.push({ level: 'ok', title: 'IVA: posible exportación exenta',
+        text: 'Cumple los supuestos del literal c del artículo 481 del Estatuto Tributario. Factura electrónica sin IVA, con identificación del comprador extranjero. El contador público confirma.' });
+    } else {
+      out.push({ level: 'warn', title: 'IVA: se factura gravado',
+        text: 'No aplica la exención porque ' + missing.join('; ') + '.' });
+    }
+  }
+
+  // CARF: acumulado anual del pagador
+  const threshold = 50000, warnRatio = 0.8;
+  const usd = Number(s.annualUsd) || 0;
+  if (usd > threshold) {
+    out.push({ level: 'warn', title: 'CARF: pagador por encima de USD 50.000',
+      text: 'Identificarlo como usuario: nombre, dirección, residencia fiscal, número de identificación tributaria y, si es persona, fecha y lugar de nacimiento. Confirmar si la DIAN mide el umbral por operación o acumulado.' });
+  } else if (usd >= threshold * warnRatio) {
+    out.push({ level: 'warn', title: 'CARF: cerca del umbral',
+      text: 'Pedir los datos completos del pagador antes de que su acumulado supere USD 50.000.' });
+  } else {
+    out.push({ level: 'ok', title: 'CARF: datos mínimos',
+      text: 'Se guardan billetera, país declarado y país detectado. El pago igual entra en los agregados de transferencias del reporte.' });
+  }
+  return out;
+}
+
+(function(){
+  const ids = { residence:'c-residence', businessInCO:'c-business', usedAbroad:'c-abroad', rutExporter:'c-rut', evidence:'c-evidence', jurisdiction:'c-jur', annualUsd:'c-usd' };
+  const outEl = document.getElementById('c-out');
+  function run(){
+    const s = {};
+    Object.keys(ids).forEach(function(k){ s[k] = document.getElementById(ids[k]).value; });
+    const res = classifyIncome(s);
+    outEl.innerHTML = '';
+    res.forEach(function(r){
+      const d = document.createElement('div');
+      if (r.level !== 'ok') d.className = r.level;
+      const b = document.createElement('b'); b.textContent = r.title;
+      d.appendChild(b); d.appendChild(document.createTextNode(r.text));
+      outEl.appendChild(d);
+    });
+  }
+  Object.values(ids).forEach(function(id){
+    const el = document.getElementById(id);
+    el.addEventListener('change', run); el.addEventListener('input', run);
+  });
+  document.getElementById('classify-src').textContent = classifyIncome.toString();
+  run();
+})();
+
+/* botones de copiar */
+document.querySelectorAll('pre').forEach(function(pre){
+  const b = document.createElement('button');
+  b.type = 'button'; b.className = 'copy'; b.textContent = 'Copiar';
+  b.addEventListener('click', function(){
+    const txt = pre.querySelector('code').innerText;
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function(){
+      b.textContent = 'Copiado'; setTimeout(function(){ b.textContent = 'Copiar'; }, 1500);
+    }).catch(function(){ b.textContent = 'No se pudo copiar'; setTimeout(function(){ b.textContent = 'Copiar'; }, 1500); });
+  });
+  pre.appendChild(b);
+});
+</script>
+</body>
+</html>
