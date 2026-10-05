@@ -1,1 +1,6 @@
-{ "permissions": { "allow": [], "deny": ["Read(./.env)", "Read(./.env.*)"] } }
+{
+  "permissions": {
+    "allow": ["mcp__claude_ai_Supabase__execute_sql"],
+    "deny": ["Read(./.env)", "Read(./.env.*)"]
+  }
+}
