@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checklist proveedor de liquidez</title>
+<style>
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --line:#e3e0d8; --text:#1d1f23; --muted:#5f6670;
+  --accent:#1f6f5c; --accent-soft:#e3f1ec; --warn:#a2650c; --warn-soft:#fbf0dc;
+  --todo:#6b7280; --todo-soft:#eef0f3; --focus:#1f6f5c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121417; --surface:#1a1d21; --line:#2c3138; --text:#e7e9ec; --muted:#a2a9b3;
+    --accent:#5cc4a6; --accent-soft:#1c3a32; --warn:#e7b25a; --warn-soft:#3a2f1c;
+    --todo:#9aa3ae; --todo-soft:#252a31; --focus:#5cc4a6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121417; --surface:#1a1d21; --line:#2c3138; --text:#e7e9ec; --muted:#a2a9b3;
+  --accent:#5cc4a6; --accent-soft:#1c3a32; --warn:#e7b25a; --warn-soft:#3a2f1c;
+  --todo:#9aa3ae; --todo-soft:#252a31; --focus:#5cc4a6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:920px;margin:0 auto;padding:32px 16px 80px}
+h1{font-size:clamp(26px,4vw,34px);line-height:1.15;margin:0 0 8px}
+h2{font-size:21px;margin:0}
+h3{font-size:17px;margin:0 0 6px}
+p{margin:0 0 12px}
+.lede{color:var(--muted);max-width:46em}
+.meta{font-size:14px;color:var(--muted);margin-bottom:24px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.summary{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:20px 0 28px}
+.bar{height:10px;background:var(--todo-soft);border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.bar span{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{font:inherit;font-size:14px;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);margin-top:12px}
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:0 0 16px;overflow:hidden}
+.phase-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.phase-head small{color:var(--muted);font-size:13px;white-space:nowrap}
+.phase-note{padding:10px 18px 0;color:var(--muted);font-size:14px}
+ul.items{list-style:none;margin:0;padding:6px 8px 10px}
+ul.items li{border-radius:8px}
+ul.items label{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:start;padding:9px 10px;cursor:pointer}
+ul.items label:hover{background:var(--todo-soft)}
+input[type=checkbox]{width:18px;height:18px;margin:3px 0 0;accent-color:var(--accent)}
+.txt .code{font-weight:600;margin-right:4px}
+.who{display:block;font-size:13px;color:var(--muted)}
+li.checked .txt{color:var(--muted)}
+li.checked .txt .main{text-decoration:line-through;text-decoration-color:var(--line)}
+.badge{font-size:12px;padding:2px 8px;border-radius:99px;white-space:nowrap;border:1px solid transparent}
+.b-hecho{background:var(--accent-soft);color:var(--accent)}
+.b-curso{background:var(--warn-soft);color:var(--warn)}
+.b-pend{background:var(--todo-soft);color:var(--todo)}
+.hide-done li.checked{display:none}
+section.analisis{margin-top:40px}
+section.analisis > h2{font-size:24px;margin-bottom:8px}
+ol.results{padding-left:0;list-style:none;counter-reset:r;margin:16px 0 0}
+ol.results > li{counter-increment:r;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+ol.results > li > h3::before{content:"Resultado " counter(r) ". ";color:var(--accent)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:8px 0 0}
+dt{font-weight:600;font-size:14px}
+dd{margin:0;font-size:15px}
+.example{border:1px dashed var(--accent);background:var(--accent-soft);border-radius:12px;padding:16px 18px;margin:16px 0}
+.example h3{color:var(--accent)}
+.note{font-size:14px;color:var(--muted)}
+@media (max-width:560px){
+  dl{grid-template-columns:1fr} dt{margin-top:6px}
+  ul.items label{grid-template-columns:22px 1fr} .badge{grid-column:2;justify-self:start}
+}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+@media print{.tools{display:none} .phase,.summary,ol.results>li{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Checklist: construir el proveedor de liquidez USDT</h1>
+  <p class="lede">Versión en checklist de <code>Docs/plan-paso-a-paso-proveedor-de-liquidez.md</code>. Une las dos mitades: la empresa (fases 0 a 6 y 8) y el sistema (fase 7). Marca cada paso cuando quede hecho.</p>
+  <p class="meta">Actualizado: 14 de octubre de 2026 · Nombre del proveedor: provisional · Lo legal y tributario está sin validar por abogado y contador.</p>
+
+  <div class="summary" aria-live="polite">
+    <strong id="total-label">Avance total</strong>
+    <div class="bar" role="progressbar" aria-labelledby="total-label" aria-valuemin="0" aria-valuemax="100" id="total-bar"><span style="width:0"></span></div>
+    <span id="total-text"></span>
+    <div class="tools">
+      <button type="button" id="toggle-done">Ocultar lo hecho</button>
+      <button type="button" id="reset">Volver al estado registrado</button>
+    </div>
+    <div class="legend">
+      <span><span class="badge b-hecho">hecho</span> registrado como terminado</span>
+      <span><span class="badge b-curso">en curso</span> empezado, no terminado</span>
+      <span><span class="badge b-pend">pendiente</span> sin iniciar</span>
+    </div>
+    <p class="note" style="margin-top:10px">Las marcas que hagas se guardan solo en este navegador. El estado oficial se actualiza en este archivo, en el repositorio, a medida que avanzamos.</p>
+  </div>
+
+  <div id="phases"></div>
+
+  <section class="analisis" aria-labelledby="analisis-title">
+    <h2 id="analisis-title">Análisis de resultados</h2>
+    <p>Cada vez que se complete un paso o un grupo de pasos con un efecto real, se agrega aquí un resultado numerado. Cada resultado responde siempre las mismas cinco preguntas, para que se lea la lógica de lo alcanzado y no solo la lista de tareas.</p>
+
+    <div class="example">
+      <h3>Ejemplo de cómo leer un resultado</h3>
+      <dl>
+        <dt>Qué se logró</dt><dd>La SAS quedó inscrita en la Cámara de Comercio con objeto social de activos virtuales.</dd>
+        <dt>Evidencia</dt><dd>Certificado de existencia y representación legal con fecha.</dd>
+        <dt>Qué habilita</dt><dd>Sacar el RUT con la responsabilidad 67 (fase 2) y abrir la cuenta en Bancolombia (fase 4).</dd>
+        <dt>Qué falta o qué riesgo queda</dt><dd>El banco puede negar la cuenta: hay que presentarle el dossier y el manual SAGRILAFT.</dd>
+        <dt>Pasos del checklist</dt><dd>1.5 y 1.6.</dd>
+      </dl>
+      <p class="note" style="margin:10px 0 0">La lógica: un resultado no es "terminé una tarea", sino "esto ya existe, así se prueba, esto destraba y esto sigue en riesgo".</p>
+    </div>
+
+    <ol class="results">
+      <li>
+        <h3>Proyecto independiente con repositorio y base de datos propios</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>Estructura del laboratorio, repositorio privado en GitHub y proyecto propio de Supabase, separados de Hellominus.</dd>
+          <dt>Evidencia</dt><dd>Repositorio <code>juansecode2026-byte/pasarela-usdt</code> y proyecto Supabase <code>pasarela-usdt</code>.</dd>
+          <dt>Qué habilita</dt><dd>Construir el sistema sin exponer datos sensibles en el repositorio público de Hellominus.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd>Sin protección de ramas (pide GitHub Pro). Supabase en plan gratuito: pasar a Pro antes del primer dato real.</dd>
+          <dt>Pasos del checklist</dt><dd>7.1.</dd>
+        </dl>
+      </li>
+      <li>
+        <h3>Esquema base probado</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>Cuatro migraciones con clientes, llaves de API, órdenes, transacciones on-chain, análisis de riesgo, dispersiones, webhooks y bitácora encadenada por hash.</dd>
+          <dt>Evidencia</dt><dd>29 pruebas en PostgreSQL local, todas aprobadas, y una prueba de mutación que confirma que detectan una protección faltante (5 de octubre).</dd>
+          <dt>Qué habilita</dt><dd>Construir la máquina de estados y la API de órdenes sobre una base que rechaza por diseño errores de dinero y mezcla entre clientes.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd>En Supabase solo se verificó que las tablas existen, no su comportamiento (las escrituras de prueba fueron bloqueadas).</dd>
+          <dt>Pasos del checklist</dt><dd>7.3.</dd>
+        </dl>
+      </li>
+      <li>
+        <h3>Enfoque y flujo de dinero definidos</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>El proyecto es un proveedor de liquidez independiente. Los pagos USDT entran directo al proveedor, que dispersa los pesos desde Bancolombia a la empresa cliente (Hellominus, DEVMINUS).</dd>
+          <dt>Evidencia</dt><dd><code>DECISIONES.md</code> y <code>CLAUDE.md</code> del 14 de octubre de 2026.</dd>
+          <dt>Qué habilita</dt><dd>Reescribir el contrato de la API (hecho, borrador 2) y saber a quién se le verifica la cuenta bancaria: una empresa por cliente.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd>Es el modelo de mayor carga regulatoria (recibe dinero de personas). Debe validarlo un abogado y un contador antes de mover dinero real.</dd>
+          <dt>Pasos del checklist</dt><dd>0.11, 0.12 y 7.2.</dd>
+        </dl>
+      </li>
+      <li>
+        <h3>Libro contable v1.7 escrito, pendiente de pruebas</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>Migración del libro con activos genéricos (COP, USD, USDT, BTC, ETH), asientos encadenados por hash, reversos, raíz de Merkle diaria, tasas, eventos crudos y conciliación.</dd>
+          <dt>Evidencia</dt><dd>Archivo <code>supabase/migrations/20261014000001_libro_v17.sql</code> y sus pruebas en <code>supabase/tests/esquema.test.sql</code>.</dd>
+          <dt>Qué habilita</dt><dd>Cuando pase las pruebas: registrar cada movimiento con evidencia verificable por un auditor sin publicar datos de clientes.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd><strong>Sin probar:</strong> se perdió el acceso a la base de pruebas local. Hasta correr las pruebas no se puede afirmar que funcione.</dd>
+          <dt>Pasos del checklist</dt><dd>7.4, 7.17 y 7.18.</dd>
+        </dl>
+      </li>
+      <li>
+        <h3>Plan unificado y checklists para seguir el avance</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>Un plan paso a paso que une la empresa y la tecnología, y dos checklists con estado por paso y este análisis de resultados. Las situaciones que aparecen en el camino se agregan en su fase.</dd>
+          <dt>Evidencia</dt><dd><code>Docs/plan-paso-a-paso-proveedor-de-liquidez.md</code> y la carpeta <code>checklist Desarrollo De procesos/</code>.</dd>
+          <dt>Qué habilita</dt><dd>Ver en un solo lugar qué bloquea qué, repartir el trabajo entre socios, abogado, contador y equipo técnico, y medir el avance.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd>El estado solo es confiable si se actualiza en cada avance; las marcas del navegador no llegan al repositorio.</dd>
+          <dt>Pasos del checklist</dt><dd>Todo el documento.</dd>
+        </dl>
+      </li>
+    </ol>
+  </section>
+</main>
+
+<script>
+const KEY = 'checklist-proveedor-liquidez-v1';
+// estado: 'hecho' | 'curso' | 'pend'. Es el estado registrado; tus marcas lo sobrescriben solo en tu navegador.
+const FASES = [
+  { id:'0', titulo:'Fase 0. Decisiones previas (sin código)', nota:'Bloquean lo demás. Socios, abogado y contador.', items:[
+    ['0.1','Nombre definitivo del proveedor','Socios','pend'],
+    ['0.2','Socios, porcentajes y roles de la SAS nueva (desempate si es 50/50)','Socios y abogado','pend'],
+    ['0.3','Modelo legal: proveedor directo, orquestador o cobro propio','Abogado y contador','pend'],
+    ['0.4','Rol: principal (balance propio) o agente (por cuenta del cliente)','Contador','pend'],
+    ['0.5','Datos exigidos a los pagadores finales (personas)','Abogado','pend'],
+    ['0.6','Activos iniciales: USDT contra COP; BTC, ETH y USD después','Socios','curso'],
+    ['0.7','Cuándo se confirma la reserva (pago en cadena o pesos salidos)','Socios y clientes','pend'],
+    ['0.8','Política de reembolso','Socios y abogado','pend'],
+    ['0.9','Red inicial (TRON o Polygon)','Socios','pend'],
+    ['0.10','Clientes directos: Hellominus y DEVMINUS. Confirmar si Zuhay (CRM de ventas de la landing de Hellominus, su socio) también es cliente de la API','Socios','pend'],
+    ['0.11','Pagos entran al proveedor; dispersión a la empresa cliente desde Bancolombia','Juan','hecho'],
+    ['0.12','El proveedor es una empresa independiente, separada de Minus','Juan','hecho'],
+  ]},
+  { id:'1', titulo:'Fase 1. Constituir la sociedad', nota:'2 a 4 semanas. Socios, abogado societario, Cámara de Comercio.', items:[
+    ['1.1','Cesión de la propiedad intelectual de los socios hacia Minus','Abogado','pend'],
+    ['1.2','Verificar el nombre en el RUES y reservar dominio y correo propios','Socios','pend'],
+    ['1.3','Acuerdo entre socios: participación, roles, aportes, permanencia, decisiones, dividendos, exclusividad','Abogado','pend'],
+    ['1.4','Estatutos con objeto social de activos virtuales (sin desarrollo de software)','Abogado','pend'],
+    ['1.5','Inscripción en la Cámara de Comercio (matrícula mercantil)','Abogado','pend'],
+    ['1.6','Registro de beneficiarios finales y composición accionaria','Abogado','pend'],
+    ['1.7','Contador con experiencia en cripto; revisor fiscal si se superan topes','Socios','pend'],
+    ['1.8','Correo corporativo con dominio propio, distinto del de Minus, creado cuando exista el nombre. No usar un correo gratuito para bancos, Binance, DIAN ni UIAF','Socios','pend'],
+  ]},
+  { id:'2', titulo:'Fase 2. DIAN', nota:'1 a 2 semanas. Contador.', items:[
+    ['2.1','RUT y NIT con la actividad económica (CIIU) correcta','Contador','pend'],
+    ['2.2','Responsabilidad 67 (CARF) en el RUT antes de operar','Contador','pend'],
+    ['2.3','Firma electrónica','Contador','pend'],
+    ['2.4','Facturación electrónica habilitada','Contador','pend'],
+    ['2.5','Inscripción en el ICA del municipio','Contador','pend'],
+    ['2.6','Política de IVA y tratamiento del spread por escrito','Contador','pend'],
+  ]},
+  { id:'3', titulo:'Fase 3. Cumplimiento (SAGRILAFT)', nota:'4 a 8 semanas. Oficial de cumplimiento.', items:[
+    ['3.1','Oficial de cumplimiento y suplente','Socios','pend'],
+    ['3.2','Manual SAGRILAFT aprobado: matriz de riesgo, señales de alerta, procedimiento ROS','Oficial de cumplimiento','pend'],
+    ['3.3','Onboarding KYB de clientes (cámara, RUT, beneficiarios, estados financieros, listas, PEP)','Oficial de cumplimiento','pend'],
+    ['3.4','Procedimiento de identificación de pagadores finales','Oficial de cumplimiento','pend'],
+    ['3.5','Herramienta de análisis on-chain contratada (Chainalysis, Elliptic o TRM Labs)','Oficial de cumplimiento','pend'],
+    ['3.6','Política de Travel Rule','Oficial de cumplimiento','pend'],
+    ['3.7','Inscripción en SIREL (UIAF) y prueba de formatos','Oficial de cumplimiento','pend'],
+  ]},
+  { id:'4', titulo:'Fase 4. Bancos y régimen cambiario', nota:'4 a 12 semanas. Riesgo real: los bancos cierran cuentas cripto con poco aviso.', items:[
+    ['4.1','Dossier bancario completo','Gerencia','pend'],
+    ['4.2','Cuenta operativa en Bancolombia (la que dispersa)','Gerencia','pend'],
+    ['4.3','Segunda cuenta en otro banco (antes de 6 meses)','Gerencia','pend'],
+    ['4.4','Cuentas separadas: fondos de clientes y fondos propios','Gerencia','pend'],
+    ['4.5','Canal para la pata en dólares, con asesor cambiario','Gerencia','pend'],
+  ]},
+  { id:'5', titulo:'Fase 5. Liquidez y tesorería', nota:'3 a 6 semanas. Requiere la sociedad constituida.', items:[
+    ['5.1','Cuenta institucional en Binance (KYB propio)','Tesorería','pend'],
+    ['5.2','Segundo proveedor de liquidez con contrato escrito','Tesorería','pend'],
+    ['5.3','Capital de trabajo en COP y USDT para 1 a 2 días de volumen','Socios','pend'],
+    ['5.4','Límites de riesgo escritos (exposición, pérdida diaria, tamaño por operación)','Tesorería','pend'],
+    ['5.5','Custodia multifirma o MPC; nunca una sola persona con las llaves','Tesorería','pend'],
+    ['5.6','Billetera fría de reserva con prueba de control documentada','Tesorería','pend'],
+  ]},
+  { id:'6', titulo:'Fase 6. Contratos', nota:'2 a 4 semanas. Abogado.', items:[
+    ['6.1','Acuerdo marco con cada cliente (Hellominus, DEVMINUS, Zuhay si aplica)','Abogado','pend'],
+    ['6.2','Anexo de cumplimiento (KYB y monitoreo)','Abogado','pend'],
+    ['6.3','Política de tarifas y spreads, con impuestos dentro del precio','Socios y contador','pend'],
+    ['6.4','Contrato SAS–Minus: licencia SaaS y desarrollo, a precio de mercado','Abogado','pend'],
+    ['6.5','Términos de redes soportadas y de datos personales (Ley 1581)','Abogado','pend'],
+  ]},
+  { id:'7', titulo:'Fase 7. Tecnología (lo que construimos)', nota:'En paralelo a las fases 1 a 6. Supabase a Pro antes del primer dato real.', items:[
+    ['7.1','Repositorio privado y proyecto de Supabase','Equipo técnico','hecho'],
+    ['7.2','Contrato de la API (borrador 2)','Equipo técnico','hecho'],
+    ['7.3','Esquema base: clientes, llaves, órdenes, cadena, bitácora (29 pruebas)','Equipo técnico','hecho'],
+    ['7.4','Libro contable v1.7: activos genéricos, hash por asiento, anclaje, tasas, eventos crudos, conciliación','Equipo técnico','curso'],
+    ['7.5','Máquina de estados de la orden, con pruebas','Equipo técnico','pend'],
+    ['7.6','Vinculación de clientes (KYB, límites, cuenta bancaria)','Equipo técnico','pend'],
+    ['7.7','API de órdenes con idempotencia y llave por cliente','Equipo técnico','pend'],
+    ['7.8','Captura on-chain: direcciones por orden, depósitos, confirmaciones, reorganizaciones','Equipo técnico','pend'],
+    ['7.9','Análisis de la billetera de origen y revisión de cumplimiento','Equipo técnico','pend'],
+    ['7.10','Cotización y conversión por el adaptador de Binance, con control de deslizamiento','Equipo técnico','pend'],
+    ['7.11','Dispersión desde Bancolombia (manual con doble aprobación al principio)','Equipo técnico','pend'],
+    ['7.12','Conciliación diaria en tres vías: cadena, libro y banco','Equipo técnico','pend'],
+    ['7.13','Reportes: UIAF mensual, CARF anual en XML, expediente por operación','Equipo técnico','pend'],
+    ['7.14','Webhooks firmados y cliente liviano para Hellominus y DEVMINUS','Equipo técnico','pend'],
+    ['7.15','Seguridad: custodia fuera del libro, secretos, roles, copias de seguridad','Equipo técnico','pend'],
+    ['7.16','Pruebas del ciclo completo en redes de prueba','Equipo técnico','pend'],
+  ]},
+  { id:'7i', titulo:'Fase 7 · Infraestructura y bloqueos técnicos', nota:'Situaciones que salieron en el camino. Bloquean pasos de la fase 7.', items:[
+    ['7.17','Restablecer la base de pruebas local: se perdió su contraseña (estaba en una carpeta temporal). Guardar la nueva en %APPDATA%\\postgresql\\pgpass.conf, fuera del repositorio','Juan y equipo técnico','pend'],
+    ['7.18','Correr las 40 pruebas nuevas del libro v1.7 (bloqueado por 7.17)','Equipo técnico','pend'],
+    ['7.19','Aplicar el libro v1.7 en Supabase después de que pasen sus pruebas','Equipo técnico','pend'],
+    ['7.20','Probar el comportamiento de la base en Supabase: las escrituras de prueba fueron bloqueadas 5 veces por el sistema de permisos','Equipo técnico','pend'],
+    ['7.21','Supabase a plan Pro antes del primer dato real (el gratuito se pausa y no tiene copias automáticas)','Socios','pend'],
+    ['7.22','Contraseña de la base de Supabase: la define Juan en el panel, nunca en el chat ni en el repositorio','Juan','pend'],
+    ['7.23','Protección de ramas en GitHub (requiere GitHub Pro u organización)','Socios','pend'],
+    ['7.24','Renombrar el repositorio cuando haya nombre definitivo del proveedor','Equipo técnico','pend'],
+    ['7.25','Decidir si se restaura el proyecto de Supabase pausado (crm-productividad-hello-minus)','Juan','pend'],
+  ]},
+  { id:'8', titulo:'Fase 8. Lanzamiento controlado', nota:'Todos.', items:[
+    ['8.1','Piloto con 2 o 3 clientes conocidos y límites bajos el primer mes','Todos','pend'],
+    ['8.2','Primera semana con montos bajos y límites progresivos','Tesorería','pend'],
+    ['8.3','Reportes UIAF desde el primer mes, aunque no haya operaciones','Oficial de cumplimiento','pend'],
+    ['8.4','Expediente de prueba revisado con contador y oficial de cumplimiento','Contador','pend'],
+    ['8.5','Un mes en paralelo con la contabilidad actual','Contador','pend'],
+    ['8.6','Revisión mensual de la matriz de riesgo y los límites','Oficial de cumplimiento','pend'],
+    ['8.7','Seguimiento del proyecto de ley PSAV (PL 510 de 2025)','Abogado','pend'],
+  ]},
+];
+</script>
+<script>
+(function(){
+  const ETQ = { hecho:['hecho','b-hecho'], curso:['en curso','b-curso'], pend:['pendiente','b-pend'] };
+  let marks = {};
+  try { marks = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { marks = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} };
+  const isChecked = (code, estado) => (code in marks) ? marks[code] : estado === 'hecho';
+  const cont = document.getElementById('phases');
+
+  function render(){
+    cont.innerHTML = '';
+    let total = 0, done = 0;
+    FASES.forEach(f => {
+      let fd = 0;
+      const sec = document.createElement('section');
+      sec.className = 'phase';
+      const ul = document.createElement('ul'); ul.className = 'items';
+      f.items.forEach(([code, texto, quien, estado]) => {
+        const chk = isChecked(code, estado);
+        if (chk) fd++;
+        const li = document.createElement('li'); if (chk) li.className = 'checked';
+        const lab = document.createElement('label');
+        const inp = document.createElement('input'); inp.type = 'checkbox'; inp.checked = chk;
+        inp.addEventListener('change', () => { marks[code] = inp.checked; save(); render(); });
+        const t = document.createElement('span'); t.className = 'txt';
+        t.innerHTML = '<span class="code"></span><span class="main"></span><span class="who"></span>';
+        t.querySelector('.code').textContent = code;
+        t.querySelector('.main').textContent = texto;
+        t.querySelector('.who').textContent = quien;
+        const b = document.createElement('span');
+        const [et, cl] = (chk && estado !== 'hecho') ? ['marcado por ti', 'b-hecho'] : ETQ[estado];
+        b.className = 'badge ' + cl; b.textContent = et;
+        lab.append(inp, t, b); li.append(lab); ul.append(li);
+      });
+      total += f.items.length; done += fd;
+      sec.innerHTML = '<div class="phase-head"><h2></h2><small></small></div>' + (f.nota ? '<p class="phase-note"></p>' : '');
+      sec.querySelector('h2').textContent = f.titulo;
+      sec.querySelector('small').textContent = fd + ' de ' + f.items.length;
+      if (f.nota) sec.querySelector('.phase-note').textContent = f.nota;
+      sec.append(ul); cont.append(sec);
+    });
+    const pct = total ? Math.round(done * 100 / total) : 0;
+    const bar = document.getElementById('total-bar');
+    bar.setAttribute('aria-valuenow', pct);
+    bar.querySelector('span').style.width = pct + '%';
+    document.getElementById('total-text').textContent = done + ' de ' + total + ' pasos (' + pct + ' %)';
+  }
+
+  const tg = document.getElementById('toggle-done');
+  tg.addEventListener('click', () => {
+    const on = cont.classList.toggle('hide-done');
+    tg.textContent = on ? 'Mostrar lo hecho' : 'Ocultar lo hecho';
+  });
+  document.getElementById('reset').addEventListener('click', () => {
+    if (confirm('¿Borrar tus marcas y volver al estado registrado en el archivo?')) { marks = {}; save(); render(); }
+  });
+  render();
+})();
+</script>
+</body>
+</html>

@@ -4,7 +4,8 @@ Antes llamado "Pasarela de pago USDT". Desde el 14 de octubre de 2026 es un **pr
 
 ## Contexto y fuentes (en `Docs/`, locales)
 
-- `Docs/resumen-proyecto-hellominus.md`: contexto de Hellominus, arquitectura con Zuhay, decisiones tomadas, brechas y el paso a paso por fases (sección 7). Es el archivo de traspaso.
+- `Docs/plan-paso-a-paso-proveedor-de-liquidez.md`: **el plan vigente**, por fases, con el estado de cada paso (empresa y tecnología). Es el archivo de traspaso.
+- `Docs/contrato-api-v1.md`: contrato de la API (borrador).
 - `Docs/pasarela-usdt-colombia-estandar.html`: estándar técnico (flujo, máquina de estados, reglas, Binance, modelo de datos, API, cumplimiento, fases). Todo lo regulatorio (UIAF, DIAN, Binance) está **sin verificar**: lo validan un abogado y un contador.
 
 ## Enfoque (decidido por Juan el 14 de octubre de 2026)
@@ -14,7 +15,7 @@ Antes llamado "Pasarela de pago USDT". Desde el 14 de octubre de 2026 es un **pr
 - **Reparto de los pagos:**
   - Pagos en Colombia, directo en pesos colombianos: los maneja la **pasarela en pesos** correspondiente (la construye Zuhay).
   - Pagos en USDT desde cualquier parte del mundo: los maneja **este proyecto**.
-- **Primeros clientes:** Hellominus y Zuhay. Después pueden sumarse otras compañías.
+- **Primeros clientes:** Hellominus y DEVMINUS. **Zuhay** es el CRM de ventas de la landing de Hellominus: por ahí se generan todas las ventas, y Zuhay y Hellominus son socios. Si Zuhay es cliente directo de la API o solo origina las ventas está por confirmar. Después pueden sumarse otras compañías.
 - **Cómo entran y salen los pagos (decidido por Juan el 14 de octubre de 2026):** los pagos en USDT entran **directo al proveedor de liquidez**, y el proveedor hace la **dispersión en pesos desde una cuenta de Bancolombia**. Hellominus y DEVMINUS reciben pagos en cripto, pero quien dispersa es el proveedor. Es el modelo de mayor carga regulatoria (recibe y paga fondos de terceros): pendiente de validar con abogado y contador. **La dispersión va a la empresa cliente** (Hellominus o DEVMINUS), que reparte a sus anfitriones por su cuenta: el proveedor no paga a anfitriones ni a otros terceros.
 - Hellominus ya **no es el dueño ni el comercio** de este sistema: es un cliente más. Cada cliente es un proyecto (`project_id`) con su entidad legal (`legal_entity_id`).
 
@@ -27,6 +28,10 @@ Cuatro documentos del 14 de octubre de 2026, copiados desde Descargas. Mandan so
 - En `Libro de contabilidad blockchain/`: `libro-contable-blockchain_v1.7` y `proveedor-liquidez_v1.0`. **Son los que definen este proyecto**: la ruta de 8 fases del proveedor de liquidez y, en la Parte II del libro, la constitución de la SAS independiente.
 - En `productos Consultoría Pasarelas de pago Agentizadas (IA)/`: `plan-comercial_v2.0` y `niveles-cripto_v1.0`. Es material comercial de Minus (los tres niveles y sus precios): un producto de consultoría, **no** parte de lo que construye este proyecto.
 - El modelo que describen es de **contraparte (RFQ)**: el cliente pide precio, recibe una cotización firme de 10 a 30 segundos, acepta y se liquida. No es el flujo "una dirección de depósito por orden" del estándar anterior. Cómo encaja el pago de un pagador final del mundo en ese modelo está abierto (`DECISIONES.md`).
+
+## Checklists (en `checklist Desarrollo De procesos/`)
+
+HTML para ir marcando el avance: `checklist-proveedor-de-liquidez.html` (el plan por fases) y `checklist-libro-contable-blockchain.html` (los 15 pasos del libro). Cada uno cierra con **Análisis de resultados**: un resultado numerado por cada avance real, con cinco campos fijos (qué se logró, evidencia, qué habilita, qué falta o qué riesgo queda, pasos del checklist). Cuando un paso cambie de estado, se actualiza en el arreglo `FASES` del archivo y se agrega su resultado. Los documentos originales no se mueven.
 
 ## Alcance
 

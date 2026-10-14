@@ -1,6 +1,6 @@
 # Decisiones
 
-Estado al 4 de octubre de 2026. Fuente: `Docs/resumen-proyecto-hellominus.md`, secciones 6 y 7.
+Estado al 14 de octubre de 2026. El plan vigente está en `Docs/plan-paso-a-paso-proveedor-de-liquidez.md`.
 
 ## Aceptadas
 

@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checklist libro contable</title>
+<style>
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --line:#e3e0d8; --text:#1d1f23; --muted:#5f6670;
+  --accent:#1f6f5c; --accent-soft:#e3f1ec; --warn:#a2650c; --warn-soft:#fbf0dc;
+  --todo:#6b7280; --todo-soft:#eef0f3; --focus:#1f6f5c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121417; --surface:#1a1d21; --line:#2c3138; --text:#e7e9ec; --muted:#a2a9b3;
+    --accent:#5cc4a6; --accent-soft:#1c3a32; --warn:#e7b25a; --warn-soft:#3a2f1c;
+    --todo:#9aa3ae; --todo-soft:#252a31; --focus:#5cc4a6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121417; --surface:#1a1d21; --line:#2c3138; --text:#e7e9ec; --muted:#a2a9b3;
+  --accent:#5cc4a6; --accent-soft:#1c3a32; --warn:#e7b25a; --warn-soft:#3a2f1c;
+  --todo:#9aa3ae; --todo-soft:#252a31; --focus:#5cc4a6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:920px;margin:0 auto;padding:32px 16px 80px}
+h1{font-size:clamp(26px,4vw,34px);line-height:1.15;margin:0 0 8px}
+h2{font-size:21px;margin:0}
+h3{font-size:17px;margin:0 0 6px}
+p{margin:0 0 12px}
+.lede{color:var(--muted);max-width:46em}
+.meta{font-size:14px;color:var(--muted);margin-bottom:24px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.summary{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:20px 0 28px}
+.bar{height:10px;background:var(--todo-soft);border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.bar span{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{font:inherit;font-size:14px;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);margin-top:12px}
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:0 0 16px;overflow:hidden}
+.phase-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.phase-head small{color:var(--muted);font-size:13px;white-space:nowrap}
+.phase-note{padding:10px 18px 0;color:var(--muted);font-size:14px}
+ul.items{list-style:none;margin:0;padding:6px 8px 10px}
+ul.items li{border-radius:8px}
+ul.items label{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:start;padding:9px 10px;cursor:pointer}
+ul.items label:hover{background:var(--todo-soft)}
+input[type=checkbox]{width:18px;height:18px;margin:3px 0 0;accent-color:var(--accent)}
+.txt .code{font-weight:600;margin-right:4px}
+.who{display:block;font-size:13px;color:var(--muted)}
+li.checked .txt{color:var(--muted)}
+li.checked .txt .main{text-decoration:line-through;text-decoration-color:var(--line)}
+.badge{font-size:12px;padding:2px 8px;border-radius:99px;white-space:nowrap;border:1px solid transparent}
+.b-hecho{background:var(--accent-soft);color:var(--accent)}
+.b-curso{background:var(--warn-soft);color:var(--warn)}
+.b-pend{background:var(--todo-soft);color:var(--todo)}
+.hide-done li.checked{display:none}
+section.analisis{margin-top:40px}
+section.analisis > h2{font-size:24px;margin-bottom:8px}
+ol.results{padding-left:0;list-style:none;counter-reset:r;margin:16px 0 0}
+ol.results > li{counter-increment:r;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+ol.results > li > h3::before{content:"Resultado " counter(r) ". ";color:var(--accent)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:8px 0 0}
+dt{font-weight:600;font-size:14px}
+dd{margin:0;font-size:15px}
+.example{border:1px dashed var(--accent);background:var(--accent-soft);border-radius:12px;padding:16px 18px;margin:16px 0}
+.example h3{color:var(--accent)}
+.note{font-size:14px;color:var(--muted)}
+@media (max-width:560px){
+  dl{grid-template-columns:1fr} dt{margin-top:6px}
+  ul.items label{grid-template-columns:22px 1fr} .badge{grid-column:2;justify-self:start}
+}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+@media print{.tools{display:none} .phase,.summary,ol.results>li{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main>
+  <h1>Checklist: libro contable blockchain</h1>
+  <p class="lede">Versión en checklist de <code>Libro de contabilidad blockchain/libro-contable-blockchain_v1.7</code>: 15 pasos en 4 fases, herramientas, archivos de Excel y la Parte II legal. Un libro de partida doble, inalterable, encadenado con hashes y anclado cada día en una blockchain pública.</p>
+  <p class="meta">Actualizado: 14 de octubre de 2026 · El tratamiento contable y tributario debe validarlo el contador antes de producción.</p>
+
+  <div class="summary" aria-live="polite">
+    <strong id="total-label">Avance total</strong>
+    <div class="bar" role="progressbar" aria-labelledby="total-label" aria-valuemin="0" aria-valuemax="100" id="total-bar"><span style="width:0"></span></div>
+    <span id="total-text"></span>
+    <div class="tools">
+      <button type="button" id="toggle-done">Ocultar lo hecho</button>
+      <button type="button" id="reset">Volver al estado registrado</button>
+    </div>
+    <div class="legend">
+      <span><span class="badge b-hecho">hecho</span> registrado como terminado</span>
+      <span><span class="badge b-curso">en curso</span> empezado, no terminado</span>
+      <span><span class="badge b-pend">pendiente</span> sin iniciar</span>
+    </div>
+    <p class="note" style="margin-top:10px">Las marcas que hagas se guardan solo en este navegador. El estado oficial se actualiza en este archivo, en el repositorio, a medida que avanzamos.</p>
+  </div>
+
+  <div id="phases"></div>
+
+  <section class="analisis" aria-labelledby="analisis-title">
+    <h2 id="analisis-title">Análisis de resultados</h2>
+    <p>Cada vez que se complete un paso o un grupo de pasos con un efecto real, se agrega aquí un resultado numerado. Cada resultado responde las mismas cinco preguntas, para que se vea qué se puede demostrar con el libro y no solo qué tareas se hicieron.</p>
+
+    <div class="example">
+      <h3>Ejemplo de cómo leer un resultado</h3>
+      <dl>
+        <dt>Qué se logró</dt><dd>El anclaje diario publica la raíz de Merkle del día en Bitcoin con OpenTimestamps.</dd>
+        <dt>Evidencia</dt><dd>Fila en <code>anchors</code> con estado confirmado y el sello de OpenTimestamps verificable por cualquiera.</dd>
+        <dt>Qué habilita</dt><dd>Un auditor o un banco puede comprobar que un asiento existía así en esa fecha, sin ver datos de clientes.</dd>
+        <dt>Qué falta o qué riesgo queda</dt><dd>La pantalla de verificación para auditores (paso 6.5) todavía no existe.</dd>
+        <dt>Pasos del checklist</dt><dd>6.1, 6.2 y 6.4.</dd>
+      </dl>
+      <p class="note" style="margin:10px 0 0">La lógica: un resultado no es "terminé una tarea", sino "esto ya existe, así se prueba, esto destraba y esto sigue en riesgo".</p>
+    </div>
+
+    <ol class="results">
+      <li>
+        <h3>Bitácora inalterable y encadenada, probada</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>La bitácora de acciones (<code>audit_log</code>) encadena cada registro con el hash del anterior, no se puede editar ni borrar, y una función recorre la cadena y señala el primer registro alterado.</dd>
+          <dt>Evidencia</dt><dd>Pruebas locales del 5 de octubre: cadena íntegra, edición y borrado rechazados, alteración detectada.</dd>
+          <dt>Qué habilita</dt><dd>Cumplir la parte de "bitácora de accesos y acciones, también encadenada con hashes" del paso 14, y usar el mismo patrón en el libro.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd>Falta registrar en ella los accesos reales cuando exista la aplicación.</dd>
+          <dt>Pasos del checklist</dt><dd>14.4.</dd>
+        </dl>
+      </li>
+      <li>
+        <h3>Núcleo del libro v1.7 escrito, pendiente de pruebas</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>Migración con activos genéricos (COP, USD, USDT, BTC, ETH en unidades mínimas, 1 ETH = 10^18 wei), plan de cuentas por entidad, asientos solo por una función que valida el cuadre y los sella con hash, reversos, verificador de la cadena, raíz de Merkle diaria, tasas con fuente, eventos crudos con su hash, wallets solo con direcciones públicas y conciliación.</dd>
+          <dt>Evidencia</dt><dd><code>supabase/migrations/20261014000001_libro_v17.sql</code> y 40 pruebas nuevas escritas en <code>supabase/tests/esquema.test.sql</code>.</dd>
+          <dt>Qué habilita</dt><dd>Cuando pasen las pruebas: conectar las fuentes (fase 3) sobre un libro que rechaza por diseño asientos descuadrados y modificaciones.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd><strong>Sin probar.</strong> Se perdió el acceso a la base de pruebas local y no se pudo correr. Hasta entonces no se puede afirmar que funcione. Tampoco está aplicada en Supabase.</dd>
+          <dt>Pasos del checklist</dt><dd>3.1, 4.1 a 4.4, 5.1 a 5.4, 6.1, 6.4, 10.3 y 11.1 (en curso); bloqueado por 3.3 y 3.4.</dd>
+        </dl>
+      </li>
+    </ol>
+  </section>
+</main>
+
+<script>
+const KEY = 'checklist-libro-contable-v1';
+// estado: 'hecho' | 'curso' | 'pend'. Es el estado registrado; tus marcas lo sobrescriben solo en tu navegador.
+const FASES = [
+  { id:'C', titulo:'Herramientas de trazabilidad (sección C)', nota:'Casi todo se construye hoy con planes gratuitos y redes de prueba. Lo que exige contrato y empresa se cotiza en paralelo.', items:[
+    ['C.1','Exploradores para verificar a mano: Etherscan, Tronscan, mempool.space, Blockchair','Cumplimiento','pend'],
+    ['C.2','APIs de lectura: Etherscan, TronGrid, Esplora (Bitcoin) o proveedor de nodos','Tecnología','pend'],
+    ['C.3','API de Binance con llave de solo lectura, sin permiso de retiro','Tecnología','pend'],
+    ['C.4','TRM oficial y una fuente única de precios de cripto','Tecnología','pend'],
+    ['C.5','Supabase con tablas del libro de solo inserción','Tecnología','curso'],
+    ['C.6','SHA-256 y OpenTimestamps para sellar y anclar','Tecnología','curso'],
+    ['C.7','Generación de los archivos de Excel (openpyxl o SheetJS)','Tecnología','pend'],
+    ['C.8','Redes de prueba: Sepolia (Ethereum), Nile o Shasta (Tron), testnet o signet (Bitcoin)','Tecnología','pend'],
+    ['C.9','Antes de operar: analítica on-chain contratada (Chainalysis, Elliptic o TRM Labs)','Cumplimiento','pend'],
+    ['C.10','Antes de operar: custodia multifirma o MPC (Safe, Fireblocks o BitGo)','Tesorería','pend'],
+    ['C.11','Supabase en plan Pro antes del primer dato real (copias automáticas)','Socios','pend'],
+    ['C.12','Con volumen: nodos propios, monitoreo continuo y segundo proveedor de datos','Tecnología','pend'],
+  ]},
+  { id:'1', titulo:'Paso 1. Alcance y principios', nota:'Fase 1 · Diseño. Entregable: documento aprobado por gerencia y contador.', items:[
+    ['1.1','Activos y redes: USDT (TRC-20 y ERC-20), BTC, ETH, USD y COP','Producto','hecho'],
+    ['1.2','Fuentes: wallets propias, wallets de clientes, Binance, bancos','Producto','curso'],
+    ['1.3','Moneda funcional COP, guardando también la cantidad original','Producto y contador','hecho'],
+    ['1.4','Principios: solo inserción, partida doble, evidencia, separación de fondos','Producto','hecho'],
+    ['1.5','Método de costo por activo (promedio ponderado o PEPS)','Contador','pend'],
+    ['1.6','Documento de alcance aprobado por gerencia y contador','Gerencia y contador','pend'],
+  ]},
+  { id:'2', titulo:'Paso 2. Plan de cuentas', nota:'Alineado al PUC y a NIIF. Códigos finales con el contador.', items:[
+    ['2.1','Grupos: bancos, cripto propios, saldos en exchange, fondos de clientes, obligaciones con clientes, ingresos, gastos','Contador','curso'],
+    ['2.2','Decidir si la cripto es inventario o intangible (cambia renta)','Contador','pend'],
+    ['2.3','Códigos finales cargados en la base de datos','Contador y tecnología','pend'],
+  ]},
+  { id:'3', titulo:'Paso 3. Modelo de datos', nota:'Separar evidencia cruda, asientos y cadena de verificación.', items:[
+    ['3.1','Tablas: cuentas, wallets, contrapartes, eventos crudos, asientos, líneas, tasas, anclas, conciliaciones','Tecnología','curso'],
+    ['3.2','Migraciones versionadas y probadas','Tecnología','curso'],
+    ['3.3','Base de pruebas local operativa (contraseña perdida; guardar la nueva en pgpass.conf)','Juan y tecnología','pend'],
+    ['3.4','Correr las 40 pruebas del libro v1.7 (bloqueado por 3.3)','Tecnología','pend'],
+    ['3.5','Aplicar la migración del libro en Supabase después de que pasen las pruebas','Tecnología','pend'],
+  ]},
+  { id:'4', titulo:'Paso 4. Partida doble inalterable', nota:'Fase 2 · Núcleo. La base de datos misma impide errores.', items:[
+    ['4.1','Validación en servidor: débitos = créditos en COP en cada asiento','Tecnología','curso'],
+    ['4.2','Tablas del libro solo de inserción: ningún rol edita ni borra','Tecnología','curso'],
+    ['4.3','Correcciones solo con asiento de reverso que referencia al original','Tecnología','curso'],
+    ['4.4','Cantidades en unidades mínimas enteras (satoshis, wei, 6 decimales USDT)','Tecnología','curso'],
+  ]},
+  { id:'5', titulo:'Paso 5. Cadena de hashes', nota:'Cualquier cambio en un asiento antiguo rompe la cadena.', items:[
+    ['5.1','Serialización fija de cada asiento','Tecnología','curso'],
+    ['5.2','Hash = SHA-256(hash anterior + contenido)','Tecnología','curso'],
+    ['5.3','Asiento génesis con valor fijo documentado','Tecnología','curso'],
+    ['5.4','Verificador que recorre y recalcula toda la cadena','Tecnología','curso'],
+  ]},
+  { id:'6', titulo:'Paso 6. Anclaje en blockchain pública', nota:'Solo sale una huella de 32 bytes por día; ningún dato de clientes.', items:[
+    ['6.1','Raíz de Merkle diaria de los hashes del día','Tecnología','curso'],
+    ['6.2','Publicar la raíz en Bitcoin con OpenTimestamps','Tecnología','pend'],
+    ['6.3','Opcional: publicarla también en Ethereum','Tecnología','pend'],
+    ['6.4','Guardar raíz, red, transacción y prueba en la tabla de anclas','Tecnología','curso'],
+    ['6.5','Pantalla de verificación para auditores (asiento, ruta de Merkle, anclaje)','Tecnología','pend'],
+  ]},
+  { id:'7', titulo:'Paso 7. Captura on-chain por red', nota:'Fase 3 · Conexiones. Solo transacciones confirmadas, guardadas como evidencia.', items:[
+    ['7.1','Bitcoin: lectura por xpub, comisión como gasto, confirmaciones configurables','Tecnología','pend'],
+    ['7.2','Ethereum: transferencias y eventos Transfer ERC-20, gas como gasto, bloque finalizado','Tecnología','pend'],
+    ['7.3','USDT: TRC-20 y ERC-20 como subcuentas, contrato oficial validado, costo de energía','Tecnología','pend'],
+    ['7.4','Sin duplicados: clave única por red, hash e índice','Tecnología','hecho'],
+    ['7.5','Detectar reorganizaciones de cadena y reversar','Tecnología','pend'],
+  ]},
+  { id:'8', titulo:'Paso 8. Bancos y exchange', nota:'La pata fiat con la misma disciplina que la cadena.', items:[
+    ['8.1','Binance: depósitos, retiros, operaciones OTC y comisiones (solo lectura)','Tecnología','pend'],
+    ['8.2','Bancos COP: extractos por API o archivo diario estandarizado','Tecnología','pend'],
+    ['8.3','Bancos USD, con vínculo a la declaración de cambio','Tecnología y contador','pend'],
+    ['8.4','Cada movimiento en eventos crudos con su soporte','Tecnología','curso'],
+  ]},
+  { id:'9', titulo:'Paso 9. Reglas contables automáticas', nota:'Lo que no coincide con una regla va a revisión manual; no se contabiliza solo.', items:[
+    ['9.1','Catálogo: cobro en USDT, conversión, compra de BTC con USDT, gas, custodia, spread OTC','Contador y tecnología','pend'],
+    ['9.2','Bandeja de revisión manual para eventos sin regla','Tecnología','pend'],
+    ['9.3','Catálogo aprobado por el contador y probado con casos reales','Contador','pend'],
+  ]},
+  { id:'10', titulo:'Paso 10. Valoración y tasas de cambio', nota:'Una fuente única, trazable y repetible.', items:[
+    ['10.1','USD a COP con la TRM oficial del día','Tecnología','pend'],
+    ['10.2','Cripto a USD con una fuente de precio definida y marca de tiempo','Tecnología','pend'],
+    ['10.3','Cada línea guarda la tasa usada y su fuente','Tecnología','curso'],
+    ['10.4','Costo y utilidad realizada con el método del paso 1','Tecnología y contador','pend'],
+    ['10.5','Valoración al cierre de mes y a 31 de diciembre','Contador','pend'],
+  ]},
+  { id:'11', titulo:'Paso 11. Conciliación diaria', nota:'Fase 4 · Control. El libro cuadra con cada fuente, todos los días.', items:[
+    ['11.1','Registro de conciliación por cuenta y fuente, con diferencia calculada','Tecnología','curso'],
+    ['11.2','Wallets contra saldo on-chain; alerta y bloqueo del cierre si no cuadra','Tecnología','pend'],
+    ['11.3','Binance contra su API; alerta a tesorería','Tecnología','pend'],
+    ['11.4','Bancos contra extracto; alerta a contabilidad','Tecnología','pend'],
+    ['11.5','Fondos de clientes contra obligaciones con clientes (alerta crítica)','Tecnología','pend'],
+  ]},
+  { id:'12', titulo:'Paso 12. Impuestos y costo fiscal', nota:'El impuesto se calcula sobre la utilidad, no sobre el valor vendido.', items:[
+    ['12.1','Lotes de compra con fecha, cantidad, costo en COP y tasa','Tecnología','pend'],
+    ['12.2','Tiempo de tenencia por lote (menos o más de 2 años)','Tecnología','pend'],
+    ['12.3','Utilidad realizada por venta, con su impuesto (renta o ganancia ocasional)','Tecnología y contador','pend'],
+    ['12.4','Costos de transacción (comisiones y gas) en el costo, según el contador','Contador','pend'],
+    ['12.5','Datos de USDT del exterior: país, contraparte, motivo, tasa y hash','Tecnología','pend'],
+    ['12.6','Revisar el ICA sobre ingresos brutos antes de fijar tarifas','Contador','pend'],
+    ['12.7','Reportes: renta, exógena 1012/1206, CARF, IVA, ICA','Contador','pend'],
+  ]},
+  { id:'13', titulo:'Paso 13. Trazabilidad y cumplimiento', nota:'Desde cualquier asiento se llega al cliente, la evidencia y el riesgo.', items:[
+    ['13.1','Cada asiento enlaza evento crudo, transacción, cliente y expediente KYB','Tecnología','curso'],
+    ['13.2','Puntaje de riesgo de cada wallet externa','Cumplimiento','pend'],
+    ['13.3','Datos de origen y beneficiario (Travel Rule)','Cumplimiento','pend'],
+    ['13.4','Exportadores: UIAF mensual, CARF anual en XML, saldos para exógena','Tecnología','pend'],
+    ['13.5','Conservar evidencia al menos 5 años','Tecnología','pend'],
+  ]},
+  { id:'14', titulo:'Paso 14. Seguridad, accesos y billetera fría', nota:'El sistema contable nunca puede mover fondos.', items:[
+    ['14.1','El libro no guarda llaves privadas: solo direcciones públicas','Tecnología','curso'],
+    ['14.2','Llaves de API de exchange y bancos solo de lectura','Tecnología','pend'],
+    ['14.3','Roles separados: quien registra, quien aprueba ajustes, quien audita','Gerencia','pend'],
+    ['14.4','Bitácora de accesos y acciones encadenada con hashes','Tecnología','hecho'],
+    ['14.5','Copias cifradas y prueba de restauración trimestral','Tecnología','pend'],
+    ['14.6','Billetera fría documentada: dirección propia, prueba de control, traslados como transferencia interna','Tesorería','pend'],
+    ['14.7','Lista blanca de retiro en Binance y doble persona para mover la reserva','Tesorería','pend'],
+    ['14.8','Contraseñas y llaves fuera de carpetas temporales, del chat y del repositorio: en el gestor de secretos o en el archivo estándar del usuario','Tecnología','pend'],
+  ]},
+  { id:'15', titulo:'Paso 15. Reportes, pruebas y producción', nota:'Entrar a producción con datos reales verificados.', items:[
+    ['15.1','Balance y resultados por activo y red; posición diaria; mayor con enlace a la evidencia','Tecnología','pend'],
+    ['15.2','Probar casos difíciles: comisiones, reversos, duplicados, tokens falsos, reorganizaciones','Tecnología','curso'],
+    ['15.3','Intentar alterar un asiento en pruebas y confirmar que el verificador lo detecta','Tecnología','curso'],
+    ['15.4','Un mes en paralelo con la contabilidad actual','Contador','pend'],
+    ['15.5','Revisión del contador y del revisor fiscal; acta de aprobación','Contador','pend'],
+  ]},
+  { id:'D', titulo:'Anexo D. Archivos de Excel', nota:'Generados desde el libro y sellados; nunca la fuente de verdad.', items:[
+    ['D.1','Plantilla con las ocho hojas y fórmulas protegidas','Tecnología','pend'],
+    ['D.2','Generación y sellado diario (hash SHA-256 en la hoja de control y en la raíz del día)','Tecnología','pend'],
+    ['D.3','Saldos iniciales de lotes anteriores con su soporte','Contador','pend'],
+  ]},
+  { id:'E', titulo:'Parte II. Constitución como proveedor de liquidez', nota:'Orden recomendado de entregables (sección E.7). Lo redacta un abogado.', items:[
+    ['E.1','Cesión de propiedad intelectual de los socios hacia Minus','Abogado','pend'],
+    ['E.2','Acuerdo entre socios de la nueva SAS','Abogado','pend'],
+    ['E.3','Estatutos con objeto social específico e inscripción de la SAS','Abogado y Cámara de Comercio','pend'],
+    ['E.4','RUT, cuenta bancaria, ICA y facturación','Contador','pend'],
+    ['E.5','Contrato marco con Minus: licencia SaaS y desarrollo, a precio de mercado','Abogado','pend'],
+    ['E.6','Manual SAGRILAFT, oficial de cumplimiento y registro ante la UIAF','Cumplimiento','pend'],
+  ]},
+];
+</script>
+<script>
+(function(){
+  const ETQ = { hecho:['hecho','b-hecho'], curso:['en curso','b-curso'], pend:['pendiente','b-pend'] };
+  let marks = {};
+  try { marks = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { marks = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} };
+  const isChecked = (code, estado) => (code in marks) ? marks[code] : estado === 'hecho';
+  const cont = document.getElementById('phases');
+
+  function render(){
+    cont.innerHTML = '';
+    let total = 0, done = 0;
+    FASES.forEach(f => {
+      let fd = 0;
+      const sec = document.createElement('section');
+      sec.className = 'phase';
+      const ul = document.createElement('ul'); ul.className = 'items';
+      f.items.forEach(([code, texto, quien, estado]) => {
+        const chk = isChecked(code, estado);
+        if (chk) fd++;
+        const li = document.createElement('li'); if (chk) li.className = 'checked';
+        const lab = document.createElement('label');
+        const inp = document.createElement('input'); inp.type = 'checkbox'; inp.checked = chk;
+        inp.addEventListener('change', () => { marks[code] = inp.checked; save(); render(); });
+        const t = document.createElement('span'); t.className = 'txt';
+        t.innerHTML = '<span class="code"></span><span class="main"></span><span class="who"></span>';
+        t.querySelector('.code').textContent = code;
+        t.querySelector('.main').textContent = texto;
+        t.querySelector('.who').textContent = quien;
+        const b = document.createElement('span');
+        const [et, cl] = (chk && estado !== 'hecho') ? ['marcado por ti', 'b-hecho'] : ETQ[estado];
+        b.className = 'badge ' + cl; b.textContent = et;
+        lab.append(inp, t, b); li.append(lab); ul.append(li);
+      });
+      total += f.items.length; done += fd;
+      sec.innerHTML = '<div class="phase-head"><h2></h2><small></small></div>' + (f.nota ? '<p class="phase-note"></p>' : '');
+      sec.querySelector('h2').textContent = f.titulo;
+      sec.querySelector('small').textContent = fd + ' de ' + f.items.length;
+      if (f.nota) sec.querySelector('.phase-note').textContent = f.nota;
+      sec.append(ul); cont.append(sec);
+    });
+    const pct = total ? Math.round(done * 100 / total) : 0;
+    const bar = document.getElementById('total-bar');
+    bar.setAttribute('aria-valuenow', pct);
+    bar.querySelector('span').style.width = pct + '%';
+    document.getElementById('total-text').textContent = done + ' de ' + total + ' pasos (' + pct + ' %)';
+  }
+
+  const tg = document.getElementById('toggle-done');
+  tg.addEventListener('click', () => {
+    const on = cont.classList.toggle('hide-done');
+    tg.textContent = on ? 'Mostrar lo hecho' : 'Ocultar lo hecho';
+  });
+  document.getElementById('reset').addEventListener('click', () => {
+    if (confirm('¿Borrar tus marcas y volver al estado registrado en el archivo?')) { marks = {}; save(); render(); }
+  });
+  render();
+})();
+</script>
+</body>
+</html>

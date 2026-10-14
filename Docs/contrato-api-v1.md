@@ -1,43 +1,56 @@
-# Contrato de la API v1 (borrador)
+# Contrato de la API v1 (borrador 2)
 
-Estado: borrador del 4 de octubre de 2026. Es lo único que comparten la pasarela, Hellominus y Zuhay. Deriva de `pasarela-usdt-colombia-estandar.html` (secciones API y webhooks, flujo y reglas). Lo marcado **ABIERTO** depende de una decisión de la Fase 0 (`DECISIONES.md`) y no se implementa hasta cerrarla.
+Estado: borrador del 14 de octubre de 2026. Reemplaza el borrador del 4 de octubre, que trataba a Hellominus como dueño del sistema. Ahora el sistema es el **proveedor de liquidez USDT** (nombre provisional), independiente, y sus **clientes** (Hellominus, DEVMINUS) lo consumen por esta API. Es lo único que comparten los proyectos.
+
+Fuentes: `Docs/pasarela-usdt-colombia-estandar.html` (flujo y reglas), `Libro de contabilidad blockchain/` y `CLAUDE.md` (decisiones). Lo marcado **ABIERTO** depende de una decisión de `DECISIONES.md` y no se implementa hasta cerrarla.
+
+## 0. Modelo en una página
+
+1. Un **cliente** (Hellominus, DEVMINUS) se vincula una sola vez: pasa KYB y deja la cuenta bancaria a la que se le dispersa. Cada cliente es un `project` y tiene su **`merchant`**: la empresa que recibe los pesos.
+2. Cuando un pagador del mundo quiere pagar en USDT, la aplicación del cliente (desde su servidor) **crea una orden**. La API devuelve una dirección de depósito única, el monto exacto en USDT y una hora límite.
+3. El **pagador paga directo al proveedor de liquidez** (a esa dirección). El proveedor analiza la billetera de origen, espera confirmaciones y convierte USDT a pesos.
+4. El proveedor **dispersa los pesos desde Bancolombia a la cuenta del merchant** (la empresa cliente), y avisa por webhook. El proveedor no paga a anfitriones ni a otros terceros: el cliente reparte por su cuenta.
 
 ## 1. Convenciones
 
 - **Base**: `https://<host>/v1`. Solo HTTPS. Cambios incompatibles van en `/v2`; agregar campos opcionales no rompe `v1`.
-- **Autenticación**: `Authorization: Bearer <api_key_del_proyecto>`. Una llave por proyecto, con permisos limitados, rotable. La llave identifica el `project_id`; ningún cuerpo ni ruta lo lleva.
+- **Autenticación**: `Authorization: Bearer <api_key_del_proyecto>`. Una llave por cliente, con permisos limitados, rotable. La llave identifica el `project_id`; ningún cuerpo ni ruta lo lleva. Se usa solo desde el servidor del cliente, nunca desde el navegador del pagador.
 - **Idempotencia**: todo `POST` exige `Idempotency-Key` (UUID). Misma llave y mismo cuerpo devuelve la respuesta original; misma llave con cuerpo distinto devuelve `409 idempotency_conflict`. Se conserva 24 horas.
 - **Dinero**: nunca decimales flotantes.
-  - Pesos: entero en pesos (`amount_cop`) en la API; internamente centavos. **ABIERTO**: confirmar si se aceptan centavos en la entrada.
+  - Pesos: entero en pesos (`amount_cop`). Internamente centavos. **ABIERTO**: si se aceptan centavos en la entrada.
   - USDT: cadena de texto con 6 decimales (`"250.000000"`).
   - Tasa: cadena (`"4000.00"`).
 - **Fechas**: ISO 8601 en UTC.
 - **Identificadores**: prefijados y opacos (`mrc_`, `ord_`, `stl_`, `rfd_`, `evt_`).
-- **Errores**: `{ "error": { "code": "...", "message": "...", "request_id": "..." } }`. Códigos: `400 invalid_request`, `401 unauthorized`, `403 forbidden`, `404 not_found`, `409 idempotency_conflict | invalid_state`, `422 merchant_not_approved | limit_exceeded | network_not_enabled`, `429 rate_limited`, `5xx internal`.
+- **Errores**: `{ "error": { "code": "...", "message": "...", "request_id": "..." } }`. Códigos: `400 invalid_request`, `401 unauthorized`, `403 forbidden`, `404 not_found`, `409 idempotency_conflict | invalid_state`, `422 merchant_not_approved | limit_exceeded | network_not_enabled | payer_not_allowed`, `429 rate_limited`, `5xx internal`.
 - **Paginación**: `?limit=` (máx. 100) y `?cursor=`; respuesta con `next_cursor`.
 - **Límite de velocidad**: por llave; encabezado `Retry-After` en `429`.
 - **Motivos de cumplimiento**: la API nunca revela por qué una orden queda en revisión ni expone resultados de análisis de billeteras.
 
-## 2. Comercios
+## 2. Comercios (la empresa que recibe los pesos)
 
-Quien recibe el dinero. **Decidido (4 de octubre de 2026)**: para Hellominus, el `merchant` es Hellominus mismo y el dinero llega a su cuenta; el reparto a anfitriones y a Zuhay no pasa por la pasarela. En la práctica Hellominus tiene un solo comercio. El modelo sigue admitiendo varios comercios por proyecto para otros casos futuros. **ABIERTO (#1)**: validación legal con abogado y contador.
+Hay uno por cliente. **Decidido (14 de octubre de 2026)**: la dispersión va a la **empresa cliente**, no a cada anfitrión. Por eso el comercio es una empresa (NIT), con una cuenta bancaria verificada. Los documentos del proveedor de liquidez recomiendan atender solo personas jurídicas con KYB, y el comercio cumple eso.
 
 ### `POST /v1/merchants`
-Registra un comercio y abre su vinculación (KYB o KYC).
+Registra la empresa cliente y abre su vinculación (KYB).
 
 ```json
 {
-  "external_ref": "HOST-0042",
-  "legal_name": "Alojamientos del Valle S.A.S.",
+  "external_ref": "HELLOMINUS",
+  "legal_name": "Hellominus S.A.S.",
   "doc_type": "NIT",
   "doc_number": "900123456-7",
   "fiscal_residence": "CO",
   "beneficial_owners": [{ "name": "…", "doc_type": "CC", "doc_number": "…" }],
-  "bank_account": { "bank_code": "…", "type": "savings", "number": "…", "holder_doc": "…" }
+  "bank_account": { "bank_code": "…", "type": "savings", "number": "…", "holder_doc": "900123456-7" }
 }
 ```
 
-`201` → `{ "id": "mrc_…", "kyc_status": "pending", "risk_level": null }`. Los datos bancarios y documentos se cifran a nivel de aplicación; nunca se devuelven completos (solo últimos 4 dígitos).
+`201` → `{ "id": "mrc_…", "kyc_status": "pending", "risk_level": null }`.
+
+- La cuenta debe estar **a nombre del mismo NIT** del comercio. Cualquier otra titularidad se rechaza.
+- Los datos bancarios y documentos se cifran a nivel de aplicación y nunca se devuelven completos (solo últimos 4 dígitos).
+- El alta normalmente la hace el equipo del proveedor con el cliente, no se automatiza en la primera versión. **ABIERTO**: si este endpoint queda interno.
 
 ### `GET /v1/merchants/{id}`
 `{ id, external_ref, kyc_status, risk_level, limits: { per_order_cop, per_month_cop }, created_at }`. `kyc_status`: `pending | review | approved | rejected`. Solo un comercio `approved` puede recibir órdenes.
@@ -52,6 +65,7 @@ Registra un comercio y abre su vinculación (KYB o KYC).
   "external_ref": "HM-48213",
   "amount_cop": 1000000,
   "network": "tron",
+  "payer": { "type": "person", "country": "AR" },
   "metadata": { "booking": "HM-48213" }
 }
 ```
@@ -67,15 +81,16 @@ Registra un comercio y abre su vinculación (KYB o KYC).
   "token": "USDT",
   "usdt_amount": "250.000000",
   "rate_cop_per_usdt": "4000.00",
-  "expires_at": "2026-10-04T15:30:00Z"
+  "expires_at": "2026-10-14T15:30:00Z"
 }
 ```
 
-- `external_ref` es único por proyecto. Repetirlo con otra llave de idempotencia devuelve `409`.
-- La dirección es única por orden. La cotización queda bloqueada hasta `expires_at` (15 minutos por defecto, configurable por proyecto).
-- `metadata` es libre, hasta 2 KB, sin datos personales del viajero.
-- No hay campo `splits`: con el dinero llegando a Hellominus, el reparto es interno de Hellominus y Zuhay. Se agregaría en una versión posterior solo si cambia esa decisión.
-- **ABIERTO (#4)**: `payment_valid_until`, la hora hasta la cual el pago sigue siendo válido (las confirmaciones de red pueden llegar después de `expires_at`). Zuhay debe retener la disponibilidad al menos hasta ahí.
+- `external_ref` es único por cliente. Repetirlo con otra llave de idempotencia devuelve `409`.
+- La dirección es única por orden. La cotización queda bloqueada hasta `expires_at` (15 minutos por defecto, configurable por cliente). Los documentos del proveedor describen cotizaciones de 10 a 30 segundos para clientes institucionales (RFQ); para el pagador final de una reserva se mantiene la ventana larga.
+- `payer`: **el pagador final es una persona**, no una empresa. Esto sube el KYC y el monitoreo. **ABIERTO (#1)**: qué datos del pagador se exigen (país, tipo, y nombre e identificación cuando el acumulado se acerca al umbral CARF). Hasta definirlo, solo `type` y `country`. Un pagador de un país sancionado se rechaza con `422 payer_not_allowed` antes de crear la orden.
+- `metadata` es libre, hasta 2 KB, sin datos personales del pagador.
+- No hay campo `splits`: el reparto a anfitriones es interno del cliente.
+- **ABIERTO (#4)**: `payment_valid_until`, la hora hasta la cual el pago sigue siendo válido (las confirmaciones de red pueden llegar después de `expires_at`). El cliente debe retener la disponibilidad al menos hasta ahí.
 
 ### `GET /v1/orders/{id}`
 Orden completa más `history: [{ from, to, event, at }]`. Con `?expand=payment` agrega `usdt_received`, `confirmations`, `tx_hash`.
@@ -83,34 +98,32 @@ Orden completa más `history: [{ from, to, event, at }]`. Con `?expand=payment` 
 ### `POST /v1/orders/{id}/cancel`
 Solo si el estado es `CREATED` o `AWAITING_PAYMENT`. En otro estado devuelve `409 invalid_state`.
 
-### Estados que ve el proyecto
+### Estados que ve el cliente
 
 `CREATED, AWAITING_PAYMENT, PAYMENT_DETECTED, CONFIRMING, CONFIRMED, CONVERTING, CONVERTED, SETTLING, SETTLED, UNDERPAID, HELD_COMPLIANCE, REJECTED, REFUND_PENDING, REFUNDED, FAILED_CONVERSION, FAILED_PAYOUT, EXPIRED, CANCELLED`.
 
-Los estados internos de fallo (`FAILED_CONVERSION`, `FAILED_PAYOUT`) y `HELD_COMPLIANCE` se exponen sin causa. El proyecto debe tratarlos como "en proceso" y no mostrarle al viajero un motivo.
+Los estados de fallo y `HELD_COMPLIANCE` se exponen **sin causa**. El cliente debe tratarlos como "en proceso" y no mostrarle al pagador un motivo. Terminales: `SETTLED, REFUNDED, REJECTED, CANCELLED`.
 
-Terminales: `SETTLED, REFUNDED, REJECTED, CANCELLED`.
-
-**ABIERTO (#4)**: qué estado dispara la confirmación de la reserva (`CONFIRMED` por pago válido en cadena, o `SETTLED`/pesos recibidos).
+**ABIERTO (#4)**: qué estado confirma la reserva (`CONFIRMED` por pago válido en cadena, o `SETTLED` cuando los pesos ya salieron).
 
 ## 4. Reembolsos (ABIERTO, brecha 1 del estándar)
 
-El estándar solo devuelve por error de pago (pago de menos, tardío o rechazado). No cubre cancelar una reserva ya liquidada. Propuesta, sujeta a #3:
+El estándar solo devuelve por error de pago (pago de menos, tardío o rechazado). No cubre cancelar una reserva ya liquidada. Con la dispersión a la empresa cliente, un reembolso posterior a la liquidación implicaría que el cliente devuelva los pesos y el proveedor pague de vuelta al pagador. Propuesta, sujeta a #3:
 
 - `POST /v1/orders/{id}/refunds` con `{ amount_cop, reason }` → `rfd_…`.
 - Solo a la billetera de origen y con aprobación de cumplimiento.
-- Requiere definir si el anfitrión ya cobró (custodia hasta el check-in, brecha 2).
 
 ## 5. Liquidaciones
 
 ### `GET /v1/settlements?merchant_id=&from=&to=`
-Dispersiones por comercio y periodo: `{ id, order_id, merchant_id, gross_cop, fee_cop, net_cop, rail, bank_ref, status, settled_at }`. `status`: `pending | done | failed`.
+Dispersiones al comercio por periodo: `{ id, order_id, merchant_id, gross_cop, fee_cop, net_cop, rail, bank_ref, status, settled_at }`. `status`: `pending | done | failed`. `rail` indica la entidad: **Bancolombia** como cuenta de dispersión del proveedor.
 
-**ABIERTO (#3)**: momento del pago al anfitrión (inmediato o después del check-in).
+- **ABIERTO (#8)**: si el proveedor actúa como principal (compra y vende con su balance, con capital de trabajo) o como agente (ejecuta por cuenta del cliente y cobra comisión). Cambia IVA, contratos y el momento de la dispersión.
+- **ABIERTO**: frecuencia de dispersión (inmediata por orden o por lote) y el segundo banco que recomiendan los documentos.
 
 ## 6. Webhooks
 
-La pasarela envía `POST` a la URL configurada por proyecto.
+El proveedor envía `POST` a la URL configurada por cliente.
 
 ```
 X-Signature: t=1760000000,v1=<hmac_sha256(secret, t + "." + body)>
@@ -120,7 +133,7 @@ X-Signature: t=1760000000,v1=<hmac_sha256(secret, t + "." + body)>
 {
   "id": "evt_…",
   "type": "order.confirmed",
-  "created_at": "2026-10-04T15:12:00Z",
+  "created_at": "2026-10-14T15:12:00Z",
   "data": { "order_id": "ord_…", "external_ref": "HM-48213", "state": "CONFIRMED" }
 }
 ```
@@ -128,27 +141,30 @@ X-Signature: t=1760000000,v1=<hmac_sha256(secret, t + "." + body)>
 - Eventos: `order.payment_detected`, `order.confirmed`, `order.converted`, `order.settled`, `order.expired`, `order.held`, `order.refunded`.
 - `order.held` no lleva motivo.
 - Receptor: verificar firma, rechazar si `t` tiene más de 5 minutos, responder `2xx` rápido y procesar de forma idempotente por `id`. El orden de entrega no está garantizado; usar `GET /v1/orders/{id}` ante la duda.
-- Reintentos: 1 min, 5 min, 30 min, 2 h, 12 h; después alerta al equipo de la pasarela.
-- El secreto de firma es por proyecto, se rota sin cortes aceptando dos secretos durante una ventana.
+- Reintentos: 1 min, 5 min, 30 min, 2 h, 12 h; después alerta al equipo del proveedor.
+- El secreto de firma es por cliente y se rota aceptando dos secretos durante una ventana.
 
-## 7. Qué consume cada proyecto
+## 7. Qué consume cada cliente
 
-| Proyecto | Llama | Recibe |
+| Cliente | Llama | Recibe |
 |---|---|---|
-| Hellominus (servidor) | `POST /orders`, `GET /orders/{id}`, `POST /orders/{id}/cancel` | Webhooks que se mapean a `bookings.payment_status` |
-| Zuhay | Webhooks de la pasarela para registrar el pago externo `HM-…` (idempotente por `evt_` y `external_ref`) | Es quien debe retener la disponibilidad hasta `payment_valid_until` |
-| Cuenta de operación (interna) | `GET /settlements`, consola de cumplimiento | — |
-
-El navegador del viajero nunca llama a esta API ni ve la llave: Hellominus la usa solo desde su servidor.
+| Hellominus (servidor) | `POST /orders`, `GET /orders/{id}`, `POST /orders/{id}/cancel` | Webhooks que se mapean al estado de pago de su reserva |
+| DEVMINUS (servidor) | Igual | Igual |
+| Zuhay | **ABIERTO**: si es cliente directo o recibe los avisos a través de Hellominus | Si registra pagos externos, debe hacerlo de forma idempotente por `evt_` y `external_ref`, y retener fechas hasta `payment_valid_until` |
+| Equipo del proveedor (interno) | `GET /settlements`, consola de cumplimiento, alta de comercios | — |
 
 ## 8. Fuera de alcance de v1
 
-Webhooks de comercios por separado, pagos recurrentes, otras monedas distintas de USDT y COP, múltiples cuentas bancarias por comercio.
+- RFQ institucional con cotización de 10 a 30 segundos para otras empresas que compren o vendan liquidez en bloque (el modelo del documento Proveedor de liquidez). Se agrega en una versión posterior si el negocio lo pide.
+- Dispersión a anfitriones o a otros terceros.
+- Pagos recurrentes, otras monedas distintas de USDT y COP (el libro prevé BTC, ETH y USD), múltiples cuentas bancarias por comercio.
 
 ## 9. Preguntas para cerrar el contrato
 
-1. ~~¿Quién es el `merchant`?~~ Resuelto: Hellominus. Falta validación legal (#1).
-2. ~~¿Hay reparto en la orden?~~ Resuelto: no, el reparto es interno.
-3. ¿Qué estado confirma la reserva? (#4)
-4. ¿Zuhay puede registrar un pago externo idempotente y retener fechas hasta `payment_valid_until`? (#6)
-5. ¿Redes habilitadas en v1: solo `tron`, o también `polygon`? (#5)
+1. ¿Zuhay es cliente directo o recibe los avisos a través de Hellominus? Dijiste primero "Hellominus y Zuhay" y después "Hellominus y DEVMINUS".
+2. ¿Qué datos del pagador final exige el abogado (país, nombre, identificación)? (#1)
+3. ¿Principal o agente? (#8)
+4. ¿Qué estado confirma la reserva? (#4)
+5. ¿Política de reembolso? (#3)
+6. ¿Redes habilitadas en v1: solo `tron`, o también `polygon`? (#5)
+7. ¿El alta de comercios es interna del proveedor?
