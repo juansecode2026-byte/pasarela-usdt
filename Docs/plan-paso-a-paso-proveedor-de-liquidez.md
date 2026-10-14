@@ -152,6 +152,8 @@ Situaciones que salieron en el camino.
 | 7.23 | Protección de ramas en GitHub (requiere Pro u organización) | Pendiente |
 | 7.24 | Renombrar el repositorio con el nombre definitivo | Pendiente |
 | 7.25 | Decidir si se restaura el proyecto pausado `crm-productividad-hello-minus` | Pendiente |
+| 7.26 | Contexto desde `.md`: cada HTML tiene su `.md` gemelo y se regenera con `scripts/sincronizar-md.py` | **Hecho** |
+| 7.27 | Sincronización automática HTML y `.md`: gancho de Claude Code al editar un HTML y gancho de git antes de cada commit | **Hecho** |
 
 **Se construye ya, con planes gratuitos y redes de prueba, sin dinero real.** Las herramientas que exigen contrato y empresa (análisis on-chain, custodia institucional, Binance institucional) se cotizan en paralelo para que estén firmadas al llegar el primer cliente. **Supabase debe pasar a Pro antes de guardar el primer dato real.**
 

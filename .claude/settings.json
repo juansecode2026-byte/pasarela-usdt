@@ -2,5 +2,18 @@
   "permissions": {
     "allow": ["mcp__claude_ai_Supabase__execute_sql"],
     "deny": ["Read(./.env)", "Read(./.env.*)"]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python scripts/hook-sincronizar-md.py"
+          }
+        ]
+      }
+    ]
   }
 }

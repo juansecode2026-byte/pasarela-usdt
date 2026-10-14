@@ -2,16 +2,32 @@
 
 Antes llamado "Pasarela de pago USDT". Desde el 14 de octubre de 2026 es un **proveedor de liquidez independiente**: recibe USDT de pagadores de cualquier parte del mundo, los convierte y entrega pesos a sus clientes, y deja cada operación documentada para UIAF y DIAN. El nombre definitivo está por definir.
 
-## Contexto y fuentes (en `Docs/`, locales)
+## Cómo leer el contexto (regla del 14 de octubre de 2026)
 
-- `Docs/plan-paso-a-paso-proveedor-de-liquidez.md`: **el plan vigente**, por fases, con el estado de cada paso (empresa y tecnología). Es el archivo de traspaso.
-- `Docs/contrato-api-v1.md`: contrato de la API (borrador).
-- `Docs/pasarela-usdt-colombia-estandar.html`: estándar técnico (flujo, máquina de estados, reglas, Binance, modelo de datos, API, cumplimiento, fases). Todo lo regulatorio (UIAF, DIAN, Binance) está **sin verificar**: lo validan un abogado y un contador.
+**El foco es el `.md`.** Cada HTML del proyecto tiene un `.md` gemelo con el mismo nombre. Para tener contexto se lee el `.md`, que es más corto y gasta menos tokens. El HTML se lee solo cuando haga falta (una parte interactiva, una guía de un paso, algo que el `.md` omite), y se avisa por qué.
+
+- **La sincronización es automática.** Al editar un HTML con Write o Edit, un gancho de Claude Code (`.claude/settings.json` y `scripts/hook-sincronizar-md.py`) regenera su `.md`. Antes de cada commit, un gancho de git (`scripts/git-hooks/pre-commit`) los regenera otra vez y los incluye. El gancho de git se activa una vez por clon con `git config core.hooksPath scripts/git-hooks`.
+- **Cuando no es automática:** si un HTML se modifica por Bash, un script o a mano en un editor, hay que correr `python scripts/sincronizar-md.py` en ese mismo turno. `python scripts/sincronizar-md.py --revisar` avisa cuáles están desactualizados.
+- **Al actualizar un checklist**, el `.md` correspondiente se regenera siempre: lleva los pasos con su estado y el análisis de resultados. La guía de cada paso (sitio web y pasos) vive solo en el HTML.
+- Los `.md` generados no se editan a mano: se pisan. Si hay que cambiar algo, se cambia el HTML y se regenera.
+- Los documentos que nacen en Markdown (el plan, el contrato, `DECISIONES.md`, `NOTAS.md`) se editan directamente.
+- Para un documento largo, buscar la sección con Grep en vez de leerlo entero.
+
+## Contexto y fuentes (locales)
+
+Leer en este orden, siempre los `.md`:
+
+1. `Docs/plan-paso-a-paso-proveedor-de-liquidez.md`: **el plan vigente**, por fases, con el estado de cada paso (empresa y tecnología). Es el archivo de traspaso.
+2. `DECISIONES.md`: qué se aceptó, qué se reemplazó y qué sigue abierto.
+3. `checklist Desarrollo De procesos/checklist-proveedor-de-liquidez.md` y `checklist-libro-contable-blockchain.md`: estado paso a paso y análisis de resultados.
+4. `Docs/contrato-api-v1.md`: contrato de la API (borrador).
+5. Libro y proveedor de liquidez (definen este proyecto), en `Libro de contabilidad blockchain/`: `libro-contable-blockchain_v1.7_2026-10-14.md` y `proveedor-liquidez_v1.0_2026-10-14.md`.
+6. `Docs/pasarela-usdt-colombia-estandar.md`: estándar técnico anterior (flujo, máquina de estados, reglas, Binance, modelo de datos, API, cumplimiento). **Parcialmente superado** por el enfoque nuevo; sigue valiendo para la máquina de estados y las reglas de pagos. Todo lo regulatorio (UIAF, DIAN, Binance) está **sin verificar**: lo validan un abogado y un contador.
 
 ## Enfoque (decidido por Juan el 14 de octubre de 2026)
 
 - Por legalidad y para hacer las cosas bien, este proyecto es **independiente**: se comporta como **proveedor de liquidez** que presta servicio a otras compañías. Tendrá su propia empresa y su propia base de datos.
-- **Estructura de las empresas:** DEVMINUS es la empresa principal. Dentro de DEVMINUS está **Hellominus**, y Hellominus tiene como socio a **Zuhay** (el CRM de ventas).
+- **Estructura de las empresas:** DEVMINUS es la empresa principal (confirmado por Juan: "el nombre de la empresa es DEVMINUS"; los documentos nuevos la llaman "Minus"). Dentro de DEVMINUS está **Hellominus**, y Hellominus tiene como socio a **Zuhay** (el CRM de ventas).
 - **Reparto de los pagos:**
   - Pagos en Colombia, directo en pesos colombianos: los maneja la **pasarela en pesos** correspondiente (la construye Zuhay).
   - Pagos en USDT desde cualquier parte del mundo: los maneja **este proyecto**.

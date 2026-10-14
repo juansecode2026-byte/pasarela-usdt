@@ -1,0 +1,17 @@
+#!/bin/sh
+# Gancho de git: antes de cada commit regenera los .md gemelos de los HTML y los incluye en el commit.
+# Así el repositorio nunca guarda un HTML con su .md desactualizado. Sin llamadas a Claude.
+# Se activa con: git config core.hooksPath scripts/git-hooks   (ya hecho en este clon)
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+export PYTHONIOENCODING=utf-8
+
+if ! python scripts/sincronizar-md.py --silencioso; then
+  echo "pre-commit: no se pudieron sincronizar los .md. Commit cancelado." >&2
+  exit 1
+fi
+
+python scripts/sincronizar-md.py --gemelos | tr -d '\r' | while IFS= read -r md; do
+  [ -f "$md" ] && git add -- "$md"
+done
+exit 0

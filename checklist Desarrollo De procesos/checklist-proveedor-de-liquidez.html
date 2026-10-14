@@ -74,6 +74,21 @@ dd{margin:0;font-size:15px}
 }
 @media (prefers-reduced-motion:reduce){.bar span{transition:none}}
 @media print{.tools{display:none} .phase,.summary,ol.results>li{break-inside:avoid}}
+/* guias */
+[hidden]{display:none !important}
+.row{display:grid;grid-template-columns:22px 1fr auto auto;gap:10px;align-items:start;padding:9px 10px;border-radius:8px}
+.row:hover{background:var(--todo-soft)}
+button.title{background:none;border:0;padding:0;margin:0;text-align:left;color:inherit;font:inherit;cursor:pointer;border-radius:4px}
+button.title:hover .main{text-decoration:underline}
+li.checked button.title:hover .main{text-decoration:line-through}
+.ir{display:inline-block;margin-left:8px;font-size:12px;color:var(--accent)}
+.guide-btn{font-size:12px;padding:2px 10px}
+.guide{margin:0 10px 8px 42px;padding:10px 14px;background:var(--todo-soft);border-radius:8px;font-size:14px}
+.guide p{margin:0 0 4px}
+.guide ol{margin:4px 0 0;padding-left:20px}
+.guide a, dd a{color:var(--accent)}
+.flash{outline:2px solid var(--accent);outline-offset:2px;background:var(--accent-soft)}
+@media (max-width:560px){.row{grid-template-columns:22px 1fr}.row .badge,.row .guide-btn{grid-column:2;justify-self:start}.guide{margin-left:10px}}
 </style>
 </head>
 <body>
@@ -90,6 +105,7 @@ dd{margin:0;font-size:15px}
       <button type="button" id="toggle-done">Ocultar lo hecho</button>
       <button type="button" id="reset">Volver al estado registrado</button>
     </div>
+    <p class="note" style="margin-top:6px">Toca un paso: si ya tiene resultado, te lleva a su análisis; si no, abre su guía. El botón Guía muestra el sitio y los pasos. Escribe las direcciones a mano en el navegador: hay sitios falsos que imitan exchanges y billeteras.</p>
     <div class="legend">
       <span><span class="badge b-hecho">hecho</span> registrado como terminado</span>
       <span><span class="badge b-curso">en curso</span> empezado, no terminado</span>
@@ -117,54 +133,65 @@ dd{margin:0;font-size:15px}
     </div>
 
     <ol class="results">
-      <li>
+      <li data-pasos="7.1">
         <h3>Proyecto independiente con repositorio y base de datos propios</h3>
         <dl>
           <dt>Qué se logró</dt><dd>Estructura del laboratorio, repositorio privado en GitHub y proyecto propio de Supabase, separados de Hellominus.</dd>
           <dt>Evidencia</dt><dd>Repositorio <code>juansecode2026-byte/pasarela-usdt</code> y proyecto Supabase <code>pasarela-usdt</code>.</dd>
           <dt>Qué habilita</dt><dd>Construir el sistema sin exponer datos sensibles en el repositorio público de Hellominus.</dd>
           <dt>Qué falta o qué riesgo queda</dt><dd>Sin protección de ramas (pide GitHub Pro). Supabase en plan gratuito: pasar a Pro antes del primer dato real.</dd>
-          <dt>Pasos del checklist</dt><dd>7.1.</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">7.1.</dd>
         </dl>
       </li>
-      <li>
+      <li data-pasos="7.3">
         <h3>Esquema base probado</h3>
         <dl>
           <dt>Qué se logró</dt><dd>Cuatro migraciones con clientes, llaves de API, órdenes, transacciones on-chain, análisis de riesgo, dispersiones, webhooks y bitácora encadenada por hash.</dd>
           <dt>Evidencia</dt><dd>29 pruebas en PostgreSQL local, todas aprobadas, y una prueba de mutación que confirma que detectan una protección faltante (5 de octubre).</dd>
           <dt>Qué habilita</dt><dd>Construir la máquina de estados y la API de órdenes sobre una base que rechaza por diseño errores de dinero y mezcla entre clientes.</dd>
           <dt>Qué falta o qué riesgo queda</dt><dd>En Supabase solo se verificó que las tablas existen, no su comportamiento (las escrituras de prueba fueron bloqueadas).</dd>
-          <dt>Pasos del checklist</dt><dd>7.3.</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">7.3.</dd>
         </dl>
       </li>
-      <li>
+      <li data-pasos="0.11 0.12 7.2">
         <h3>Enfoque y flujo de dinero definidos</h3>
         <dl>
           <dt>Qué se logró</dt><dd>El proyecto es un proveedor de liquidez independiente. Los pagos USDT entran directo al proveedor, que dispersa los pesos desde Bancolombia a la empresa cliente (Hellominus, DEVMINUS).</dd>
           <dt>Evidencia</dt><dd><code>DECISIONES.md</code> y <code>CLAUDE.md</code> del 14 de octubre de 2026.</dd>
           <dt>Qué habilita</dt><dd>Reescribir el contrato de la API (hecho, borrador 2) y saber a quién se le verifica la cuenta bancaria: una empresa por cliente.</dd>
           <dt>Qué falta o qué riesgo queda</dt><dd>Es el modelo de mayor carga regulatoria (recibe dinero de personas). Debe validarlo un abogado y un contador antes de mover dinero real.</dd>
-          <dt>Pasos del checklist</dt><dd>0.11, 0.12 y 7.2.</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">0.11, 0.12 y 7.2.</dd>
         </dl>
       </li>
-      <li>
+      <li data-pasos="7.4 7.17 7.18">
         <h3>Libro contable v1.7 escrito, pendiente de pruebas</h3>
         <dl>
           <dt>Qué se logró</dt><dd>Migración del libro con activos genéricos (COP, USD, USDT, BTC, ETH), asientos encadenados por hash, reversos, raíz de Merkle diaria, tasas, eventos crudos y conciliación.</dd>
           <dt>Evidencia</dt><dd>Archivo <code>supabase/migrations/20261014000001_libro_v17.sql</code> y sus pruebas en <code>supabase/tests/esquema.test.sql</code>.</dd>
           <dt>Qué habilita</dt><dd>Cuando pase las pruebas: registrar cada movimiento con evidencia verificable por un auditor sin publicar datos de clientes.</dd>
           <dt>Qué falta o qué riesgo queda</dt><dd><strong>Sin probar:</strong> se perdió el acceso a la base de pruebas local. Hasta correr las pruebas no se puede afirmar que funcione.</dd>
-          <dt>Pasos del checklist</dt><dd>7.4, 7.17 y 7.18.</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">7.4, 7.17 y 7.18.</dd>
         </dl>
       </li>
-      <li>
+      <li data-pasos="">
         <h3>Plan unificado y checklists para seguir el avance</h3>
         <dl>
           <dt>Qué se logró</dt><dd>Un plan paso a paso que une la empresa y la tecnología, y dos checklists con estado por paso y este análisis de resultados. Las situaciones que aparecen en el camino se agregan en su fase.</dd>
           <dt>Evidencia</dt><dd><code>Docs/plan-paso-a-paso-proveedor-de-liquidez.md</code> y la carpeta <code>checklist Desarrollo De procesos/</code>.</dd>
           <dt>Qué habilita</dt><dd>Ver en un solo lugar qué bloquea qué, repartir el trabajo entre socios, abogado, contador y equipo técnico, y medir el avance.</dd>
           <dt>Qué falta o qué riesgo queda</dt><dd>El estado solo es confiable si se actualiza en cada avance; las marcas del navegador no llegan al repositorio.</dd>
-          <dt>Pasos del checklist</dt><dd>Todo el documento.</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">Todo el documento.</dd>
+        </dl>
+      </li>
+    
+      <li data-pasos="7.26 7.27">
+        <h3>Contexto desde Markdown, sincronizado solo</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>Cada HTML del proyecto tiene un .md gemelo, generado con un script. El contexto se lee del .md y el HTML queda para lo interactivo. La regla quedó en <code>CLAUDE.md</code>.</dd>
+          <dt>Evidencia</dt><dd>7 pares HTML y .md generados por <code>scripts/sincronizar-md.py</code>. Los .md de los documentos pesan entre el 30 % y el 65 % de su HTML (los checklists, cerca del 30 %), y sin restos de etiquetas.</dd>
+          <dt>Qué habilita</dt><dd>Retomar el trabajo en una sesión nueva leyendo menos, y mantener los checklists y sus resultados sincronizados con un solo comando.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd>La sincronización es automática en dos puntos: al editar un HTML con Claude Code (gancho en <code>.claude/settings.json</code>) y antes de cada commit (gancho de git en <code>scripts/git-hooks</code>). Un HTML que se modifique por fuera de ambos, por ejemplo a mano en un editor, queda con su .md viejo hasta el próximo commit o hasta correr <code>python scripts/sincronizar-md.py</code>. El gancho de git se activa una vez por clon con <code>git config core.hooksPath scripts/git-hooks</code>. Los documentos largos (el estándar y el libro, de unos 70.000 caracteres) conviene buscarlos por sección.</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">7.26 y 7.27.</dd>
         </dl>
       </li>
     </ol>
@@ -266,6 +293,8 @@ const FASES = [
     ['7.23','Protección de ramas en GitHub (requiere GitHub Pro u organización)','Socios','pend'],
     ['7.24','Renombrar el repositorio cuando haya nombre definitivo del proveedor','Equipo técnico','pend'],
     ['7.25','Decidir si se restaura el proyecto de Supabase pausado (crm-productividad-hello-minus)','Juan','pend'],
+    ['7.26','Contexto desde .md: cada HTML tiene su .md gemelo; se lee el .md y se regenera al actualizar el HTML (scripts/sincronizar-md.py)','Equipo técnico','hecho'],
+    ['7.27','Sincronización automática HTML y .md: gancho de Claude Code al editar un HTML y gancho de git antes de cada commit','Equipo técnico','hecho'],
   ]},
   { id:'8', titulo:'Fase 8. Lanzamiento controlado', nota:'Todos.', items:[
     ['8.1','Piloto con 2 o 3 clientes conocidos y límites bajos el primer mes','Todos','pend'],
@@ -277,6 +306,100 @@ const FASES = [
     ['8.7','Seguimiento del proyecto de ley PSAV (PL 510 de 2025)','Abogado','pend'],
   ]},
 ];
+// Guía por paso: [dónde, enlace, [pasos]]. Muy resumida. Sin enlace = reunión, documento o trabajo interno.
+const GUIAS = {
+  '0.1':['Reunión de socios','https://www.rues.org.co',['Cada socio propone 2 o 3 nombres','Revisar disponibilidad en el RUES y del dominio','Elegir uno y anotarlo en DECISIONES.md']],
+  '0.2':['Reunión de socios con abogado societario','',['Definir porcentajes (con 50/50 se necesita regla de desempate)','Nombrar representante legal principal y suplente','Dejarlo por escrito para el acuerdo entre socios (1.3)']],
+  '0.3':['Abogado financiero y contador','',['Llevar los tres modelos (directo, orquestador, cobro propio) del estándar','Pedir concepto escrito de cuál aplica con pagadores personas del exterior','Registrarlo en DECISIONES.md (#1)']],
+  '0.4':['Contador','',['Explicar principal frente a agente (documento Proveedor de liquidez, sección 02)','Pedir el efecto en IVA, capital y contratos','Decidir y anotar en DECISIONES.md (#8)']],
+  '0.5':['Abogado','',['Preguntar qué datos exigir al pagador (país, nombre, identificación) y desde qué monto','Preguntar si se aceptan personas naturales o solo empresas','Reflejarlo en el campo payer del contrato de la API']],
+  '0.6':['Reunión de socios','',['Confirmar USDT contra COP como inicio','Dejar BTC, ETH y USD para una segunda etapa','Marcar este paso al confirmarlo']],
+  '0.7':['Reunión con Hellominus y DEVMINUS','',['Elegir: pago válido en cadena (CONFIRMED) o pesos ya salidos (SETTLED)','Hablar del riesgo de precio entre ambos','Anotarlo en el contrato de la API (sección 3)']],
+  '0.8':['Reunión con abogado','',['Definir cuándo se devuelve (pago de menos, tardío, rechazado)','Definir si se reembolsan reservas ya liquidadas','Escribir la política y anexarla al acuerdo marco']],
+  '0.9':['Reunión de socios','',['Comparar TRON y Polygon por costo y soporte del proveedor de análisis','Confirmar que el proveedor on-chain cubre la red','Anotar la elección en DECISIONES.md (#5)']],
+  '0.10':['Reunión con Hellominus','',['Confirmar si Zuhay llama a la API o solo origina las ventas','Actualizar la tabla de clientes del contrato (sección 7)']],
+  '0.11':['Ya decidido','',['Registrado en DECISIONES.md y CLAUDE.md el 14 de octubre de 2026']],
+  '0.12':['Ya decidido','',['Registrado en DECISIONES.md y CLAUDE.md el 14 de octubre de 2026']],
+
+  '1.1':['Abogado','',['Redactar la cesión de propiedad intelectual de cada socio hacia Minus','Firmarla antes de constituir la SAS','Guardar copia firmada']],
+  '1.2':['RUES','https://www.rues.org.co',['Buscar el nombre elegido en el RUES','Revisar disponibilidad del dominio propio','Reservarlo cuando el nombre esté confirmado']],
+  '1.3':['Abogado societario','',['Llevar la tabla de la Parte II.E.4 del libro v1.7','Definir participación, roles, aportes, permanencia, decisiones, dividendos y exclusividad','Firmar antes de constituir']],
+  '1.4':['Abogado','',['Objeto: compraventa, intermediación y custodia de activos virtuales; provisión de liquidez; consultoría','No incluir desarrollo de software (lo hace Minus)','Revisar que un banco lo entienda claro']],
+  '1.5':['Cámara de Comercio de tu ciudad','https://www.rues.org.co',['Presentar el documento privado de constitución','Pagar derechos de matrícula','Obtener el certificado de existencia y representación legal']],
+  '1.6':['Abogado','',['Listar beneficiarios finales con documento y porcentaje','Dejarlo en el certificado y en el libro de accionistas']],
+  '1.7':['Socios','',['Buscar contador con experiencia en cripto y pedir referencias','Definir si hay topes de revisor fiscal (se revisa cada año)']],
+  '1.8':['Registrador de dominios y Google Workspace','https://workspace.google.com',['Con el nombre definido, comprar el dominio propio (distinto del de Minus)','Crear el correo corporativo','Usarlo para bancos, Binance, DIAN y UIAF']],
+
+  '2.1':['Portal MUISCA de la DIAN','https://muisca.dian.gov.co',['Con la SAS inscrita, abrir el RUT (o con el contador)','Elegir la actividad económica (CIIU) con el contador','Descargar el RUT y el NIT']],
+  '2.2':['Portal MUISCA de la DIAN','https://muisca.dian.gov.co',['Actualizar el RUT agregando la responsabilidad 67','Hacerlo antes de la primera operación','Guardar el RUT actualizado']],
+  '2.3':['Portal MUISCA de la DIAN','https://muisca.dian.gov.co',['Solicitar la firma electrónica','Guardar el certificado en un lugar seguro','Probar con una presentación sencilla']],
+  '2.4':['Portal de la DIAN','https://www.dian.gov.co',['Habilitarse como facturador electrónico','Elegir el software de facturación','Definir con el contador qué se factura en cada operación']],
+  '2.5':['Secretaría de Hacienda del municipio','',['Inscribirse en el ICA','Definir la actividad y la base (ingreso bruto o margen)','Anotar el calendario municipal']],
+  '2.6':['Contador','',['Pedir concepto escrito: venta de cripto sin IVA, comisión con IVA','Definir cómo se trata el spread','Considerar consulta formal a la DIAN']],
+
+  '3.1':['Socios','',['Elegir persona con idoneidad acreditada y un suplente','Dejar el nombramiento en acta de la asamblea']],
+  '3.2':['Supersociedades','https://www.supersociedades.gov.co',['Basarse en el Capítulo X de la Circular Básica Jurídica','Incluir matriz de riesgo, segmentación, señales de alerta y procedimiento ROS','Aprobarlo en asamblea']],
+  '3.3':['Oficial de cumplimiento','',['Definir la lista de documentos: cámara de comercio, RUT, beneficiarios, estados financieros, origen de fondos','Consultar listas restrictivas y PEP','Documentar la aprobación de cada cliente']],
+  '3.4':['Oficial de cumplimiento','',['Definir qué datos pedir al pagador según el paso 0.5','Definir desde qué monto se piden datos completos','Escribirlo en el manual SAGRILAFT']],
+  '3.5':['Chainalysis, Elliptic o TRM Labs','https://www.chainalysis.com',['Cotizar con dos de los tres proveedores','Pasar su revisión KYB (requiere la SAS)','Firmar y guardar la llave de API en un gestor de secretos']],
+  '3.6':['Oficial de cumplimiento','',['Definir qué datos de origen y beneficiario se intercambian entre proveedores','Escribir el procedimiento en el manual','Probarlo con un caso de ejemplo']],
+  '3.7':['UIAF','https://www.uiaf.gov.co',['Solicitar el registro como reportante en SIREL','Obtener código y usuario','Probar los formatos con un reporte de prueba']],
+
+  '4.1':['Gerencia','',['Reunir certificado de existencia, RUT, manual SAGRILAFT y organigrama','Agregar perfil de clientes, volúmenes esperados y flujo de fondos','Revisarlo con el oficial de cumplimiento']],
+  '4.2':['Bancolombia','https://www.bancolombia.com',['Pedir cita con un ejecutivo empresarial','Presentar el dossier y explicar el negocio','Abrir la cuenta de dispersión']],
+  '4.3':['Otro banco','',['Repetir el proceso con un segundo banco','Usarlo de respaldo si cierran la cuenta principal','Meta: antes de 6 meses']],
+  '4.4':['Gerencia','',['Abrir cuentas distintas para fondos de clientes y fondos propios','No mezclar saldos nunca','Reflejarlo en el plan de cuentas']],
+  '4.5':['Asesor cambiario','https://www.banrep.gov.co',['Consultar cómo canalizar los dólares','Usar un intermediario del mercado cambiario o cuenta de compensación','Definir qué numeral cambiario declarar']],
+
+  '5.1':['Binance','https://www.binance.com',['Escribir la dirección a mano en el navegador','Abrir cuenta institucional (KYB) a nombre de la SAS','Solicitar servicio OTC y esperar aprobación']],
+  '5.2':['Otra mesa OTC o market maker','',['Buscar el proveedor y pasar su KYB','Firmar contrato con spreads, límites y tiempos','Configurarlo como adaptador de respaldo']],
+  '5.3':['Socios','',['Estimar el volumen de 1 a 2 días por lado','Fondear COP y USDT en cuentas separadas','Registrar el aporte en el libro']],
+  '5.4':['Tesorería','',['Escribir exposición máxima abierta, pérdida diaria máxima y tamaño máximo por operación','Aprobarlo en junta','Configurarlo en el motor de cotización']],
+  '5.5':['Safe, Fireblocks o BitGo','https://safe.global',['Elegir una solución multifirma o MPC','Configurar mínimo dos aprobadores','Probar con una transferencia pequeña en red de prueba']],
+  '5.6':['Fabricante de la billetera de hardware','',['Comprarla solo en el sitio oficial del fabricante','Generar la reserva con dos personas presentes','Firmar un mensaje de prueba y guardar la evidencia; nunca guardar la frase de recuperación']],
+
+  '6.1':['Abogado','',['Redactar el acuerdo marco OTC: cotización, cierre, liquidación, incumplimiento','Incluir errores de precio y envíos a direcciones erradas','Firmarlo con cada cliente']],
+  '6.2':['Abogado','',['Redactar el anexo: el cliente entrega KYB y acepta monitoreo de wallets','Adjuntarlo al acuerdo marco']],
+  '6.3':['Socios y contador','',['Definir tarifas y spreads','Incluir IVA, GMF (4 por mil) y costos bancarios dentro del precio','Dejarlo por escrito']],
+  '6.4':['Abogado','',['Redactar contrato marco con dos anexos: licencia SaaS y desarrollo','Fijar precio de mercado y justificarlo','Aprobarlo por escrito entre los socios (partes vinculadas)']],
+  '6.5':['Abogado','',['Listar redes soportadas (TRC-20, ERC-20) y la responsabilidad por envíos erróneos','Definir responsable y encargado de datos personales (Ley 1581)']],
+
+  '7.1':['Repositorio en GitHub','https://github.com/juansecode2026-byte/pasarela-usdt',['Repositorio privado y proyecto de Supabase creados']],
+  '7.2':['Docs/contrato-api-v1.md','',['Borrador 2 escrito el 14 de octubre de 2026','Cerrar los puntos abiertos de su sección 9']],
+  '7.3':['supabase/migrations y supabase/tests','',['Cuatro migraciones aplicadas en Supabase','29 pruebas pasadas en PostgreSQL local el 5 de octubre']],
+  '7.4':['supabase/migrations/20261014000001_libro_v17.sql','',['Migración y 40 pruebas escritas','Falta correr las pruebas (7.18) y aplicarla (7.19)']],
+  '7.5':['Código del servicio','',['Pasar la tabla de transiciones del estándar a código','Escribir una prueba por cada transición válida e inválida','No modificar la tabla sin pruebas']],
+  '7.6':['Código del servicio','',['Crear el alta interna de clientes','Exigir KYB aprobado antes de crear órdenes','Probar los límites por orden y por mes']],
+  '7.7':['Código del servicio','',['Implementar POST /v1/orders con Idempotency-Key','Guardar la llave por cliente solo como hash','Probar contra el contrato']],
+  '7.8':['Código y red de prueba','https://tronscan.org',['Derivar una dirección por orden desde una clave pública extendida','Detector idempotente por red, hash e índice','Probar en red de prueba (Nile, Shasta o Sepolia)']],
+  '7.9':['Código y proveedor on-chain','',['Integrar el proveedor contratado en 3.5','Si marca la billetera, la orden pasa a HELD_COMPLIANCE','No avisar el motivo al pagador']],
+  '7.10':['Binance (modo de pruebas)','https://www.binance.com',['Crear el adaptador con llave sin permiso de retiro y con lista de IP','Medir el deslizamiento contra la cotización','Probar en modo de pruebas']],
+  '7.11':['Banca en línea de Bancolombia','https://www.bancolombia.com',['Crear una tarea manual con doble aprobación por dispersión','Conciliar el comprobante bancario','Automatizar solo si el banco lo permite']],
+  '7.12':['Libro contable','',['Comparar cadena, libro y banco cada día','Alertar si no cuadran','Ver los pasos 11.x del checklist del libro']],
+  '7.13':['UIAF y DIAN','https://www.dian.gov.co',['Exportadores UIAF (texto plano) y CARF (XML)','Validar contra los anexos técnicos vigentes','Expediente por operación en PDF y JSON con hash']],
+  '7.14':['Código del servicio','',['Webhooks firmados con HMAC y reintentos','Cliente liviano para Hellominus y DEVMINUS','Probar la firma y los reintentos']],
+  '7.15':['Código y gestor de secretos','',['Custodia fuera del libro','Secretos en un gestor, nunca en el repositorio','Roles mínimos y copias de seguridad probadas']],
+  '7.16':['Redes de prueba','',['Probar pago exacto, de menos, de más y tardío','Probar billetera marcada, falla de conversión y falla de dispersión','Guardar cada resultado']],
+  '7.17':['Tu equipo (PowerShell)','',['Reinstalar PostgreSQL 17 con winget, o restablecer la contraseña','Guardarla en %APPDATA%\\postgresql\\pgpass.conf, fuera del repositorio','Probar con scripts/probar-esquema.ps1']],
+  '7.18':['Tu equipo (PowerShell)','',['Con la base lista, ejecutar scripts/probar-esquema.ps1','Corregir lo que falle','Agregar el resultado en el análisis de este checklist']],
+  '7.19':['Panel de Supabase','https://supabase.com/dashboard',['Aplicar la migración con apply_migration','Verificar tablas y disparadores por lectura','Revisar los avisos de seguridad']],
+  '7.20':['Panel de Supabase','https://supabase.com/dashboard',['Decidir cómo probar el comportamiento en Supabase','Opción: una rama de base de datos solo para pruebas','Anotar el resultado']],
+  '7.21':['Panel de Supabase','https://supabase.com/dashboard',['Entrar a la facturación de la organización','Pasar a Pro','Confirmar que hay copias automáticas']],
+  '7.22':['Panel de Supabase','https://supabase.com/dashboard',['Ir a Project Settings, Database','Definir o restablecer la contraseña','Guardarla en un gestor de secretos; nunca en el chat']],
+  '7.23':['GitHub','https://github.com/pricing',['Pasar la cuenta a GitHub Pro o mover el repositorio a una organización','Activar la protección de la rama main','Comprobar que un push directo se rechaza']],
+  '7.24':['GitHub, Settings del repositorio','https://github.com',['Con el nombre definitivo, renombrar el repositorio','Actualizar el remoto local con git remote set-url']],
+  '7.27':['.claude/settings.json y scripts/git-hooks','',['Editar un HTML con Claude Code regenera su .md solo','Cada commit regenera los .md y los incluye (git config core.hooksPath scripts/git-hooks, una vez por clon)','Revisar con python scripts/sincronizar-md.py --revisar']],
+  '7.26':['scripts/sincronizar-md.py','',['Leer siempre el .md; el HTML solo si hace falta','Al cambiar un HTML, correr python scripts/sincronizar-md.py','Revisar con --revisar que no haya .md desactualizados']],
+  '7.25':['Panel de Supabase','https://supabase.com/dashboard',['Decidir si se necesita el proyecto pausado','Restaurarlo desde el panel si hace falta','Ojo con el límite de proyectos activos del plan gratuito']],
+
+  '8.1':['Clientes piloto','',['Elegir 2 o 3 clientes conocidos','Fijar límites bajos por orden y por mes','Seguir cada operación de cerca el primer mes']],
+  '8.2':['Tesorería','',['Montos bajos durante la primera semana','Subir los límites de forma progresiva','Registrar cada ajuste']],
+  '8.3':['UIAF, SIREL','https://www.uiaf.gov.co',['Enviar el reporte mensual por SIREL','Enviar el reporte de ausencia si no hubo operaciones','Plazo: primeros 20 días del mes siguiente']],
+  '8.4':['Contador y oficial de cumplimiento','',['Armar el expediente de una operación de prueba','Revisarlo con ambos','Anotar los ajustes']],
+  '8.5':['Contador','',['Llevar la contabilidad actual y el libro en paralelo un mes','Comparar saldos y diferencias','Apagar lo anterior solo con aprobación del contador']],
+  '8.6':['Oficial de cumplimiento','',['Reunión mensual','Revisar la matriz de riesgo y los límites de tesorería','Dejar acta']],
+  '8.7':['Cámara de Representantes','https://www.camara.gov.co',['Seguir el PL 510 de 2025','Pedir un resumen mensual al abogado','Ajustar el diseño si exige registro']],
+};
 </script>
 <script>
 (function(){
@@ -286,31 +409,119 @@ const FASES = [
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} };
   const isChecked = (code, estado) => (code in marks) ? marks[code] : estado === 'hecho';
   const cont = document.getElementById('phases');
+  const tg = document.getElementById('toggle-done');
+  const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const abiertas = new Set();
+  const resultOf = {};
+
+  function goTo(id){
+    let el = document.getElementById(id);
+    if (el && el.offsetParent === null && cont.classList.contains('hide-done')) {
+      cont.classList.remove('hide-done'); tg.textContent = 'Ocultar lo hecho';
+    }
+    el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 2200);
+  }
+
+  // Resultados: id, enlaces de vuelta a sus pasos y mapa paso -> resultado
+  document.querySelectorAll('ol.results > li').forEach((li, i) => {
+    li.id = 'res-' + (i + 1);
+    const pasos = (li.dataset.pasos || '').split(/\s+/).filter(Boolean);
+    pasos.forEach(c => { if (!(c in resultOf)) resultOf[c] = li.id; });
+    const dd = li.querySelector('dd.pasos');
+    if (dd && pasos.length) {
+      dd.textContent = '';
+      pasos.forEach((c, k) => {
+        const a = document.createElement('a');
+        a.href = '#p-' + c; a.textContent = c;
+        a.addEventListener('click', e => { e.preventDefault(); goTo('p-' + c); });
+        dd.append(a);
+        if (k < pasos.length - 1) dd.append(', ');
+      });
+    }
+  });
+
+  function guiaPanel(code){
+    const g = GUIAS[code];
+    if (!g) return null;
+    const [donde, url, pasos] = g;
+    const box = document.createElement('div');
+    box.className = 'guide'; box.id = 'g-' + code; box.hidden = !abiertas.has(code);
+    const p = document.createElement('p'); p.className = 'site';
+    const b = document.createElement('strong'); b.textContent = 'Dónde: ';
+    p.append(b);
+    if (url) {
+      const a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = donde;
+      p.append(a, ' (' + new URL(url).hostname + ')');
+    } else { p.append(donde); }
+    box.append(p);
+    const ol = document.createElement('ol');
+    pasos.forEach(t => { const li = document.createElement('li'); li.textContent = t; ol.append(li); });
+    box.append(ol);
+    return box;
+  }
+
+  function toggleGuia(code){
+    const box = document.getElementById('g-' + code);
+    if (!box) return;
+    const abrir = box.hidden;
+    box.hidden = !abrir;
+    if (abrir) abiertas.add(code); else abiertas.delete(code);
+    const btn = document.querySelector('[aria-controls="g-' + code + '"]');
+    if (btn) btn.setAttribute('aria-expanded', String(abrir));
+  }
 
   function render(){
     cont.innerHTML = '';
     let total = 0, done = 0;
     FASES.forEach(f => {
       let fd = 0;
-      const sec = document.createElement('section');
-      sec.className = 'phase';
+      const sec = document.createElement('section'); sec.className = 'phase';
       const ul = document.createElement('ul'); ul.className = 'items';
       f.items.forEach(([code, texto, quien, estado]) => {
         const chk = isChecked(code, estado);
         if (chk) fd++;
-        const li = document.createElement('li'); if (chk) li.className = 'checked';
-        const lab = document.createElement('label');
-        const inp = document.createElement('input'); inp.type = 'checkbox'; inp.checked = chk;
+        const li = document.createElement('li');
+        li.id = 'p-' + code; if (chk) li.className = 'checked';
+        const row = document.createElement('div'); row.className = 'row';
+        const inp = document.createElement('input');
+        inp.type = 'checkbox'; inp.checked = chk;
+        inp.setAttribute('aria-label', 'Marcar ' + code + ': ' + texto);
         inp.addEventListener('change', () => { marks[code] = inp.checked; save(); render(); });
+
+        const res = resultOf[code];
+        const title = document.createElement('button');
+        title.type = 'button'; title.className = 'title';
+        title.title = res ? 'Ir al análisis de resultados de este paso' : 'Ver la guía de este paso';
         const t = document.createElement('span'); t.className = 'txt';
-        t.innerHTML = '<span class="code"></span><span class="main"></span><span class="who"></span>';
-        t.querySelector('.code').textContent = code;
-        t.querySelector('.main').textContent = texto;
-        t.querySelector('.who').textContent = quien;
+        const c1 = document.createElement('span'); c1.className = 'code'; c1.textContent = code + ' ';
+        const c2 = document.createElement('span'); c2.className = 'main'; c2.textContent = texto;
+        const c3 = document.createElement('span'); c3.className = 'who'; c3.textContent = quien;
+        t.append(c1, c2, c3);
+        if (res) { const ir = document.createElement('span'); ir.className = 'ir'; ir.textContent = 'Ver resultado ↓'; t.append(ir); }
+        title.append(t);
+        title.addEventListener('click', () => { if (res) goTo(res); else toggleGuia(code); });
+
         const b = document.createElement('span');
         const [et, cl] = (chk && estado !== 'hecho') ? ['marcado por ti', 'b-hecho'] : ETQ[estado];
         b.className = 'badge ' + cl; b.textContent = et;
-        lab.append(inp, t, b); li.append(lab); ul.append(li);
+        row.append(inp, title, b);
+
+        const panel = guiaPanel(code);
+        if (panel) {
+          const gb = document.createElement('button');
+          gb.type = 'button'; gb.className = 'guide-btn'; gb.textContent = 'Guía';
+          gb.setAttribute('aria-controls', 'g-' + code);
+          gb.setAttribute('aria-expanded', String(abiertas.has(code)));
+          gb.addEventListener('click', () => toggleGuia(code));
+          row.append(gb);
+          li.append(row, panel);
+        } else { li.append(row); }
+        ul.append(li);
       });
       total += f.items.length; done += fd;
       sec.innerHTML = '<div class="phase-head"><h2></h2><small></small></div>' + (f.nota ? '<p class="phase-note"></p>' : '');
@@ -326,7 +537,6 @@ const FASES = [
     document.getElementById('total-text').textContent = done + ' de ' + total + ' pasos (' + pct + ' %)';
   }
 
-  const tg = document.getElementById('toggle-done');
   tg.addEventListener('click', () => {
     const on = cont.classList.toggle('hide-done');
     tg.textContent = on ? 'Mostrar lo hecho' : 'Ocultar lo hecho';
@@ -335,6 +545,7 @@ const FASES = [
     if (confirm('¿Borrar tus marcas y volver al estado registrado en el archivo?')) { marks = {}; save(); render(); }
   });
   render();
+  if (location.hash.length > 1) setTimeout(() => goTo(decodeURIComponent(location.hash.slice(1))), 50);
 })();
 </script>
 </body>

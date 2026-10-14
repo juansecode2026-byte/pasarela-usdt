@@ -74,6 +74,21 @@ dd{margin:0;font-size:15px}
 }
 @media (prefers-reduced-motion:reduce){.bar span{transition:none}}
 @media print{.tools{display:none} .phase,.summary,ol.results>li{break-inside:avoid}}
+/* guias */
+[hidden]{display:none !important}
+.row{display:grid;grid-template-columns:22px 1fr auto auto;gap:10px;align-items:start;padding:9px 10px;border-radius:8px}
+.row:hover{background:var(--todo-soft)}
+button.title{background:none;border:0;padding:0;margin:0;text-align:left;color:inherit;font:inherit;cursor:pointer;border-radius:4px}
+button.title:hover .main{text-decoration:underline}
+li.checked button.title:hover .main{text-decoration:line-through}
+.ir{display:inline-block;margin-left:8px;font-size:12px;color:var(--accent)}
+.guide-btn{font-size:12px;padding:2px 10px}
+.guide{margin:0 10px 8px 42px;padding:10px 14px;background:var(--todo-soft);border-radius:8px;font-size:14px}
+.guide p{margin:0 0 4px}
+.guide ol{margin:4px 0 0;padding-left:20px}
+.guide a, dd a{color:var(--accent)}
+.flash{outline:2px solid var(--accent);outline-offset:2px;background:var(--accent-soft)}
+@media (max-width:560px){.row{grid-template-columns:22px 1fr}.row .badge,.row .guide-btn{grid-column:2;justify-self:start}.guide{margin-left:10px}}
 </style>
 </head>
 <body>
@@ -90,6 +105,7 @@ dd{margin:0;font-size:15px}
       <button type="button" id="toggle-done">Ocultar lo hecho</button>
       <button type="button" id="reset">Volver al estado registrado</button>
     </div>
+    <p class="note" style="margin-top:6px">Toca un paso: si ya tiene resultado, te lleva a su análisis; si no, abre su guía. El botón Guía muestra el sitio y los pasos. Escribe las direcciones a mano en el navegador: hay sitios falsos que imitan exchanges y billeteras.</p>
     <div class="legend">
       <span><span class="badge b-hecho">hecho</span> registrado como terminado</span>
       <span><span class="badge b-curso">en curso</span> empezado, no terminado</span>
@@ -117,24 +133,45 @@ dd{margin:0;font-size:15px}
     </div>
 
     <ol class="results">
-      <li>
+      <li data-pasos="14.4">
         <h3>Bitácora inalterable y encadenada, probada</h3>
         <dl>
           <dt>Qué se logró</dt><dd>La bitácora de acciones (<code>audit_log</code>) encadena cada registro con el hash del anterior, no se puede editar ni borrar, y una función recorre la cadena y señala el primer registro alterado.</dd>
           <dt>Evidencia</dt><dd>Pruebas locales del 5 de octubre: cadena íntegra, edición y borrado rechazados, alteración detectada.</dd>
           <dt>Qué habilita</dt><dd>Cumplir la parte de "bitácora de accesos y acciones, también encadenada con hashes" del paso 14, y usar el mismo patrón en el libro.</dd>
           <dt>Qué falta o qué riesgo queda</dt><dd>Falta registrar en ella los accesos reales cuando exista la aplicación.</dd>
-          <dt>Pasos del checklist</dt><dd>14.4.</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">14.4.</dd>
         </dl>
       </li>
-      <li>
+      <li data-pasos="3.1 3.2 3.3 3.4 4.1 4.2 4.3 4.4 5.1 5.2 5.3 5.4 6.1 6.4 10.3 11.1">
         <h3>Núcleo del libro v1.7 escrito, pendiente de pruebas</h3>
         <dl>
           <dt>Qué se logró</dt><dd>Migración con activos genéricos (COP, USD, USDT, BTC, ETH en unidades mínimas, 1 ETH = 10^18 wei), plan de cuentas por entidad, asientos solo por una función que valida el cuadre y los sella con hash, reversos, verificador de la cadena, raíz de Merkle diaria, tasas con fuente, eventos crudos con su hash, wallets solo con direcciones públicas y conciliación.</dd>
           <dt>Evidencia</dt><dd><code>supabase/migrations/20261014000001_libro_v17.sql</code> y 40 pruebas nuevas escritas en <code>supabase/tests/esquema.test.sql</code>.</dd>
           <dt>Qué habilita</dt><dd>Cuando pasen las pruebas: conectar las fuentes (fase 3) sobre un libro que rechaza por diseño asientos descuadrados y modificaciones.</dd>
           <dt>Qué falta o qué riesgo queda</dt><dd><strong>Sin probar.</strong> Se perdió el acceso a la base de pruebas local y no se pudo correr. Hasta entonces no se puede afirmar que funcione. Tampoco está aplicada en Supabase.</dd>
-          <dt>Pasos del checklist</dt><dd>3.1, 4.1 a 4.4, 5.1 a 5.4, 6.1, 6.4, 10.3 y 11.1 (en curso); bloqueado por 3.3 y 3.4.</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">3.1, 4.1 a 4.4, 5.1 a 5.4, 6.1, 6.4, 10.3 y 11.1 (en curso); bloqueado por 3.3 y 3.4.</dd>
+        </dl>
+      </li>
+    
+      <li data-pasos="1.1 1.3 1.4">
+        <h3>Alcance y principios del libro definidos</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>Activos y redes fijados (USDT en TRC-20 y ERC-20, BTC, ETH, USD y COP), COP como moneda funcional guardando la cantidad original, y los principios del libro: solo inserción, partida doble, evidencia y separación de fondos.</dd>
+          <dt>Evidencia</dt><dd>Tabla <code>assets</code>, columna <code>native_amount</code> y los disparadores de la migración <code>20261014000001_libro_v17.sql</code>.</dd>
+          <dt>Qué habilita</dt><dd>Diseñar el plan de cuentas y las reglas contables sobre principios que el código ya hace cumplir.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd>Falta el documento de alcance aprobado por gerencia y contador (1.6) y el método de costo (1.5).</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">1.1, 1.3 y 1.4.</dd>
+        </dl>
+      </li>
+      <li data-pasos="7.4">
+        <h3>Sin duplicados de transacciones on-chain, probado</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>Una misma transacción no se registra dos veces: la base exige unicidad por red, hash e índice.</dd>
+          <dt>Evidencia</dt><dd>Prueba "cadena: la misma transacción no se procesa dos veces", aprobada el 5 de octubre de 2026.</dd>
+          <dt>Qué habilita</dt><dd>Construir el detector de depósitos de forma idempotente: reintentos y reconexiones no duplican dinero.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd>Falta el detector y el manejo de reorganizaciones de cadena (7.5).</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">7.4.</dd>
         </dl>
       </li>
     </ol>
@@ -277,6 +314,121 @@ const FASES = [
     ['E.6','Manual SAGRILAFT, oficial de cumplimiento y registro ante la UIAF','Cumplimiento','pend'],
   ]},
 ];
+// Guía por paso: [dónde, enlace, [pasos]]. Muy resumida. Sin enlace = reunión, documento o trabajo interno.
+const GUIAS = {
+  'C.1':['Etherscan, Tronscan, mempool.space','https://etherscan.io',['Escribir la dirección a mano en el navegador','Pegar el hash de la transacción','Guardar el enlace como evidencia']],
+  'C.2':['Etherscan API y TronGrid','https://etherscan.io/apis',['Crear cuenta gratuita y generar la llave','Hacer lo mismo en trongrid.io','Guardar las llaves en un gestor de secretos']],
+  'C.3':['Binance, API Management','https://www.binance.com',['Crear una llave de API','Activar solo lectura y dejar los retiros desactivados','Fijar la lista de IP permitidas']],
+  'C.4':['Superfinanciera (TRM)','https://www.superfinanciera.gov.co',['Definir la TRM oficial como fuente','Elegir una fuente de precios de cripto con API','Guardar cada tasa con fuente y hora']],
+  'C.5':['Panel de Supabase','https://supabase.com/dashboard',['Migraciones en supabase/migrations','Ver el paso 4 de este checklist']],
+  'C.6':['OpenTimestamps','https://opentimestamps.org',['Instalar el cliente','Sellar la raíz diaria','Guardar la prueba en la tabla de anclas']],
+  'C.7':['openpyxl','https://openpyxl.readthedocs.io',['Instalar openpyxl (Python)','Generar el archivo con sus hojas','Sellarlo con SHA-256']],
+  'C.8':['Redes de prueba','',['Obtener cripto de prueba con los faucets de cada red (Sepolia, Nile o Shasta, testnet de Bitcoin)','Configurar los conectores a esas redes']],
+  'C.9':['Chainalysis, Elliptic o TRM Labs','https://www.chainalysis.com',['Ver el paso 3.5 del checklist del proveedor','Requiere la SAS constituida']],
+  'C.10':['Safe, Fireblocks o BitGo','https://safe.global',['Ver el paso 5.5 del checklist del proveedor','Requiere la SAS constituida']],
+  'C.11':['Panel de Supabase','https://supabase.com/dashboard',['Entrar a la facturación de la organización','Pasar a Pro antes del primer dato real']],
+  'C.12':['Bitcoin Core','https://bitcoincore.org',['Evaluar el costo contra un proveedor','Instalar y sincronizar un nodo','Contratar un segundo proveedor de datos']],
+
+  '1.1':['Libro v1.7 y tabla assets','',['Lista de activos y redes fijada en el libro','Cargada en la migración 005']],
+  '1.2':['Libro v1.7, sección A','',['Listar wallets propias, de clientes, cuentas de Binance y bancos','Registrarlas en la tabla wallets']],
+  '1.3':['Migración 005','',['COP como moneda funcional','native_amount guarda la cantidad original']],
+  '1.4':['Migración 005','',['Solo inserción, partida doble, evidencia y separación de fondos aplicados en el código']],
+  '1.5':['Contador','',['Elegir promedio ponderado o PEPS por activo','Aplicarlo igual todos los años','Anotarlo en el documento de alcance']],
+  '1.6':['Gerencia y contador','',['Reunir los pasos 1.1 a 1.5 en un documento','Aprobarlo con firma','Archivarlo en el repositorio']],
+
+  '2.1':['Contador','',['Partir de la tabla sugerida del libro (paso 2)','Ajustar nombres con el contador','Cargarlas en ledger_accounts']],
+  '2.2':['Contador','',['Preguntar si la cripto va como inventario o como intangible','Anotar la decisión por activo','Reflejarla en el plan de cuentas']],
+  '2.3':['Contador y tecnología','',['Mapear cada cuenta al PUC','Cargar el plan final en la base']],
+
+  '3.1':['Migración del libro v1.7','',['Revisar supabase/migrations/20261014000001_libro_v17.sql','Verificar sus tablas: assets, wallets, fx_rates, raw_events, journal_entries, ledger_lines, anchors, reconciliations']],
+  '3.2':['supabase/migrations y tests','',['Probar en local antes de aplicar','Aplicar en Supabase solo si las pruebas pasan']],
+  '3.3':['Tu equipo (PowerShell)','',['Reinstalar PostgreSQL 17 con winget, o restablecer la contraseña','Guardarla en %APPDATA%\\postgresql\\pgpass.conf, fuera del repositorio']],
+  '3.4':['Tu equipo (PowerShell)','',['Ejecutar scripts/probar-esquema.ps1','Corregir lo que falle','Agregar el resultado en el análisis']],
+  '3.5':['Panel de Supabase','https://supabase.com/dashboard',['Aplicar la migración con apply_migration','Verificar por lectura tablas y disparadores']],
+
+  '4.1':['Función post_journal_entry','',['Valida que débitos y créditos cuadren','Prueba: un asiento descuadrado se rechaza']],
+  '4.2':['Disparadores de solo inserción','',['Nadie edita ni borra asientos ni líneas','Prueba: editar y borrar fallan']],
+  '4.3':['Función reverse_journal_entry','',['Crea el asiento inverso y lo referencia','Prueba: un asiento solo se reversa una vez']],
+  '4.4':['native_amount numeric(38,0)','',['Unidades mínimas enteras para cada activo','Prueba: 1 ETH se guarda como 10^18']],
+
+  '5.1':['Función ledger_entry_payload','',['Serializa igual al registrar y al verificar']],
+  '5.2':['Función post_journal_entry','',['Hash = SHA-256(hash anterior + contenido)']],
+  '5.3':['Primer asiento','',['Usa el valor fijo GENESIS']],
+  '5.4':['Función ledger_verify','',['Devuelve el primer asiento roto, o nada si la cadena está íntegra','Prueba: detecta un asiento alterado']],
+
+  '6.1':['Funciones del libro','',['ledger_merkle_root calcula la raíz de un rango','create_anchor cierra el día']],
+  '6.2':['OpenTimestamps','https://opentimestamps.org',['Tomar merkle_root de la tabla anclas','Sellarla con el cliente de OpenTimestamps','Guardar tx_ref y proof']],
+  '6.3':['Etherscan','https://etherscan.io',['Enviar una transacción con la raíz en el campo de datos','Guardar su hash en tx_ref']],
+  '6.4':['Tabla anchors','',['Guarda raíz, red, tx_ref, prueba y estado','Solo se completan los datos de publicación']],
+  '6.5':['Pantalla para auditores','',['Elegir un asiento y ver su hash, su ruta de Merkle y su anclaje','Pendiente de construir']],
+
+  '7.1':['mempool.space y Blockstream','https://mempool.space',['Leer movimientos por clave pública extendida (solo lectura)','Esperar confirmaciones (3 a 6)','Registrar la comisión como gasto']],
+  '7.2':['Etherscan API o Alchemy','https://etherscan.io/apis',['Leer transferencias y eventos Transfer','Esperar bloque finalizado','Registrar el gas como gasto']],
+  '7.3':['Tronscan, TronGrid y Tether','https://tether.to',['Validar el contrato oficial del token','Tratar TRC-20 y ERC-20 como subcuentas','Registrar energía o TRX como costo']],
+  '7.4':['Tabla onchain_txs','',['Unicidad por red, hash e índice','Prueba pasada el 5 de octubre de 2026']],
+  '7.5':['Captura on-chain','',['Detectar si una transacción desaparece','Reversar el asiento y alertar']],
+
+  '8.1':['Binance','https://www.binance.com',['Leer depósitos, retiros, OTC y comisiones','Guardar cada uno en raw_events']],
+  '8.2':['Bancolombia','https://www.bancolombia.com',['Pedir extracto por API o archivo diario','Cargarlo a raw_events']],
+  '8.3':['Asesor cambiario','',['Vincular cada movimiento en dólares con su declaración de cambio']],
+  '8.4':['Tabla raw_events','',['Guarda el contenido tal como llegó y su hash','Sin duplicados por fuente y referencia']],
+
+  '9.1':['Contador','',['Armar la tabla evento, débito, crédito (libro, paso 9)','Aprobarla con el contador','Codificarla']],
+  '9.2':['Consulta en la base','',['Eventos crudos sin asiento son la bandeja de revisión','Construir la pantalla que los lista']],
+  '9.3':['Contador','',['Probar con casos reales','Firmar el catálogo']],
+
+  '10.1':['Banco de la República','https://www.banrep.gov.co',['Consultar la TRM del día','Guardarla en fx_rates con su fuente']],
+  '10.2':['Fuente de precios definida','',['Fijar una sola fuente','Guardar cada precio con hora']],
+  '10.3':['ledger_lines.fx_rate_id','',['Cada línea puede apuntar a la tasa usada']],
+  '10.4':['Contador y tecnología','',['Calcular el costo por lote con el método del paso 1.5']],
+  '10.5':['Contador','',['Valorar al cierre de mes y a 31 de diciembre']],
+
+  '11.1':['Tabla reconciliations','',['Guarda saldo del libro, saldo externo y diferencia','Solo inserción']],
+  '11.2':['Explorador de la red','https://etherscan.io',['Comparar el saldo del libro con el de la dirección','Alertar y bloquear el cierre del día si no cuadra']],
+  '11.3':['API de Binance','',['Comparar con el saldo que reporta la API','Alertar a tesorería']],
+  '11.4':['Extracto bancario','',['Comparar con el extracto del día','Alertar a contabilidad']],
+  '11.5':['Libro','',['Comparar fondos de clientes con obligaciones con clientes','Diferencia: alerta crítica']],
+
+  '12.1':['Libro y contador','',['Cada compra es un lote con fecha, cantidad, costo en COP y tasa']],
+  '12.2':['Libro','',['Guardar el tiempo de tenencia por lote','Separar menos y más de 2 años']],
+  '12.3':['Contador','',['Calcular la utilidad de cada venta','Clasificarla en renta o ganancia ocasional']],
+  '12.4':['Contador','',['Decidir cómo entran comisiones y gas al costo']],
+  '12.5':['Libro','',['Guardar país, contraparte, motivo del pago, tasa y hash de cada ingreso del exterior']],
+  '12.6':['Contador','',['Revisar si el ICA se calcula sobre el ingreso bruto','Hacerlo antes de fijar tarifas']],
+  '12.7':['Contador','https://www.dian.gov.co',['Preparar renta, exógena 1012/1206, CARF, IVA e ICA','Usar los reportes que sale del libro']],
+
+  '13.1':['Libro','',['Cada asiento enlaza evento crudo, transacción, cliente y expediente KYB']],
+  '13.2':['Proveedor on-chain','',['Consultar el puntaje de cada wallet externa','Ver el paso 3.5 del checklist del proveedor']],
+  '13.3':['Oficial de cumplimiento','',['Guardar datos de origen y beneficiario de las transferencias entre proveedores']],
+  '13.4':['UIAF y DIAN','https://www.uiaf.gov.co',['Exportador UIAF mensual y CARF anual en XML','Saldos a 31 de diciembre para exógena']],
+  '13.5':['Almacenamiento','',['Conservar la evidencia al menos 5 años','Con copias cifradas']],
+
+  '14.1':['Diseño del libro','',['Solo direcciones y claves públicas','Nunca llaves privadas ni frases de recuperación']],
+  '14.2':['Binance y bancos','',['Llaves de solo lectura','Fijar lista de IP']],
+  '14.3':['Gerencia','',['Separar quien registra, quien aprueba ajustes y quien audita','Documentar la matriz de roles']],
+  '14.4':['Tabla audit_log','',['Bitácora encadenada por hash, solo inserción','Prueba pasada el 5 de octubre de 2026']],
+  '14.5':['Supabase y almacenamiento','',['Copias cifradas','Probar la restauración cada trimestre']],
+  '14.6':['Tesorería','',['Registrar la dirección como cuenta propia de custodia fría','Guardar prueba de control (mensaje firmado)','Registrar cada traslado como transferencia interna']],
+  '14.7':['Binance, retiros','https://www.binance.com',['Activar la lista blanca de retiro con solo la billetera fría','Exigir dos personas para mover la reserva','Enviar primero una prueba pequeña']],
+  '14.8':['Gestor de secretos','',['No guardar contraseñas en carpetas temporales, en el chat ni en el repositorio','Usar un gestor de secretos o el archivo estándar del usuario']],
+
+  '15.1':['Panel de reportes','',['Balance y resultados por activo y red','Posición diaria','Mayor con enlace a la evidencia']],
+  '15.2':['Pruebas','',['Probar comisiones, reversos, duplicados, tokens falsos y reorganizaciones','Guardar cada resultado']],
+  '15.3':['Pruebas','',['Alterar un asiento en una base de pruebas','Confirmar que el verificador lo detecta']],
+  '15.4':['Contador','',['Operar un mes en paralelo con la contabilidad actual','Comparar resultados']],
+  '15.5':['Contador y revisor fiscal','',['Revisar el libro y firmar el acta de aprobación']],
+
+  'D.1':['Archivo de Excel','',['Plantilla con las ocho hojas','Fórmulas protegidas']],
+  'D.2':['openpyxl','https://openpyxl.readthedocs.io',['Generar el archivo cada día desde el libro','Guardar su hash SHA-256 en la hoja de control']],
+  'D.3':['Contador','',['Cargar los lotes comprados antes del libro con fecha, costo y soporte']],
+
+  'E.1':['Abogado','',['Redactar la cesión de propiedad intelectual hacia Minus','Firmarla antes de constituir']],
+  'E.2':['Abogado','',['Acuerdo entre socios de la nueva SAS','Firmarlo antes de constituir']],
+  'E.3':['Cámara de Comercio','https://www.rues.org.co',['Estatutos con objeto social específico','Inscribir la SAS y obtener la matrícula']],
+  'E.4':['Contador','https://muisca.dian.gov.co',['RUT y NIT','Cuenta bancaria, ICA y facturación electrónica']],
+  'E.5':['Abogado','',['Contrato marco con Minus: licencia SaaS y desarrollo','Precio de mercado, aprobado por escrito por los socios']],
+  'E.6':['Oficial de cumplimiento','https://www.uiaf.gov.co',['Manual SAGRILAFT','Nombrar el oficial de cumplimiento','Registrarse ante la UIAF']],
+};
 </script>
 <script>
 (function(){
@@ -286,31 +438,119 @@ const FASES = [
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} };
   const isChecked = (code, estado) => (code in marks) ? marks[code] : estado === 'hecho';
   const cont = document.getElementById('phases');
+  const tg = document.getElementById('toggle-done');
+  const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const abiertas = new Set();
+  const resultOf = {};
+
+  function goTo(id){
+    let el = document.getElementById(id);
+    if (el && el.offsetParent === null && cont.classList.contains('hide-done')) {
+      cont.classList.remove('hide-done'); tg.textContent = 'Ocultar lo hecho';
+    }
+    el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 2200);
+  }
+
+  // Resultados: id, enlaces de vuelta a sus pasos y mapa paso -> resultado
+  document.querySelectorAll('ol.results > li').forEach((li, i) => {
+    li.id = 'res-' + (i + 1);
+    const pasos = (li.dataset.pasos || '').split(/\s+/).filter(Boolean);
+    pasos.forEach(c => { if (!(c in resultOf)) resultOf[c] = li.id; });
+    const dd = li.querySelector('dd.pasos');
+    if (dd && pasos.length) {
+      dd.textContent = '';
+      pasos.forEach((c, k) => {
+        const a = document.createElement('a');
+        a.href = '#p-' + c; a.textContent = c;
+        a.addEventListener('click', e => { e.preventDefault(); goTo('p-' + c); });
+        dd.append(a);
+        if (k < pasos.length - 1) dd.append(', ');
+      });
+    }
+  });
+
+  function guiaPanel(code){
+    const g = GUIAS[code];
+    if (!g) return null;
+    const [donde, url, pasos] = g;
+    const box = document.createElement('div');
+    box.className = 'guide'; box.id = 'g-' + code; box.hidden = !abiertas.has(code);
+    const p = document.createElement('p'); p.className = 'site';
+    const b = document.createElement('strong'); b.textContent = 'Dónde: ';
+    p.append(b);
+    if (url) {
+      const a = document.createElement('a');
+      a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = donde;
+      p.append(a, ' (' + new URL(url).hostname + ')');
+    } else { p.append(donde); }
+    box.append(p);
+    const ol = document.createElement('ol');
+    pasos.forEach(t => { const li = document.createElement('li'); li.textContent = t; ol.append(li); });
+    box.append(ol);
+    return box;
+  }
+
+  function toggleGuia(code){
+    const box = document.getElementById('g-' + code);
+    if (!box) return;
+    const abrir = box.hidden;
+    box.hidden = !abrir;
+    if (abrir) abiertas.add(code); else abiertas.delete(code);
+    const btn = document.querySelector('[aria-controls="g-' + code + '"]');
+    if (btn) btn.setAttribute('aria-expanded', String(abrir));
+  }
 
   function render(){
     cont.innerHTML = '';
     let total = 0, done = 0;
     FASES.forEach(f => {
       let fd = 0;
-      const sec = document.createElement('section');
-      sec.className = 'phase';
+      const sec = document.createElement('section'); sec.className = 'phase';
       const ul = document.createElement('ul'); ul.className = 'items';
       f.items.forEach(([code, texto, quien, estado]) => {
         const chk = isChecked(code, estado);
         if (chk) fd++;
-        const li = document.createElement('li'); if (chk) li.className = 'checked';
-        const lab = document.createElement('label');
-        const inp = document.createElement('input'); inp.type = 'checkbox'; inp.checked = chk;
+        const li = document.createElement('li');
+        li.id = 'p-' + code; if (chk) li.className = 'checked';
+        const row = document.createElement('div'); row.className = 'row';
+        const inp = document.createElement('input');
+        inp.type = 'checkbox'; inp.checked = chk;
+        inp.setAttribute('aria-label', 'Marcar ' + code + ': ' + texto);
         inp.addEventListener('change', () => { marks[code] = inp.checked; save(); render(); });
+
+        const res = resultOf[code];
+        const title = document.createElement('button');
+        title.type = 'button'; title.className = 'title';
+        title.title = res ? 'Ir al análisis de resultados de este paso' : 'Ver la guía de este paso';
         const t = document.createElement('span'); t.className = 'txt';
-        t.innerHTML = '<span class="code"></span><span class="main"></span><span class="who"></span>';
-        t.querySelector('.code').textContent = code;
-        t.querySelector('.main').textContent = texto;
-        t.querySelector('.who').textContent = quien;
+        const c1 = document.createElement('span'); c1.className = 'code'; c1.textContent = code + ' ';
+        const c2 = document.createElement('span'); c2.className = 'main'; c2.textContent = texto;
+        const c3 = document.createElement('span'); c3.className = 'who'; c3.textContent = quien;
+        t.append(c1, c2, c3);
+        if (res) { const ir = document.createElement('span'); ir.className = 'ir'; ir.textContent = 'Ver resultado ↓'; t.append(ir); }
+        title.append(t);
+        title.addEventListener('click', () => { if (res) goTo(res); else toggleGuia(code); });
+
         const b = document.createElement('span');
         const [et, cl] = (chk && estado !== 'hecho') ? ['marcado por ti', 'b-hecho'] : ETQ[estado];
         b.className = 'badge ' + cl; b.textContent = et;
-        lab.append(inp, t, b); li.append(lab); ul.append(li);
+        row.append(inp, title, b);
+
+        const panel = guiaPanel(code);
+        if (panel) {
+          const gb = document.createElement('button');
+          gb.type = 'button'; gb.className = 'guide-btn'; gb.textContent = 'Guía';
+          gb.setAttribute('aria-controls', 'g-' + code);
+          gb.setAttribute('aria-expanded', String(abiertas.has(code)));
+          gb.addEventListener('click', () => toggleGuia(code));
+          row.append(gb);
+          li.append(row, panel);
+        } else { li.append(row); }
+        ul.append(li);
       });
       total += f.items.length; done += fd;
       sec.innerHTML = '<div class="phase-head"><h2></h2><small></small></div>' + (f.nota ? '<p class="phase-note"></p>' : '');
@@ -326,7 +566,6 @@ const FASES = [
     document.getElementById('total-text').textContent = done + ' de ' + total + ' pasos (' + pct + ' %)';
   }
 
-  const tg = document.getElementById('toggle-done');
   tg.addEventListener('click', () => {
     const on = cont.classList.toggle('hide-done');
     tg.textContent = on ? 'Mostrar lo hecho' : 'Ocultar lo hecho';
@@ -335,6 +574,7 @@ const FASES = [
     if (confirm('¿Borrar tus marcas y volver al estado registrado en el archivo?')) { marks = {}; save(); render(); }
   });
   render();
+  if (location.hash.length > 1) setTimeout(() => goTo(decodeURIComponent(location.hash.slice(1))), 50);
 })();
 </script>
 </body>
