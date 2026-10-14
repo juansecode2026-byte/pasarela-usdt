@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plan Comercial Pasarela USDT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: documento de una columna; portada con índice; tres planes premium en columnas que se apilan en móvil; tablas con scroll propio */
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --ink:#15211d; --muted:#56635e; --line:#d9dfdb;
+  --accent:#0f6b5c; --accent-soft:#e3f0ec; --gold:#8a6410; --gold-soft:#f7efdc;
+  --f-display:"Newsreader", Georgia, "Times New Roman", serif;
+  --f-body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101614; --surface:#17201d; --ink:#e4ece8; --muted:#9aa9a3; --line:#2b3733;
+  --accent:#5cc4ae; --accent-soft:#183029; --gold:#e0b55a; --gold-soft:#2e2614; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#101614; --surface:#17201d; --ink:#e4ece8; --muted:#9aa9a3; --line:#2b3733;
+  --accent:#5cc4ae; --accent-soft:#183029; --gold:#e0b55a; --gold-soft:#2e2614; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:52px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,5vw,2.7rem);letter-spacing:-.01em}
+h2{font-size:1.65rem}
+h3{font-size:1.25rem}
+p{margin:0;max-width:68ch}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:16px;scroll-margin-top:16px}
+ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+
+.cover{display:flex;flex-direction:column;gap:22px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.lede{font-size:1.1rem;color:var(--muted)}
+.ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.ficha div{background:var(--surface);padding:10px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ficha dt{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.ficha dd{margin:0;font-weight:600}
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.toc li a{display:flex;gap:14px;align-items:baseline;padding:7px 0;border-bottom:1px dotted var(--line);color:var(--ink);text-decoration:none}
+.toc li:last-child a{border-bottom:0}
+.toc li a:hover span:last-child{color:var(--accent)}
+.toc .num{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);min-width:2ch;font-variant-numeric:tabular-nums}
+
+.plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:780px){.plans{grid-template-columns:1fr}}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.plan.featured{border:2px solid var(--accent)}
+.plan .tag{align-self:flex-start;font-family:var(--f-mono);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.price{display:flex;flex-direction:column;gap:4px}
+.price .big{font-family:var(--f-display);font-size:2.1rem;line-height:1;font-variant-numeric:tabular-nums}
+.price .big small{font-size:.85rem;font-family:var(--f-body);color:var(--muted);font-weight:500}
+.price .mo{font-weight:600;font-variant-numeric:tabular-nums}
+.price .crypto{font-size:.88rem;color:var(--gold);font-weight:600;font-variant-numeric:tabular-nums}
+.plan .for{color:var(--muted);font-size:.93rem}
+.plan ul{font-size:.93rem}
+.plan .foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px;font-family:var(--f-mono);font-size:.78rem;color:var(--muted);flex-wrap:wrap}
+
+.note{border-left:3px solid var(--gold);background:var(--gold-soft);padding:14px 16px;border-radius:0 6px 6px 0;display:flex;flex-direction:column;gap:6px}
+.note.ok{border-color:var(--accent);background:var(--accent-soft)}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.92rem}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.c,th.c{text-align:center}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.yes{color:var(--accent);font-weight:700}
+.no{color:var(--muted)}
+td:first-child{font-weight:600}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.agent{display:flex;flex-direction:column;gap:6px}
+.agent .who{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+
+.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;counter-reset:s}
+.steps li{display:grid;grid-template-columns:40px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.steps li:last-child{border-bottom:0}
+.steps li::before{counter-increment:s;content:counter(s);font-family:var(--f-display);font-size:1.5rem;line-height:1;color:var(--accent)}
+
+footer{border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:12px;font-size:.88rem;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="cover">
+  <span class="eyebrow">Minus · Propuesta comercial</span>
+  <h1>Formalización cripto agentizada: de operar en gris a operar con cumplimiento</h1>
+  <p class="lede">Llevamos a tu empresa al estándar que exigen bancos, contrapartes y autoridades en Colombia, y lo mantenemos funcionando con agentes de IA que hacen el trabajo diario de cumplimiento, reportes y conciliación.</p>
+  <dl class="ficha">
+    <div><dt>Versión</dt><dd>v2.0</dd></div>
+    <div><dt>Fecha</dt><dd>14 oct 2026</dd></div>
+    <div><dt>Moneda</dt><dd>USD, sin IVA</dd></div>
+    <div><dt>Vigencia</dt><dd>30 días</dd></div>
+  </dl>
+
+  <nav class="toc" aria-label="Índice">
+    <span class="eyebrow">Índice</span>
+    <ol>
+      <li><a href="#porque"><span class="num">1</span><span>Por qué formalizarse ahora</span></a></li>
+      <li><a href="#resumen"><span class="num">2</span><span>Resumen de planes</span></a></li>
+      <li><a href="#planes"><span class="num">3</span><span>Detalle de cada plan</span></a></li>
+      <li><a href="#agentes"><span class="num">4</span><span>Los agentes que operan tu cumplimiento</span></a></li>
+      <li><a href="#comparativo"><span class="num">5</span><span>Comparativo por módulo</span></a></li>
+      <li><a href="#valor"><span class="num">6</span><span>Por qué cuesta lo que cuesta</span></a></li>
+      <li><a href="#crypto"><span class="num">7</span><span>Precio especial para empresas que ya operan cripto</span></a></li>
+      <li><a href="#alcance"><span class="num">8</span><span>Cómo se ajusta el precio al alcance</span></a></li>
+      <li><a href="#condiciones"><span class="num">9</span><span>Condiciones comerciales</span></a></li>
+      <li><a href="#proceso"><span class="num">10</span><span>Proceso de venta</span></a></li>
+      <li><a href="#versiones"><span class="num">11</span><span>Control de versiones</span></a></li>
+    </ol>
+  </nav>
+</div>
+
+<section id="porque">
+  <span class="eyebrow">1 · Contexto</span>
+  <h2>Por qué formalizarse ahora</h2>
+  <p>En Colombia no hay una licencia cripto que tramitar, pero sí hay obligaciones vigentes. Una empresa que opera cripto sin cumplirlas se expone a sanciones y, sobre todo, a perder sus cuentas bancarias.</p>
+  <div class="grid2">
+    <div class="box"><h3>Ya es obligatorio</h3><ul>
+      <li>Reportes mensuales a la UIAF (Resolución 314 de 2021)</li>
+      <li>Reporte CARF a la DIAN desde el año gravable 2026, con primera entrega en mayo de 2027</li>
+      <li>SAGRILAFT para el sector de activos virtuales (Supersociedades)</li>
+    </ul></div>
+    <div class="box"><h3>Lo que viene</h3><ul>
+      <li>Ley de Proveedores de Servicios de Activos Virtuales en trámite en el Congreso</li>
+      <li>Bancos cada vez más estrictos con clientes cripto</li>
+      <li>Contrapartes institucionales que solo operan con empresas formalizadas</li>
+    </ul></div>
+  </div>
+  <div class="note ok"><p><strong>La promesa:</strong> tu empresa queda lista para abrir y mantener cuentas bancarias, firmar con proveedores de liquidez institucionales y adaptarse cuando salga la ley, sin contratar un departamento de cumplimiento completo.</p></div>
+</section>
+
+<section id="resumen">
+  <span class="eyebrow">2 · Resumen</span>
+  <h2>Resumen de planes</h2>
+  <p>Cada plan tiene una implementación (pago único) y una suscripción mensual a los agentes que operan el cumplimiento.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Plan</th><th>Resultado</th><th class="n">Implementación</th><th class="n">Agentes / mes</th><th class="n">Plazo</th></tr></thead>
+    <tbody>
+      <tr><td>Formalización</td><td>Empresa en regla ante UIAF, DIAN y Supersociedades</td><td class="n">USD 18.000</td><td class="n">USD 1.500</td><td class="n">8–10 semanas</td></tr>
+      <tr><td>Operación formal</td><td>Formalizada y operando conversión USDT ↔ COP con cumplimiento automático</td><td class="n">USD 35.000</td><td class="n">USD 3.000</td><td class="n">10–14 semanas</td></tr>
+      <tr><td>Proveedor de liquidez</td><td>Lista para dar liquidez a otras empresas con estándar institucional</td><td class="n">USD 60.000</td><td class="n">USD 5.000</td><td class="n">14–20 semanas</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="planes">
+  <span class="eyebrow">3 · Detalle</span>
+  <h2>Detalle de cada plan</h2>
+  <p>Cada plan incluye todo lo del plan anterior. Los entregables legales y tributarios se hacen con abogados y contadores aliados, incluidos en el precio.</p>
+  <div class="plans">
+    <article class="plan">
+      <h3>Formalización</h3>
+      <div class="price"><span class="big">USD 18.000 <small>implementación</small></span><span class="mo">+ USD 1.500 / mes</span><span class="crypto">Ya opera cripto: USD 14.400</span></div>
+      <p class="for">Para la empresa que ya mueve cripto y necesita ponerse en regla.</p>
+      <ul>
+        <li>Diagnóstico regulatorio y matriz de brechas</li>
+        <li>Ajuste de objeto social y estructura (con aliado legal)</li>
+        <li>RUT con actividad correcta y responsabilidad CARF</li>
+        <li>Manual SAGRILAFT y matriz de riesgo LA/FT</li>
+        <li>Inscripción como reportante ante la UIAF</li>
+        <li>Dossier bancario completo</li>
+        <li>Oficial de cumplimiento: acompañamiento en la selección y capacitación</li>
+        <li>Agentes: KYB y reportes UIAF</li>
+      </ul>
+      <div class="foot"><span>8–10 semanas</span><span>2 agentes</span></div>
+    </article>
+
+    <article class="plan featured">
+      <span class="tag">Recomendado</span>
+      <h3>Operación formal</h3>
+      <div class="price"><span class="big">USD 35.000 <small>implementación</small></span><span class="mo">+ USD 3.000 / mes</span><span class="crypto">Ya opera cripto: USD 28.000</span></div>
+      <p class="for">Para formalizarse y operar conversión con el cumplimiento corriendo solo.</p>
+      <ul>
+        <li>Todo lo del plan Formalización</li>
+        <li>Pasarela USDT en hasta 3 redes con wallet multifirma</li>
+        <li>Conversión vía Binance OTC por API</li>
+        <li>Motor de cotización con límites de riesgo</li>
+        <li>Política de IVA y tratamiento del spread (con contador aliado)</li>
+        <li>Acompañamiento en la apertura del segundo banco</li>
+        <li>Agentes: monitoreo transaccional, conciliación y CARF</li>
+      </ul>
+      <div class="foot"><span>10–14 semanas</span><span>5 agentes</span></div>
+    </article>
+
+    <article class="plan">
+      <h3>Proveedor de liquidez</h3>
+      <div class="price"><span class="big">USD 60.000 <small>implementación</small></span><span class="mo">+ USD 5.000 / mes</span><span class="crypto">Ya opera cripto: USD 48.000</span></div>
+      <p class="for">Para operar como contraparte institucional de otras empresas.</p>
+      <ul>
+        <li>Todo lo del plan Operación formal</li>
+        <li>API de cotización (RFQ) para clientes institucionales</li>
+        <li>Segundo proveedor de liquidez con ruteo al mejor precio</li>
+        <li>Acuerdo marco OTC y contratos de clientes (con aliado legal)</li>
+        <li>Integración con ERP (SAP, Siesa u otro)</li>
+        <li>Auditoría simulada anual de cumplimiento</li>
+        <li>Agentes: regulatorio y tesorería</li>
+      </ul>
+      <div class="foot"><span>14–20 semanas</span><span>7 agentes</span></div>
+    </article>
+  </div>
+</section>
+
+<section id="agentes">
+  <span class="eyebrow">4 · Agentes</span>
+  <h2>Los agentes que operan tu cumplimiento</h2>
+  <p>Los agentes hacen el trabajo repetitivo y dejan las decisiones a personas. Cada acción queda registrada para auditoría. Ningún agente envía un reporte ni bloquea un cliente sin aprobación humana.</p>
+  <div class="grid2">
+    <div class="box agent"><span class="who">Agente KYB</span><p>Revisa documentos de clientes empresa, consulta listas restrictivas y PEP, identifica beneficiarios finales y arma el expediente para aprobación.</p></div>
+    <div class="box agent"><span class="who">Agente de reportes UIAF</span><p>Prepara cada mes los reportes de clientes y transacciones en el formato exigido y avisa antes del plazo del día 20.</p></div>
+    <div class="box agent"><span class="who">Agente de monitoreo</span><p>Revisa cada operación y wallet contra reglas y análisis on-chain. Escala alertas al oficial de cumplimiento con el caso documentado.</p></div>
+    <div class="box agent"><span class="who">Agente de conciliación</span><p>Cuadra cada día banco, wallets, exchange y libro interno. Reporta diferencias antes del cierre.</p></div>
+    <div class="box agent"><span class="who">Agente CARF</span><p>Acumula durante el año la información de usuarios reportables y genera el XML para la DIAN.</p></div>
+    <div class="box agent"><span class="who">Agente regulatorio</span><p>Sigue la ley PSAV, resoluciones de DIAN, UIAF y Supersociedades, y resume qué cambia para tu empresa.</p></div>
+    <div class="box agent"><span class="who">Agente de tesorería</span><p>Vigila inventario y exposición frente a los límites de riesgo y sugiere reposición con el proveedor de mejor precio.</p></div>
+  </div>
+</section>
+
+<section id="comparativo">
+  <span class="eyebrow">5 · Comparativo</span>
+  <h2>Comparativo por módulo</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Módulo</th><th class="c">Formalización</th><th class="c">Operación formal</th><th class="c">Proveedor de liquidez</th></tr></thead>
+    <tbody>
+      <tr><td>Diagnóstico y matriz de brechas</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+      <tr><td>Estructura societaria y RUT / CARF</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+      <tr><td>SAGRILAFT y matriz de riesgo</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+      <tr><td>Inscripción UIAF y dossier bancario</td><td class="c yes">✓</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+      <tr><td>Pasarela USDT y wallet multifirma</td><td class="c no">—</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+      <tr><td>Conversión vía Binance OTC</td><td class="c no">—</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+      <tr><td>Política de IVA y spread</td><td class="c no">—</td><td class="c yes">✓</td><td class="c yes">✓</td></tr>
+      <tr><td>API RFQ y segundo proveedor</td><td class="c no">—</td><td class="c no">—</td><td class="c yes">✓</td></tr>
+      <tr><td>Contratos OTC y ERP</td><td class="c no">—</td><td class="c no">—</td><td class="c yes">✓</td></tr>
+      <tr><td>Auditoría simulada anual</td><td class="c no">—</td><td class="c no">—</td><td class="c yes">✓</td></tr>
+      <tr><td>Agentes activos</td><td class="c">2</td><td class="c">5</td><td class="c">7</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="valor">
+  <span class="eyebrow">6 · Valor</span>
+  <h2>Por qué cuesta lo que cuesta</h2>
+  <p>La comparación correcta no es contra otra agencia de software. Es contra lo que le cuesta a la empresa resolver esto por su cuenta, o no resolverlo.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Sin Minus</th><th>Con Minus</th></tr></thead>
+    <tbody>
+      <tr><td>Contratar abogado, contador especializado, analistas de cumplimiento y desarrolladores por separado</td><td>Un solo contrato con aliados legales y tributarios incluidos</td></tr>
+      <tr><td>Reportes UIAF y CARF armados a mano cada mes y cada año</td><td>Agentes que los preparan y avisan antes del plazo</td></tr>
+      <tr><td>Riesgo de cierre de cuentas por falta de documentación</td><td>Dossier bancario y SAGRILAFT listos para mostrar</td></tr>
+      <tr><td>Empezar de cero cuando salga la ley PSAV</td><td>Agente regulatorio y estructura ya alineada con estándares GAFI</td></tr>
+      <tr><td>Meses de curva de aprendizaje</td><td>Implementación en 8 a 20 semanas</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><p><strong>Argumento de venta:</strong> el cliente no compra software. Compra la tranquilidad de no perder su banco y la posibilidad de trabajar con contrapartes institucionales que hoy no le abren la puerta.</p></div>
+</section>
+
+<section id="crypto">
+  <span class="eyebrow">7 · Tarifa especial</span>
+  <h2>Precio especial para empresas que ya operan cripto</h2>
+  <p>Las empresas que ya operan cripto tienen <strong>20 % de descuento en la implementación</strong>. La suscripción mensual de agentes no tiene descuento, porque el trabajo de los agentes es el mismo para todos.</p>
+  <div class="grid2">
+    <div class="box">
+      <h3>Quién califica</h3>
+      <p>Al menos dos de estos criterios:</p>
+      <ul>
+        <li>Opera cripto hace 6 meses o más</li>
+        <li>Tiene cuenta corporativa activa en un exchange</li>
+        <li>Ya custodia fondos en wallets propias</li>
+        <li>Tiene oficial de cumplimiento o manual SAGRILAFT</li>
+        <li>Ya reporta a la UIAF</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Por qué tiene sentido</h3>
+      <ul>
+        <li>Es el cliente con más urgencia: ya está expuesto y lo sabe</li>
+        <li>Necesita menos horas de configuración y capacitación</li>
+        <li>Suele convertir a un plan más alto por su volumen</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="alcance">
+  <span class="eyebrow">8 · Precio por alcance</span>
+  <h2>Cómo se ajusta el precio al alcance</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Variable</th><th>Qué mueve el precio</th><th>Efecto</th></tr></thead>
+    <tbody>
+      <tr><td>Estado de la sociedad</td><td>Si hay que constituir una sociedad nueva o reestructurar</td><td>+ USD 3.000 a 6.000</td></tr>
+      <tr><td>Volumen mensual</td><td>Más volumen exige más monitoreo y conciliación</td><td>Ajuste de la suscripción mensual</td></tr>
+      <tr><td>Integraciones</td><td>ERP, CRM o sistema contable propio</td><td>Se cotiza según el sistema</td></tr>
+      <tr><td>Oficial de cumplimiento externo</td><td>Si el cliente no tiene uno y quiere tercerizarlo con un aliado</td><td>Costo mensual adicional del aliado</td></tr>
+      <tr><td>Madurez cripto</td><td>Infraestructura y procesos existentes</td><td>−20 % en implementación</td></tr>
+      <tr><td>Urgencia</td><td>Entrega antes del plazo estándar</td><td>+15 % a +25 %</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="condiciones">
+  <span class="eyebrow">9 · Condiciones</span>
+  <h2>Condiciones comerciales</h2>
+  <div class="grid2">
+    <div class="box">
+      <h3>Pagos</h3>
+      <ul>
+        <li>Implementación: 40 % al firmar, 30 % a mitad del proyecto, 30 % al entregar</li>
+        <li>Suscripción de agentes: mensual, desde el paso a producción</li>
+        <li>Permanencia mínima de la suscripción: 12 meses</li>
+        <li>Pago en USD, COP a la TRM del día, o USDT</li>
+        <li>Precios sin IVA</li>
+      </ul>
+    </div>
+    <div class="box">
+      <h3>Alcance y límites</h3>
+      <ul>
+        <li>Colombia no otorga licencias cripto hoy. El servicio deja a la empresa en cumplimiento de las normas vigentes, no le otorga una licencia.</li>
+        <li>La apertura de cuentas depende de cada banco. Entregamos el dossier y acompañamos, pero no garantizamos aprobación.</li>
+        <li>No incluye capital de trabajo, tasas de terceros ni costos de herramientas on-chain.</li>
+        <li>Las decisiones de cumplimiento las toma el oficial de cumplimiento del cliente.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="proceso">
+  <span class="eyebrow">10 · Proceso</span>
+  <h2>Proceso de venta</h2>
+  <ol class="steps">
+    <li><div><strong>Diagnóstico regulatorio (60 min, sin costo).</strong> Se identifican las brechas y si califica para el precio cripto.</div></li>
+    <li><div><strong>Matriz de brechas por escrito (72 h).</strong> Documento corto con riesgos y plan recomendado. Es la pieza que cierra la venta.</div></li>
+    <li><div><strong>Propuesta y firma.</strong> Precio final, contrato y anticipo del 40 %.</div></li>
+    <li><div><strong>Implementación.</strong> Entregas semanales con aliados legales y tributarios.</div></li>
+    <li><div><strong>Paso a producción.</strong> Agentes activos y capacitación del oficial de cumplimiento.</div></li>
+    <li><div><strong>Operación continua.</strong> Suscripción mensual con informe de cumplimiento cada mes.</div></li>
+  </ol>
+</section>
+
+<footer id="versiones">
+  <span class="eyebrow">11 · Control de versiones</span>
+  <div class="tbl"><table>
+    <thead><tr><th>Versión</th><th>Fecha</th><th>Cambios</th></tr></thead>
+    <tbody>
+      <tr><td>v2.0</td><td>14 oct 2026</td><td>Reposicionamiento a formalización agentizada premium. Nuevos precios (18, 35 y 60 mil USD) con suscripción mensual de agentes, sección de agentes, argumento de valor y límites del servicio.</td></tr>
+      <tr><td>v1.0</td><td>14 oct 2026</td><td>Versión inicial: implementación técnica en tres planes (5, 10 y 15 mil USD) con 20 % de descuento cripto.</td></tr>
+    </tbody>
+  </table></div>
+  <p>Precios, porcentajes y plazos son una propuesta para validar con el equipo y con los aliados legales y tributarios antes de enviar a clientes.</p>
+</footer>
+
+</div>
+</body>
+</html>

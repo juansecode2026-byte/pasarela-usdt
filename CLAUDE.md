@@ -1,29 +1,37 @@
-# Pasarela de pago USDT (Colombia)
+# Proveedor de liquidez USDT (nombre provisional)
 
-Servicio reutilizable multi-proyecto: el comercio cobra en pesos, el cliente paga en USDT, la plataforma convierte y dispersa a una cuenta bancaria, y cada operación queda documentada para UIAF y DIAN.
+Antes llamado "Pasarela de pago USDT". Desde el 14 de octubre de 2026 es un **proveedor de liquidez independiente**: recibe USDT de pagadores de cualquier parte del mundo, los convierte y entrega pesos a sus clientes, y deja cada operación documentada para UIAF y DIAN. El nombre definitivo está por definir.
 
 ## Contexto y fuentes (en `Docs/`, locales)
 
 - `Docs/resumen-proyecto-hellominus.md`: contexto de Hellominus, arquitectura con Zuhay, decisiones tomadas, brechas y el paso a paso por fases (sección 7). Es el archivo de traspaso.
 - `Docs/pasarela-usdt-colombia-estandar.html`: estándar técnico (flujo, máquina de estados, reglas, Binance, modelo de datos, API, cumplimiento, fases). Todo lo regulatorio (UIAF, DIAN, Binance) está **sin verificar**: lo validan un abogado y un contador.
 
+## Enfoque (decidido por Juan el 14 de octubre de 2026)
+
+- Por legalidad y para hacer las cosas bien, este proyecto es **independiente**: se comporta como **proveedor de liquidez** que presta servicio a otras compañías. Tendrá su propia empresa y su propia base de datos.
+- **Estructura de las empresas:** DEVMINUS es la empresa principal. Dentro de DEVMINUS está **Hellominus**, y Hellominus tiene como socio a **Zuhay** (el CRM de ventas).
+- **Reparto de los pagos:**
+  - Pagos en Colombia, directo en pesos colombianos: los maneja la **pasarela en pesos** correspondiente (la construye Zuhay).
+  - Pagos en USDT desde cualquier parte del mundo: los maneja **este proyecto**.
+- **Primeros clientes:** Hellominus y Zuhay. Después pueden sumarse otras compañías.
+- Hellominus ya **no es el dueño ni el comercio** de este sistema: es un cliente más. Cada cliente es un proyecto (`project_id`) con su entidad legal (`legal_entity_id`).
+
+**Reemplazado por este enfoque** (decisiones del 4 de octubre): "el dinero llega a la cuenta de Hellominus", "Hellominus es el `merchant`", "Hellominus es el primer proyecto y primera entidad legal de la pasarela" y "Hellominus construye la pasarela". El esquema de datos ya es multi-cliente, pero el contrato de la API v1 y varios textos hay que revisarlos contra la documentación nueva.
+
+## Documentación nueva (en `Libro de contabilidad blockchain/`)
+
+Cuatro documentos del 14 de octubre de 2026, copiados desde Descargas. Mandan sobre el estándar anterior donde se contradigan.
+
+- En `Libro de contabilidad blockchain/`: `libro-contable-blockchain_v1.7` y `proveedor-liquidez_v1.0`. **Son los que definen este proyecto**: la ruta de 8 fases del proveedor de liquidez y, en la Parte II del libro, la constitución de la SAS independiente.
+- En `productos Consultoría Pasarelas de pago Agentizadas (IA)/`: `plan-comercial_v2.0` y `niveles-cripto_v1.0`. Es material comercial de Minus (los tres niveles y sus precios): un producto de consultoría, **no** parte de lo que construye este proyecto.
+- El modelo que describen es de **contraparte (RFQ)**: el cliente pide precio, recibe una cotización firme de 10 a 30 segundos, acepta y se liquida. No es el flujo "una dirección de depósito por orden" del estándar anterior. Cómo encaja el pago de un pagador final del mundo en ese modelo está abierto (`DECISIONES.md`).
+
 ## Alcance
 
 - Proyecto aparte: servicio y base de datos propios (Supabase propio), repositorio **privado**.
-- Hellominus es el primer proyecto y la primera entidad legal (`project_id`, `legal_entity_id`). Zuhay es el segundo.
-- Hellominus y Zuhay lo consumen solo por **API con llave por proyecto y webhooks firmados**. Es lo único que se comparte entre proyectos.
-- El viajero paga dentro de Hellominus (QR, dirección, monto, cuenta regresiva).
-
-## Decisión clave: quién recibe el dinero
-
-- Decidido por Juan el 4 de octubre de 2026: el dinero de cada pago llega a la **cuenta de Hellominus**. El `merchant` de las órdenes de Hellominus es Hellominus mismo, no cada anfitrión ni Zuhay.
-- El reparto posterior a los anfitriones y a Zuhay queda **fuera de la pasarela** (lo manejan Hellominus y Zuhay).
-- Sigue pendiente de abogado y contador si este esquema (equivale al modelo C o B) basta ante la UIAF y la DIAN. Ver `DECISIONES.md`.
-
-## Empresas que atiende (4 de octubre de 2026)
-
-- Se van a crear **SAS nuevas**. El proyecto atiende a dos empresas: **Hellominus** y la del **CRM de ventas** (Zuhay). Cada una es una entidad legal (`legal_entity_id`) con su proyecto (`project_id`).
-- **Hellominus construye** la pasarela. Construirla no implica que su SAS sea la que opera ante UIAF y DIAN ni la dueña de las cuentas de Binance y banco: eso sigue abierto (`DECISIONES.md`, #1 y #2).
+- Los clientes lo consumen solo por **API con llave por proyecto y webhooks firmados**. Es lo único que se comparte entre proyectos.
+- Un pagador paga en USDT dentro de la aplicación del cliente (QR, dirección, monto, cuenta regresiva).
 
 ## Reglas de este proyecto
 

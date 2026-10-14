@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tres Niveles Cripto</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: documento de una columna; portada con índice; un capítulo por nivel con la misma estructura (qué es, construcción, beneficios legales, impuestos, límites); comparativo final */
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --ink:#15211d; --muted:#56635e; --line:#d9dfdb;
+  --accent:#0f6b5c; --accent-soft:#e3f0ec; --gold:#8a6410; --gold-soft:#f7efdc;
+  --l1:#4b7a9e; --l2:#0f6b5c; --l3:#8a6410;
+  --f-display:"Newsreader", Georgia, "Times New Roman", serif;
+  --f-body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101614; --surface:#17201d; --ink:#e4ece8; --muted:#9aa9a3; --line:#2b3733;
+  --accent:#5cc4ae; --accent-soft:#183029; --gold:#e0b55a; --gold-soft:#2e2614;
+  --l1:#86b4d6; --l2:#5cc4ae; --l3:#e0b55a; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#101614; --surface:#17201d; --ink:#e4ece8; --muted:#9aa9a3; --line:#2b3733;
+  --accent:#5cc4ae; --accent-soft:#183029; --gold:#e0b55a; --gold-soft:#2e2614;
+  --l1:#86b4d6; --l2:#5cc4ae; --l3:#e0b55a; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,5vw,2.7rem);letter-spacing:-.01em}
+h2{font-size:1.75rem}
+h3{font-size:1.25rem}
+h4{font-size:1.05rem;font-family:var(--f-body);font-weight:700}
+p{margin:0;max-width:68ch}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:16px}
+ul,ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+
+.cover{display:flex;flex-direction:column;gap:22px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.lede{font-size:1.1rem;color:var(--muted)}
+.ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.ficha div{background:var(--surface);padding:10px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ficha dt{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.ficha dd{margin:0;font-weight:600}
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0}
+.toc li a{display:flex;gap:14px;align-items:baseline;padding:7px 0;border-bottom:1px dotted var(--line);color:var(--ink);text-decoration:none}
+.toc li:last-child a{border-bottom:0}
+.toc .sub a{padding-left:28px;font-size:.92rem;color:var(--muted)}
+.toc .num{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);min-width:2ch;font-variant-numeric:tabular-nums}
+
+/* Escalera de niveles */
+.ladder{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.ladder{grid-template-columns:1fr}}
+.rung{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.rung .lv{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--c)}
+.rung p{font-size:.93rem}
+.c1{--c:var(--l1)} .c2{--c:var(--l2)} .c3{--c:var(--l3)}
+
+/* Capítulo de nivel */
+.level{border-left:4px solid var(--c);padding-left:20px;gap:22px}
+@media (max-width:520px){.level{padding-left:14px}}
+.level > header{display:flex;flex-direction:column;gap:8px}
+.level .lv{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.block{display:flex;flex-direction:column;gap:10px}
+
+.steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;counter-reset:s}
+.steps li{display:grid;grid-template-columns:34px 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.steps li:last-child{border-bottom:0}
+.steps li::before{counter-increment:s;content:counter(s);font-family:var(--f-display);font-size:1.35rem;line-height:1.1;color:var(--c,var(--accent))}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+
+.note{border-left:3px solid var(--gold);background:var(--gold-soft);padding:14px 16px;border-radius:0 6px 6px 0;display:flex;flex-direction:column;gap:6px}
+.note.ok{border-color:var(--accent);background:var(--accent-soft)}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:600px;font-size:.92rem}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+th.h1c{color:var(--l1)} th.h2c{color:var(--l2)} th.h3c{color:var(--l3)}
+
+footer{border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:12px;font-size:.88rem;color:var(--muted)}
+footer ol{font-size:.85rem}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<div class="cover">
+  <span class="eyebrow">Minus · Documento técnico-comercial</span>
+  <h1>Formalización, operación formal y proveedor de liquidez: diferencias, construcción, beneficios legales e impuestos</h1>
+  <p class="lede">Los tres niveles son una escalera. Cada uno se construye sobre el anterior, suma obligaciones y abre oportunidades de negocio distintas.</p>
+  <dl class="ficha">
+    <div><dt>Versión</dt><dd>v1.0</dd></div>
+    <div><dt>Fecha</dt><dd>14 oct 2026</dd></div>
+    <div><dt>Jurisdicción</dt><dd>Colombia</dd></div>
+    <div><dt>Relacionado</dt><dd>Plan comercial v2.0</dd></div>
+  </dl>
+
+  <nav class="toc" aria-label="Índice">
+    <span class="eyebrow">Índice</span>
+    <ol>
+      <li><a href="#diferencia"><span class="num">1</span><span>La diferencia en una mirada</span></a></li>
+      <li><a href="#formalizacion"><span class="num">2</span><span>Nivel 1 · Formalización</span></a></li>
+      <li class="sub"><a href="#f-construye"><span class="num"></span><span>Cómo se construye · Beneficios legales · Impuestos</span></a></li>
+      <li><a href="#operacion"><span class="num">3</span><span>Nivel 2 · Operación formal</span></a></li>
+      <li class="sub"><a href="#o-construye"><span class="num"></span><span>Cómo se construye · Beneficios legales · Impuestos</span></a></li>
+      <li><a href="#liquidez"><span class="num">4</span><span>Nivel 3 · Proveedor de liquidez</span></a></li>
+      <li class="sub"><a href="#l-construye"><span class="num"></span><span>Cómo se construye · Beneficios legales · Impuestos</span></a></li>
+      <li><a href="#comparativo"><span class="num">5</span><span>Comparativo completo</span></a></li>
+      <li><a href="#elegir"><span class="num">6</span><span>Cómo saber qué nivel necesita un cliente</span></a></li>
+      <li><a href="#versiones"><span class="num">7</span><span>Fuentes y control de versiones</span></a></li>
+    </ol>
+  </nav>
+</div>
+
+<!-- 1 -->
+<section id="diferencia">
+  <span class="eyebrow">1 · Resumen</span>
+  <h2>La diferencia en una mirada</h2>
+  <div class="ladder">
+    <div class="rung c1"><span class="lv">Nivel 1</span><h3>Formalización</h3><p>La empresa queda en regla. Cumple lo que la ley ya exige a quien mueve cripto: reportes, cumplimiento LA/FT y registro tributario correcto.</p><p><strong>Pregunta que responde:</strong> ¿estoy cumpliendo?</p></div>
+    <div class="rung c2"><span class="lv">Nivel 2</span><h3>Operación formal</h3><p>La empresa cobra y convierte cripto para su propio negocio con procesos automáticos, trazables y tributariamente ordenados.</p><p><strong>Pregunta que responde:</strong> ¿puedo operar a escala sin riesgo?</p></div>
+    <div class="rung c3"><span class="lv">Nivel 3</span><h3>Proveedor de liquidez</h3><p>La empresa vende liquidez a otras empresas. Se vuelve contraparte, con inventario propio, clientes institucionales y obligaciones mayores.</p><p><strong>Pregunta que responde:</strong> ¿puedo hacer de esto mi negocio?</p></div>
+  </div>
+  <div class="note"><p><strong>Importante.</strong> En Colombia no existe hoy una licencia cripto. Ningún nivel da una licencia: lo que dan es cumplimiento demostrable de las normas vigentes (UIAF, DIAN, Supersociedades, Banco de la República) y una estructura lista para la ley de proveedores de servicios de activos virtuales que está en trámite.</p></div>
+</section>
+
+<!-- 2 -->
+<section id="formalizacion" class="level c1">
+  <header>
+    <span class="lv">Nivel 1</span>
+    <h2>Formalización</h2>
+    <p>Para la empresa que ya recibe, vende o custodia cripto, o que va a empezar, y necesita ponerse en regla antes de crecer.</p>
+  </header>
+
+  <div class="block" id="f-construye">
+    <h3>Cómo se construye</h3>
+    <ol class="steps">
+      <li><div><strong>Diagnóstico regulatorio.</strong> Qué hace hoy la empresa con cripto, con quién y por cuánto. Resultado: matriz de brechas.</div></li>
+      <li><div><strong>Estructura societaria.</strong> Objeto social que mencione los servicios con activos virtuales y beneficiarios finales identificados. Si hace falta, sociedad separada.</div></li>
+      <li><div><strong>Registro tributario.</strong> RUT con la actividad económica correcta y la responsabilidad 67 (CARF). Firma electrónica habilitada.</div></li>
+      <li><div><strong>Sistema de cumplimiento.</strong> Manual SAGRILAFT, matriz de riesgo LA/FT, oficial de cumplimiento y debida diligencia intensificada de contrapartes.</div></li>
+      <li><div><strong>Registro ante la UIAF.</strong> Inscripción como reportante y prueba de los reportes mensuales de clientes y transacciones.</div></li>
+      <li><div><strong>Dossier bancario.</strong> Paquete documental para abrir o defender cuentas.</div></li>
+      <li><div><strong>Agentes.</strong> KYB y reportes UIAF en funcionamiento.</div></li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h3>Beneficios legales</h3>
+    <ul>
+      <li>Cumple la obligación de reporte mensual a la UIAF de la Resolución 314 de 2021, que aplica a quien intercambia, transfiere o custodia activos virtuales para clientes.</li>
+      <li>Cumple la obligación CARF de la DIAN (Resolución 000240 de 2025) para el año gravable 2026.</li>
+      <li>Reduce el riesgo de sanciones de Supersociedades por no tener SAGRILAFT cuando la empresa está obligada.</li>
+      <li>Reduce el riesgo de cierre de cuentas bancarias, porque la empresa puede mostrar controles.</li>
+      <li>Deja la empresa preparada para registrarse rápido si se aprueba la ley de proveedores de activos virtuales.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>Impuestos</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Tema</th><th>Tratamiento</th></tr></thead>
+      <tbody>
+        <tr><td>Naturaleza</td><td>Para efectos tributarios, los criptoactivos son activos intangibles y forman parte del patrimonio.</td></tr>
+        <tr><td>Renta</td><td>La valorización no realizada no es ingreso gravable. Se tributa cuando se venden o se intercambian.</td></tr>
+        <tr><td>Patrimonio y exógena</td><td>Se reporta el valor patrimonial de los criptoactivos a 31 de diciembre (formato 1012, concepto 1206).</td></tr>
+        <tr><td>CARF</td><td>Reporte anual en XML de usuarios y transacciones. El año gravable 2026 se reporta hasta el último día hábil de mayo de 2027.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3>Qué no incluye</h3>
+    <p>No automatiza la operación de cobro o conversión, ni ordena el tratamiento de IVA de una operación comercial. La empresa queda en regla, pero sigue operando de forma manual.</p>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="operacion" class="level c2">
+  <header>
+    <span class="lv">Nivel 2</span>
+    <h2>Operación formal</h2>
+    <p>Para la empresa que cobra, paga o convierte cripto como parte de su negocio y necesita hacerlo a volumen sin que el cumplimiento se vuelva un cuello de botella.</p>
+  </header>
+
+  <div class="block" id="o-construye">
+    <h3>Cómo se construye</h3>
+    <p>Todo el nivel 1, más:</p>
+    <ol class="steps">
+      <li><div><strong>Pasarela USDT.</strong> Recepción en hasta 3 redes, con wallet institucional multifirma o MPC.</div></li>
+      <li><div><strong>Conversión.</strong> Integración con Binance OTC por API para pasar de USDT a COP y viceversa.</div></li>
+      <li><div><strong>Motor de cotización y límites.</strong> Precio con spread, montos máximos y exposición máxima abierta.</div></li>
+      <li><div><strong>Separación de fondos.</strong> Cuentas y wallets distintas para fondos de clientes y fondos propios.</div></li>
+      <li><div><strong>Política tributaria escrita.</strong> Tratamiento de IVA, facturación y retenciones definido con el contador.</div></li>
+      <li><div><strong>Segundo banco.</strong> Acompañamiento para no depender de una sola cuenta.</div></li>
+      <li><div><strong>Agentes.</strong> Monitoreo transaccional, conciliación diaria y CARF.</div></li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h3>Beneficios legales</h3>
+    <ul>
+      <li>Trazabilidad completa de cada operación: quién, cuánto, cuándo, desde qué wallet. Es la evidencia que piden UIAF, DIAN y bancos.</li>
+      <li>Monitoreo continuo con escalamiento al oficial de cumplimiento, como lo exige un SAGRILAFT funcionando y no solo documentado.</li>
+      <li>Separación de fondos de clientes, que protege a la empresa y a sus clientes ante un embargo o disputa.</li>
+      <li>Redundancia bancaria: si un banco cierra la cuenta, la operación no se detiene.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>Impuestos</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Tema</th><th>Tratamiento</th></tr></thead>
+      <tbody>
+        <tr><td>IVA en la venta de cripto</td><td>La venta de criptoactivos no está sujeta a IVA, según la doctrina de la DIAN.</td></tr>
+        <tr><td>IVA en servicios</td><td>La intermediación en la compra y venta de criptoactivos sí está gravada. Si la empresa cobra comisión por convertir para clientes, esa comisión lleva IVA.</td></tr>
+        <tr><td>Facturación electrónica</td><td>Obligatoria para los servicios prestados. Definir qué se factura en cada tipo de operación.</td></tr>
+        <tr><td>GMF (4×1000)</td><td>Aplica a los movimientos bancarios. Con volumen alto, afecta el margen y debe entrar en el precio.</td></tr>
+        <tr><td>Retención en la fuente</td><td>Según el tipo de operación y de contraparte. Definir con el contador.</td></tr>
+        <tr><td>Renta</td><td>La utilidad por conversión es ingreso del negocio en el año en que se realiza.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note"><p>El punto crítico de este nivel es decidir si el ingreso de la empresa es una ganancia por compraventa (sin IVA) o un servicio de intermediación (con IVA). Debe quedar por escrito con el contador antes de la primera operación.</p></div>
+  </div>
+
+  <div class="block">
+    <h3>Qué no incluye</h3>
+    <p>La empresa convierte para su propio negocio y sus propios clientes finales. No da cotizaciones a otras empresas ni actúa como contraparte institucional.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="liquidez" class="level c3">
+  <header>
+    <span class="lv">Nivel 3</span>
+    <h2>Proveedor de liquidez</h2>
+    <p>Para la empresa que quiere que la liquidez sea su negocio: cotizar y liquidar cripto ↔ COP/USD a exchanges, pasarelas, fintechs y corporativos.</p>
+  </header>
+
+  <div class="block" id="l-construye">
+    <h3>Cómo se construye</h3>
+    <p>Todo el nivel 2, más:</p>
+    <ol class="steps">
+      <li><div><strong>Modelo de principal.</strong> La empresa compra y vende con su propio balance. Requiere capital de trabajo en COP y en USDT.</div></li>
+      <li><div><strong>API de cotización (RFQ).</strong> Los clientes piden precio, reciben una cotización firme por unos segundos y aceptan.</div></li>
+      <li><div><strong>Segundo proveedor de liquidez.</strong> Contrato escrito con otra mesa OTC o market maker, y ruteo al mejor precio.</div></li>
+      <li><div><strong>Contratos institucionales.</strong> Acuerdo marco OTC con cada cliente: cotización, cierre, liquidación, incumplimiento.</div></li>
+      <li><div><strong>Tesorería profesional.</strong> Límites de riesgo, política de inventario y conciliación diaria entre banco, wallets y exchanges.</div></li>
+      <li><div><strong>Pata en dólares.</strong> Canalización de USD por intermediarios del mercado cambiario cuando aplique.</div></li>
+      <li><div><strong>Integración ERP y auditoría.</strong> Libro de operaciones auditable y auditoría simulada anual.</div></li>
+      <li><div><strong>Agentes.</strong> Regulatorio y tesorería, sobre los cinco anteriores.</div></li>
+    </ol>
+  </div>
+
+  <div class="block">
+    <h3>Beneficios legales</h3>
+    <ul>
+      <li>Estructura que cumple los criterios con los que un exchange o una fintech evalúa a su proveedor de liquidez: KYB, SAGRILAFT, reportes, contratos y auditoría.</li>
+      <li>Contratos marco que definen la responsabilidad en errores de precio, envíos fallidos e incumplimientos. Reducen el riesgo de litigio.</li>
+      <li>Cumplimiento cambiario en la pata USD: la cripto no es divisa, pero los dólares sí siguen el régimen del Banco de la República.</li>
+      <li>Mejor posición para registrarse como proveedor de servicios de activos virtuales cuando exista el registro.</li>
+    </ul>
+  </div>
+
+  <div class="block">
+    <h3>Impuestos</h3>
+    <div class="tbl"><table>
+      <thead><tr><th>Tema</th><th>Tratamiento</th></tr></thead>
+      <tbody>
+        <tr><td>Inventario</td><td>La cripto que la empresa compra para revender es inventario de su negocio. La utilidad es ingreso ordinario, no ganancia ocasional.</td></tr>
+        <tr><td>CARF</td><td>La definición de la DIAN incluye expresamente a quien actúa como contraparte. Un proveedor de liquidez es sujeto obligado.</td></tr>
+        <tr><td>IVA</td><td>El spread como principal se analiza como compraventa. Cualquier comisión explícita se analiza como servicio gravado. Requiere concepto escrito del contador.</td></tr>
+        <tr><td>GMF y costos bancarios</td><td>Con márgenes de fracciones de punto porcentual, el 4×1000 puede ser una parte grande del margen. Se modela en cada cotización.</td></tr>
+        <tr><td>Cambiario</td><td>Los ingresos y egresos en USD se canalizan y declaran según el régimen cambiario. La DIAN fiscaliza estas operaciones.</td></tr>
+        <tr><td>Exógena</td><td>Mayor volumen de información a reportar: terceros, transacciones y saldos de cripto a 31 de diciembre.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3>Riesgos propios de este nivel</h3>
+    <ul>
+      <li>Riesgo de precio: el inventario puede perder valor entre la compra y la venta.</li>
+      <li>Riesgo de contraparte: un cliente puede no pagar después de recibir. Se mitiga con liquidación prefondeada.</li>
+      <li>Concentración: depender solo de Binance, que además compite por clientes en Colombia.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 5 -->
+<section id="comparativo">
+  <span class="eyebrow">5 · Comparativo</span>
+  <h2>Comparativo completo</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Dimensión</th><th class="h1c">Formalización</th><th class="h2c">Operación formal</th><th class="h3c">Proveedor de liquidez</th></tr></thead>
+    <tbody>
+      <tr><td>Objetivo</td><td>Estar en regla</td><td>Operar a volumen en regla</td><td>Vender liquidez a otras empresas</td></tr>
+      <tr><td>Quién es el cliente final</td><td>Clientes propios</td><td>Clientes propios</td><td>Otras empresas</td></tr>
+      <tr><td>Rol en la operación</td><td>Usuario de cripto</td><td>Usuario y convertidor</td><td>Contraparte (principal)</td></tr>
+      <tr><td>Capital de trabajo</td><td>No requiere</td><td>Bajo</td><td>Alto: inventario COP y USDT</td></tr>
+      <tr><td>UIAF</td><td>Reportes mensuales</td><td>Reportes mensuales + monitoreo continuo</td><td>Reportes + monitoreo + debida diligencia institucional</td></tr>
+      <tr><td>DIAN</td><td>RUT, CARF, exógena</td><td>+ IVA, facturación, retenciones</td><td>+ inventario, cambiario, mayor exógena</td></tr>
+      <tr><td>Supersociedades</td><td>SAGRILAFT documentado</td><td>SAGRILAFT operando</td><td>SAGRILAFT operando + auditoría anual</td></tr>
+      <tr><td>Bancos</td><td>Dossier</td><td>Dos bancos y separación de fondos</td><td>Dos bancos, separación de fondos y canal cambiario</td></tr>
+      <tr><td>Contratos</td><td>No requiere</td><td>Términos con clientes finales</td><td>Acuerdo marco OTC y contratos con proveedores</td></tr>
+      <tr><td>Agentes</td><td>2</td><td>5</td><td>7</td></tr>
+      <tr><td>Plazo</td><td>8–10 semanas</td><td>10–14 semanas</td><td>14–20 semanas</td></tr>
+      <tr><td>Precio (plan v2.0)</td><td>USD 18.000 + 1.500/mes</td><td>USD 35.000 + 3.000/mes</td><td>USD 60.000 + 5.000/mes</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 6 -->
+<section id="elegir">
+  <span class="eyebrow">6 · Diagnóstico</span>
+  <h2>Cómo saber qué nivel necesita un cliente</h2>
+  <div class="grid2">
+    <div class="box"><h4 style="color:var(--l1)">Formalización si…</h4><ul>
+      <li>Ya mueve cripto pero no reporta a la UIAF</li>
+      <li>Un banco le pidió documentación o le cerró la cuenta</li>
+      <li>El volumen es bajo o la operación es ocasional</li>
+    </ul></div>
+    <div class="box"><h4 style="color:var(--l2)">Operación formal si…</h4><ul>
+      <li>Cobra o paga en USDT de forma recurrente</li>
+      <li>Convierte a COP varias veces por semana</li>
+      <li>Su equipo concilia a mano y se equivoca</li>
+    </ul></div>
+    <div class="box"><h4 style="color:var(--l3)">Proveedor de liquidez si…</h4><ul>
+      <li>Otras empresas ya le piden precio</li>
+      <li>Tiene capital para mantener inventario</li>
+      <li>Quiere que la liquidez sea su línea de negocio</li>
+    </ul></div>
+  </div>
+  <div class="note ok"><p><strong>Regla de venta:</strong> todo cliente empieza por formalización, aunque compre un nivel superior. Sin el nivel 1 resuelto, los niveles 2 y 3 no se sostienen ante un banco.</p></div>
+</section>
+
+<!-- 7 -->
+<footer id="versiones">
+  <span class="eyebrow">7 · Fuentes y control de versiones</span>
+  <div class="tbl"><table>
+    <thead><tr><th>Versión</th><th>Fecha</th><th>Cambios</th></tr></thead>
+    <tbody><tr><td>v1.0</td><td>14 oct 2026</td><td>Versión inicial: diferencias entre los tres niveles, construcción, beneficios legales, impuestos, comparativo y criterios de selección.</td></tr></tbody>
+  </table></div>
+  <p>Este documento resume normativa pública y doctrina vigente a la fecha. No reemplaza la opinión de un abogado ni de un contador. Los tratamientos de IVA y renta deben confirmarse para cada cliente.</p>
+  <ol>
+    <li>DIAN, Resolución 000240 de 2025 (CARF): <a href="https://www.cerlatam.com/normatividad/dian-resolucion-240-de-2025/">CERLATAM</a>, <a href="https://www.hklaw.com/en/insights/publications/2026/01/la-dian-busca-regular-el-reporte-de-informacion-sobre-criptoactivos">Holland &amp; Knight</a>, <a href="https://incp.org.co/?p=128922">INCP</a></li>
+    <li>DIAN, <a href="https://incp.org.co/publicaciones/infoincp-publicaciones/informacion-para-empresas/contable/2023/10/la-dian-publica-concepto-unificado-sobre-criptoactivos/">Concepto unificado sobre criptoactivos (2023)</a> y <a href="https://normograma.dian.gov.co/dian/compilacion/docs/oficio_dian_35238_2018.htm">Oficio 35238 de 2018</a></li>
+    <li><a href="https://accounter.co/noticias/actualidad/rusell-bedford-concepto-unificado-sobre-criptoactivos">Exógena: formato 1012, concepto 1206</a></li>
+    <li>UIAF, <a href="https://www.ambitojuridico.com/sites/default/files/2022-01/RES-314-21%28UIAF%29.pdf">Resolución 314 de 2021</a></li>
+    <li>Supersociedades, <a href="https://www.supersociedades.gov.co/documents/107391/159040/OFICIO%20220-159034%20DE%202021">Capítulo X (SAGRILAFT)</a></li>
+    <li>Banco de la República, <a href="https://banrep.gov.co/es/banco/junta-directiva/conceptos/c21-79245">Concepto C21-79245</a></li>
+  </ol>
+</footer>
+
+</div>
+</body>
+</html>

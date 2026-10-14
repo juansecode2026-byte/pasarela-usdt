@@ -7,19 +7,20 @@ Estado al 4 de octubre de 2026. Fuente: `Docs/resumen-proyecto-hellominus.md`, s
 | Decisión | Motivo |
 |---|---|
 | Proyecto aparte, repositorio privado, base de datos propia | Datos sensibles (identidad, bancos, UIAF/DIAN), acceso restringido, procesos permanentes, sirve a Hellominus y Zuhay |
-| Hellominus es el primer proyecto y primera entidad legal | Acordado con Juan |
-| Hellominus consume por API y webhooks; el viajero paga dentro de Hellominus | Aislamiento de claves y de datos |
+| ~~Hellominus es el primer proyecto y primera entidad legal~~ **Reemplazada el 14 oct 2026**: Hellominus y Zuhay son los primeros clientes | Ya no es el dueño del sistema |
+| Los clientes (Hellominus, Zuhay) consumen por API y webhooks; el pagador paga dentro de la aplicación del cliente | Aislamiento de claves y de datos |
 | No construir el módulo de pagos antes de cerrar modelo legal y reparto | Define obligaciones y arquitectura |
-| El dinero llega a la cuenta de Hellominus (4 oct 2026, Juan). Hellominus es el `merchant`; el reparto a anfitriones y Zuhay queda fuera de la pasarela | Un solo receptor simplifica la vinculación y el reparto. Falta validar con abogado y contador que baste ante UIAF y DIAN (#1) |
-| Se crean SAS nuevas; el proyecto atiende a Hellominus y a la empresa del CRM de ventas, y Hellominus construye la pasarela (4 oct 2026, Juan) | Cada empresa es una entidad legal con su proyecto; el esquema es multi-entidad desde el inicio |
+| ~~El dinero llega a la cuenta de Hellominus (4 oct 2026, Juan). Hellominus es el `merchant`; el reparto a anfitriones y Zuhay queda fuera de la pasarela~~ **Reemplazada el 14 oct 2026** | Un solo receptor simplificaba la vinculación. Ya no aplica: Hellominus es un cliente |
+| Se crean SAS nuevas; el proyecto atiende a Hellominus y a la empresa del CRM de ventas. ~~Hellominus construye la pasarela~~ (4 oct 2026, Juan; matizado el 14 oct) | Cada empresa es una entidad legal con su proyecto; el esquema es multi-entidad desde el inicio |
+| **Cambio de enfoque (14 oct 2026, Juan):** el proyecto es un proveedor de liquidez independiente que presta servicio a otras compañías; DEVMINUS es la empresa principal, Hellominus está dentro y su socio es Zuhay; los pagos en pesos en Colombia van por la pasarela en pesos y los pagos USDT del mundo por este proyecto; Hellominus y Zuhay son los primeros clientes; nombre provisional "Proveedor de liquidez USDT" | Legalidad y orden. **Reemplaza** las dos decisiones anteriores sobre que el dinero llega a Hellominus y que Hellominus es el comercio |
 
 ## Abiertas: Fase 0 (bloquean el módulo de pagos)
 
 | # | Decisión | Opciones / nota | Quién |
 |---|---|---|---|
 | 1 | Modelo legal | A proveedor directo, B orquestador, C cobro propio. Recomendado MVP: C o B | Abogado y contador |
-| 2 | Vendedor frente al viajero; entidad dueña de la cuenta de exchange | Cuenta bancaria: Hellominus (decidido). Falta confirmar la entidad legal exacta y quién figura como vendedor | Juan, Gabriel, Zuhay |
-| 3 | Política de reembolso y reparto interno entre Hellominus, Zuhay y anfitriones | El reparto sale de la pasarela; sigue la política de reembolso (brecha 1) y el momento de pago al anfitrión, que decide Hellominus | Juan, socio |
+| 2 | Qué empresa será el proveedor de liquidez (entidad legal, cuentas de Binance y banco) y su nombre definitivo | Antes se asumía Hellominus; ahora es una empresa propia. Nombre provisional: Proveedor de liquidez USDT | Juan, DEVMINUS |
+| 3 | Política de reembolso y qué recibe cada cliente y cuándo | Cada cliente reparte lo suyo a sus anfitriones fuera de este sistema; falta la política de reembolso (brecha 1) | Juan, socio |
 | 4 | Cuándo se confirma la reserva | Pago válido en cadena o pesos recibidos; quién asume riesgo de precio y capital de trabajo | Juan, Zuhay |
 | 5 | Proveedor de liquidez, análisis de billeteras, red (TRON o Polygon), banco; iniciar KYB | Binance es solo un adaptador | Juan |
 | 6 | Respuestas de Zuhay y acuerdo SaaS | Falta agregar bloque de pagos externos y cripto al cuestionario | Zuhay |

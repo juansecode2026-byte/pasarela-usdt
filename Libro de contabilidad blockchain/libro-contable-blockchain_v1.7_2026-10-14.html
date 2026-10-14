@@ -1,0 +1,1462 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Libro Contable Blockchain</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: guía de una columna; portada con índice; fases numeradas (secuencia real de construcción), cada paso con objetivo, tareas y entregable; bloques de código y tablas con scroll propio */
+:root{
+  --bg:#f6f7f5; --surface:#ffffff; --ink:#15211d; --muted:#56635e; --line:#d9dfdb; --code:#eef2ef;
+  --accent:#0f6b5c; --accent-soft:#e3f0ec; --gold:#8a6410; --gold-soft:#f7efdc; --crit:#a23a2f; --crit-soft:#f8e6e3;
+  --btc:#b4610c; --eth:#4f5fa8; --usdt:#13806b; --fiat:#56635e;
+  --f-display:"Newsreader", Georgia, "Times New Roman", serif;
+  --f-body:"Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101614; --surface:#17201d; --ink:#e4ece8; --muted:#9aa9a3; --line:#2b3733; --code:#1d2824;
+  --accent:#5cc4ae; --accent-soft:#183029; --gold:#e0b55a; --gold-soft:#2e2614; --crit:#ec8a7e; --crit-soft:#33201d;
+  --btc:#f0a24e; --eth:#9aa8ec; --usdt:#5cc4ae; --fiat:#9aa9a3; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#101614; --surface:#17201d; --ink:#e4ece8; --muted:#9aa9a3; --line:#2b3733; --code:#1d2824;
+  --accent:#5cc4ae; --accent-soft:#183029; --gold:#e0b55a; --gold-soft:#2e2614; --crit:#ec8a7e; --crit-soft:#33201d;
+  --btc:#f0a24e; --eth:#9aa8ec; --usdt:#5cc4ae; --fiat:#9aa9a3; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:32px 64px}
+.wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3,h4{font-family:var(--f-display);font-weight:600;line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,5vw,2.7rem);letter-spacing:-.01em}
+h2{font-size:1.75rem}
+h3{font-size:1.25rem}
+h4{font-family:var(--f-body);font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+p{margin:0;max-width:68ch}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:18px;scroll-margin-top:16px}
+ul,ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--code);padding:1px 5px;border-radius:3px}
+td code{overflow-wrap:anywhere}
+.part{margin-top:20px;padding:22px 20px;border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:6px;background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.part h2{margin:0}
+.part p{margin:0;color:var(--muted)}
+.lg-step{display:grid;grid-template-columns:44px 1fr;gap:4px 14px;padding-top:14px;border-top:1px solid var(--line)}
+.lg-step .n{font-family:var(--f-display);font-size:1.7rem;line-height:1;color:var(--gold);font-variant-numeric:tabular-nums}
+h3.sub{font-size:1.1rem;padding-top:6px;scroll-margin-top:16px}
+.toc .sub a{color:var(--muted);font-size:.92rem}
+.tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:14px}
+.tool{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.tool header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.tool h3{font-size:1.1rem}
+.tool .price{font-size:.85rem;color:var(--muted)}
+.tool dl{margin:0;display:grid;grid-template-columns:96px 1fr;gap:6px 12px;font-size:.9rem}
+.tool dt{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.tool dd{margin:0;min-width:0}
+@media (max-width:420px){.tool dl{grid-template-columns:1fr;gap:2px}.tool dd{margin-bottom:6px}}
+.cost{font-family:var(--f-mono);font-size:.7rem;padding:3px 9px;border-radius:999px;white-space:nowrap;border:1px solid}
+.cost.free{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+.cost.tier{color:var(--gold);border-color:var(--gold);background:var(--gold-soft)}
+.cost.paid{color:var(--crit);border-color:var(--crit);background:var(--crit-soft)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:.88rem;color:var(--muted)}
+.srcs{font-size:.82rem;color:var(--muted)}
+.tool .go{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;font-size:.86rem;padding:8px 10px;background:var(--bg);border-radius:4px}
+.tool .go .lbl{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);flex-basis:100%}
+.tool .go a{overflow-wrap:anywhere}
+.tool .go .how{flex-basis:100%;color:var(--muted)}
+
+.cover{display:flex;flex-direction:column;gap:22px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.lede{font-size:1.1rem;color:var(--muted)}
+.ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.ficha div{background:var(--surface);padding:10px 14px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.ficha dt{font-family:var(--f-mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.ficha dd{margin:0;font-weight:600}
+.assets{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--f-mono);font-size:.75rem;padding:3px 10px;border-radius:999px;border:1.5px solid var(--c);color:var(--c);background:var(--surface)}
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 20px;display:flex;flex-direction:column;gap:10px}
+.toc ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;column-gap:28px;gap:0 28px}
+@media (max-width:600px){.toc ol{grid-template-columns:1fr}}
+.toc li a{display:flex;gap:12px;align-items:baseline;padding:7px 0;border-bottom:1px dotted var(--line);color:var(--ink);text-decoration:none}
+.toc .num{font-family:var(--f-mono);font-size:.8rem;color:var(--accent);min-width:2.2ch;font-variant-numeric:tabular-nums}
+.toc .grp{grid-column:1/-1;padding-top:10px}
+
+/* Pasos */
+.step{display:grid;grid-template-columns:60px 1fr;gap:4px 18px;padding-top:24px;border-top:1px solid var(--line);scroll-margin-top:16px}
+.step .n{font-family:var(--f-display);font-size:2.3rem;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums}
+.step .body{display:flex;flex-direction:column;gap:14px;min-width:0}
+.step .goal{color:var(--muted)}
+@media (max-width:520px){.step{grid-template-columns:1fr}.step .n{font-size:1.8rem}}
+.deliver{display:flex;gap:10px;align-items:baseline;background:var(--accent-soft);border-radius:6px;padding:10px 14px;font-size:.93rem}
+.deliver b{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);flex:none}
+
+.note{border-left:3px solid var(--gold);background:var(--gold-soft);padding:14px 16px;border-radius:0 6px 6px 0;display:flex;flex-direction:column;gap:6px}
+.note.crit{border-color:var(--crit);background:var(--crit-soft)}
+.note.ok{border-color:var(--accent);background:var(--accent-soft)}
+
+pre{margin:0;font-family:var(--f-mono);font-size:.82rem;line-height:1.6;background:var(--code);border:1px solid var(--line);border-radius:6px;padding:14px 16px;overflow-x:auto;color:var(--ink)}
+.cm{color:var(--muted)}
+
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:580px;font-size:.92rem}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.box.net{border-top:3px solid var(--c)}
+.box.net h3{color:var(--c)}
+.cb{--c:var(--btc)} .ce{--c:var(--eth)} .cu{--c:var(--usdt)} .cf{--c:var(--fiat)}
+
+/* Diagrama de capas */
+.layers{display:flex;flex-direction:column;gap:6px}
+.layer{display:grid;grid-template-columns:150px 1fr;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.layer span{font-family:var(--f-mono);font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)}
+.layer p{font-size:.93rem}
+.arrow{text-align:center;color:var(--muted);font-family:var(--f-mono);font-size:.8rem;line-height:1}
+@media (max-width:520px){.layer{grid-template-columns:1fr;gap:4px}}
+
+footer{border-top:1px solid var(--line);padding-top:20px;display:flex;flex-direction:column;gap:12px;font-size:.88rem;color:var(--muted)}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+<div class="cover">
+  <span class="eyebrow">Minus · Guía de construcción</span>
+  <h1>Libro contable con blockchain: paso a paso para la trazabilidad de transacciones cripto y fiat</h1>
+  <p class="lede">Cómo construir un libro contable de partida doble, inalterable y verificable con blockchain, que registre y concilie cada movimiento en USDT, Bitcoin, Ethereum, USD y COP, y que alimente los reportes a la UIAF y la DIAN.</p>
+  <div class="assets">
+    <span class="chip cu">USDT · TRC-20 / ERC-20</span>
+    <span class="chip cb">Bitcoin</span>
+    <span class="chip ce">Ethereum</span>
+    <span class="chip cf">USD</span>
+    <span class="chip cf">COP</span>
+  </div>
+  <dl class="ficha">
+    <div><dt>Versión</dt><dd>v1.7</dd></div>
+    <div><dt>Fecha</dt><dd>14 oct 2026</dd></div>
+    <div><dt>Pasos</dt><dd>15</dd></div>
+    <div><dt>Plazo estimado</dt><dd>10–14 semanas</dd></div>
+  </dl>
+
+  <nav class="toc" aria-label="Índice">
+    <span class="eyebrow">Índice</span>
+    <ol>
+      <li class="grp"><span class="eyebrow">Fundamentos</span></li>
+      <li><a href="#concepto"><span class="num">A</span><span>Qué vamos a construir</span></a></li>
+      <li><a href="#arquitectura"><span class="num">B</span><span>Arquitectura en capas</span></a></li>
+      <li><a href="#herramientas"><span class="num">C</span><span>Herramientas necesarias para la trazabilidad en la blockchain</span></a></li>
+      <li class="sub"><a href="#costos-herramientas"><span class="num">C.1</span><span>Costos, procesos y activación de cada herramienta</span></a></li>
+      <li class="grp"><span class="eyebrow">Fase 1 · Diseño</span></li>
+      <li><a href="#p1"><span class="num">1</span><span>Alcance y principios</span></a></li>
+      <li><a href="#p2"><span class="num">2</span><span>Plan de cuentas</span></a></li>
+      <li><a href="#p3"><span class="num">3</span><span>Modelo de datos</span></a></li>
+      <li class="grp"><span class="eyebrow">Fase 2 · Núcleo del libro</span></li>
+      <li><a href="#p4"><span class="num">4</span><span>Partida doble inalterable</span></a></li>
+      <li><a href="#p5"><span class="num">5</span><span>Cadena de hashes</span></a></li>
+      <li><a href="#p6"><span class="num">6</span><span>Anclaje en blockchain pública</span></a></li>
+      <li class="grp"><span class="eyebrow">Fase 3 · Conexiones</span></li>
+      <li><a href="#p7"><span class="num">7</span><span>Captura on-chain por red</span></a></li>
+      <li><a href="#p8"><span class="num">8</span><span>Captura de bancos y exchange</span></a></li>
+      <li><a href="#p9"><span class="num">9</span><span>Reglas contables automáticas</span></a></li>
+      <li><a href="#p10"><span class="num">10</span><span>Valoración y tasas de cambio</span></a></li>
+      <li class="grp"><span class="eyebrow">Fase 4 · Control</span></li>
+      <li><a href="#p11"><span class="num">11</span><span>Conciliación diaria</span></a></li>
+      <li><a href="#p12"><span class="num">12</span><span>Impuestos y costo fiscal</span></a></li>
+      <li><a href="#p13"><span class="num">13</span><span>Trazabilidad y cumplimiento</span></a></li>
+      <li><a href="#p14"><span class="num">14</span><span>Seguridad, accesos y billetera fría</span></a></li>
+      <li><a href="#p15"><span class="num">15</span><span>Reportes, pruebas y producción</span></a></li>
+      <li class="grp"><span class="eyebrow">Anexo</span></li>
+      <li><a href="#excel"><span class="num">D</span><span>Archivos de Excel</span></a></li>
+      <li class="grp"><span class="eyebrow">Parte II · Legal</span></li>
+      <li><a href="#legal"><span class="num">E</span><span>Proceso legal para la constitución como proveedor de liquidez en Colombia</span></a></li>
+      <li class="sub"><a href="#legal-estructura"><span class="num">E.1</span><span>Estructura: empresa independiente</span></a></li>
+      <li class="sub"><a href="#legal-pasos"><span class="num">E.2</span><span>Constitución paso a paso</span></a></li>
+      <li class="sub"><a href="#legal-objeto"><span class="num">E.3</span><span>Objeto social</span></a></li>
+      <li class="sub"><a href="#legal-socios"><span class="num">E.4</span><span>Acuerdo entre los dos socios</span></a></li>
+      <li class="sub"><a href="#legal-contrato"><span class="num">E.5</span><span>Contrato con Minus</span></a></li>
+      <li class="sub"><a href="#legal-cumplimiento"><span class="num">E.6</span><span>Antes de operar con clientes</span></a></li>
+      <li class="sub"><a href="#legal-orden"><span class="num">E.7</span><span>Orden recomendado y entregables</span></a></li>
+      <li class="grp"><span class="eyebrow">Cierre</span></li>
+      <li><a href="#crono"><span class="num">F</span><span>Cronograma</span></a></li>
+      <li><a href="#versiones"><span class="num">G</span><span>Control de versiones</span></a></li>
+    </ol>
+  </nav>
+</div>
+
+<!-- A -->
+<section id="concepto">
+  <span class="eyebrow">A · Fundamentos</span>
+  <h2>Qué vamos a construir</h2>
+  <p>Un libro contable de partida doble donde cada asiento queda encadenado al anterior con una huella criptográfica (hash). Una vez al día, la huella del libro completo se publica en una blockchain pública. Así cualquier auditor, banco o autoridad puede verificar que el libro no fue modificado, sin que se publique ningún dato de clientes.</p>
+  <div class="grid2">
+    <div class="box"><h3>Inalterable</h3><p>Ningún asiento se edita ni se borra. Los errores se corrigen con un asiento de reverso.</p></div>
+    <div class="box"><h3>Verificable</h3><p>La huella diaria anclada en blockchain prueba que el libro no cambió desde esa fecha.</p></div>
+    <div class="box"><h3>Trazable</h3><p>Cada asiento enlaza con su transacción on-chain, su movimiento bancario y su cliente.</p></div>
+    <div class="box"><h3>Privado</h3><p>Los datos contables y de clientes viven en tu base de datos. A la blockchain solo sale una huella.</p></div>
+  </div>
+  <div class="note crit">
+    <strong>Decisión de diseño clave</strong>
+    <p>No se registra la contabilidad completa dentro de una blockchain pública. Sería costoso, lento y expondría datos de clientes, lo que choca con la protección de datos y la reserva comercial. El modelo correcto es: libro privado + cadena de hashes + anclaje público.</p>
+  </div>
+</section>
+
+<!-- B -->
+<section id="arquitectura">
+  <span class="eyebrow">B · Fundamentos</span>
+  <h2>Arquitectura en capas</h2>
+  <div class="layers">
+    <div class="layer"><span>1 · Fuentes</span><p>Blockchains (Bitcoin, Ethereum, Tron), Binance OTC, bancos (COP y USD), TRM del Banco de la República.</p></div>
+    <div class="arrow">↓</div>
+    <div class="layer"><span>2 · Captura</span><p>Conectores que leen transacciones confirmadas y las guardan crudas, sin modificar, como evidencia.</p></div>
+    <div class="arrow">↓</div>
+    <div class="layer"><span>3 · Motor contable</span><p>Reglas que convierten cada evento en un asiento de partida doble, valorado en COP.</p></div>
+    <div class="arrow">↓</div>
+    <div class="layer"><span>4 · Libro inalterable</span><p>Asientos solo de inserción, cada uno con el hash del anterior.</p></div>
+    <div class="arrow">↓</div>
+    <div class="layer"><span>5 · Anclaje</span><p>Raíz de Merkle diaria publicada en Bitcoin y/o Ethereum.</p></div>
+    <div class="arrow">↓</div>
+    <div class="layer"><span>6 · Control y reportes</span><p>Conciliación, alertas, reportes UIAF, CARF y exógena, panel para gerencia y auditoría.</p></div>
+  </div>
+  <div class="tbl"><table>
+    <thead><tr><th>Componente</th><th>Opción sugerida</th><th>Por qué</th></tr></thead>
+    <tbody>
+      <tr><td>Base de datos</td><td>PostgreSQL (Supabase)</td><td>Transacciones ACID, permisos por fila, funciones en servidor y ya está en el stack.</td></tr>
+      <tr><td>Procesos de captura</td><td>Funciones programadas (edge functions o workers)</td><td>Consultan cada red y fuente en intervalos fijos.</td></tr>
+      <tr><td>Acceso a blockchains</td><td>Proveedor de nodos (por ejemplo Alchemy, Infura, QuickNode, TronGrid) o nodo propio</td><td>Lectura confiable sin operar infraestructura al inicio.</td></tr>
+      <tr><td>Anclaje en Bitcoin</td><td>OpenTimestamps</td><td>Estándar abierto para sellar hashes en Bitcoin sin pagar una transacción por cada sello.</td></tr>
+      <tr><td>Anclaje en Ethereum</td><td>Transacción diaria con la raíz en el campo de datos, o un contrato simple de registro</td><td>Verificación inmediata en cualquier explorador.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- C -->
+<section id="herramientas">
+  <span class="eyebrow">C · Fundamentos</span>
+  <h2>Herramientas necesarias para la trazabilidad en la blockchain</h2>
+  <p>Trazabilidad significa poder seguir cada transacción de wallet a wallet y probar de dónde vino y hacia dónde fue. Para lograrlo se necesitan cuatro tipos de herramientas: exploradores para ver y verificar, APIs y nodos para leer de forma automática, analítica para medir el riesgo de cada wallet, y sellado para probar que el registro no cambió.</p>
+
+  <h3 class="sub">1. Mapa de herramientas por función</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Función</th><th>Herramientas</th><th>Uso en el libro</th><th>Cuándo</th></tr></thead>
+    <tbody>
+      <tr><td>Verificar una transacción a mano</td><td>Etherscan, Tronscan, mempool.space, Blockchair</td><td>Segunda fuente y evidencia visual de cada operación.</td><td>Desde el inicio</td></tr>
+      <tr><td>Leer transacciones de forma automática</td><td>API de Etherscan, TronGrid, API Esplora (Blockstream o mempool.space), proveedores de nodos</td><td>Alimentan la tabla de eventos crudos.</td><td>Desde el inicio</td></tr>
+      <tr><td>Leer el exchange</td><td>API de Binance con llave de solo lectura</td><td>Depósitos, retiros, operaciones OTC y comisiones.</td><td>Desde el inicio</td></tr>
+      <tr><td>Tasas de cambio</td><td>TRM oficial y una API de precios de cripto</td><td>Tabla de tasas con fuente y fecha.</td><td>Desde el inicio</td></tr>
+      <tr><td>Base de datos y automatización</td><td>PostgreSQL (Supabase), funciones programadas</td><td>Libro, cadena de hashes y conectores.</td><td>Desde el inicio</td></tr>
+      <tr><td>Sellar y anclar</td><td>SHA-256, OpenTimestamps, transacción en Ethereum</td><td>Anclaje diario de la raíz de Merkle.</td><td>Desde el inicio</td></tr>
+      <tr><td>Generar los archivos de Excel</td><td>openpyxl (Python) o SheetJS (JavaScript)</td><td>Archivos de control de lotes y ventas.</td><td>Desde el inicio</td></tr>
+      <tr><td>Medir riesgo de wallets</td><td>Chainalysis, Elliptic o TRM Labs</td><td>Puntaje de riesgo, sanciones y seguimiento de fondos.</td><td>Antes de operar con clientes</td></tr>
+      <tr><td>Custodia de fondos</td><td>Safe, Fireblocks, BitGo, billeteras de hardware</td><td>Sistema aparte del libro.</td><td>Antes de operar con clientes</td></tr>
+      <tr><td>Nodos propios</td><td>Bitcoin Core, cliente de Ethereum</td><td>Independencia de terceros.</td><td>Con volumen</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sub">2. Exploradores de blockchain: ver y verificar</h3>
+  <p>Un explorador es una página pública donde se pega el hash de una transacción y se ve su estado, origen, destino, monto y comisión. Sirven para verificar a mano y para guardar evidencia.</p>
+  <div class="grid2">
+    <div class="box net ce"><h3>Ethereum · Etherscan</h3><ul>
+      <li>Transferencias de ETH y de tokens ERC-20, incluido USDT en Ethereum.</li>
+      <li>Eventos <code>Transfer</code>, gas pagado, bloque y confirmaciones.</li>
+      <li>Etiquetas de direcciones conocidas, como exchanges.</li>
+      <li>Tiene API para consulta automática.</li>
+    </ul></div>
+    <div class="box net cu"><h3>Tron · Tronscan</h3><ul>
+      <li>Transferencias de USDT en TRC-20, la red más usada para USDT.</li>
+      <li>Muestra el contrato del token y el costo en energía o TRX.</li>
+      <li>Consulta de saldo e historial por wallet.</li>
+      <li>La API de Tron se consume con TronGrid.</li>
+    </ul></div>
+    <div class="box net cb"><h3>Bitcoin · mempool.space o Blockstream</h3><ul>
+      <li>Entradas y salidas de cada transacción (modelo UTXO).</li>
+      <li>Comisión de minería y confirmaciones.</li>
+      <li>Ambos ofrecen API pública basada en Esplora.</li>
+    </ul></div>
+    <div class="box net cf"><h3>Varias redes · Blockchair</h3><ul>
+      <li>Consulta de varias blockchains desde un solo sitio.</li>
+      <li>Útil como tercera fuente cuando dos explorers no coinciden.</li>
+    </ul></div>
+  </div>
+  <div class="note">
+    <p>Los exploradores públicos son para verificar. La captura oficial que alimenta el libro debe venir de una API o un nodo contratado, no de copiar datos a mano.</p>
+  </div>
+
+  <h3 class="sub">3. APIs y nodos: leer automáticamente</h3>
+  <ul>
+    <li><strong>Ethereum y tokens ERC-20:</strong> API de Etherscan con clave propia, o un proveedor de nodos como Alchemy, Infura o QuickNode.</li>
+    <li><strong>Tron y USDT TRC-20:</strong> TronGrid.</li>
+    <li><strong>Bitcoin:</strong> API Esplora de Blockstream o mempool.space.</li>
+    <li><strong>Avisos en tiempo real:</strong> webhooks o suscripciones a eventos de los proveedores de nodos, para enterarse de un depósito al confirmarse.</li>
+    <li><strong>Nodo propio:</strong> Bitcoin Core y un cliente de Ethereum cuando el volumen justifique no depender de terceros.</li>
+  </ul>
+  <p>Los planes, límites de consulta y precios cambian con frecuencia. Validarlos con cada proveedor antes de contratar.</p>
+
+  <h3 class="sub">4. Analítica on-chain: medir el riesgo de cada wallet</h3>
+  <p>Chainalysis, Elliptic y TRM Labs son proveedores comerciales que puntúan el riesgo de una dirección y siguen los fondos varios saltos hacia atrás. Se elige uno.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Qué permite</th><th>Cómo se usa en el libro</th></tr></thead>
+    <tbody>
+      <tr><td>Puntaje de riesgo de una wallet</td><td>Se consulta cuando un cliente registra una wallet y antes de aceptar cada depósito grande.</td></tr>
+      <tr><td>Exposición a sanciones, mezcladores y mercados ilícitos</td><td>Una alerta bloquea la contabilización automática y envía el caso al oficial de cumplimiento.</td></tr>
+      <tr><td>Seguimiento de fondos hacia atrás</td><td>Permite documentar el origen de los fondos de un cliente nuevo.</td></tr>
+      <tr><td>Monitoreo continuo de wallets</td><td>Avisa si una wallet ya registrada cambia de perfil de riesgo.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sub">5. Exchange, banco y tasas</h3>
+  <ul>
+    <li><strong>Binance:</strong> API con llave de solo lectura para depósitos, retiros, operaciones y comisiones. Nunca con permiso de retiro.</li>
+    <li><strong>Bancos:</strong> extractos por API si el banco la ofrece, o archivo diario estandarizado.</li>
+    <li><strong>TRM:</strong> la oficial, que publican la Superintendencia Financiera y el Banco de la República.</li>
+    <li><strong>Precios de cripto:</strong> una fuente única definida, por ejemplo el precio de ejecución en Binance o un índice con API. Cada tasa se guarda con su fuente y su hora.</li>
+  </ul>
+
+  <h3 class="sub">6. Sellado y anclaje</h3>
+  <ul>
+    <li><strong>SHA-256:</strong> la huella de cada asiento y de cada archivo de Excel.</li>
+    <li><strong>OpenTimestamps:</strong> sella la raíz de Merkle del día en Bitcoin.</li>
+    <li><strong>Transacción en Ethereum:</strong> publica la misma raíz en el campo de datos, para verificarla en Etherscan.</li>
+  </ul>
+
+  <h3 class="sub">7. Desarrollo y automatización</h3>
+  <ul>
+    <li><strong>Base de datos:</strong> PostgreSQL en Supabase, con permisos de solo inserción en las tablas del libro.</li>
+    <li><strong>Librerías de lectura:</strong> ethers.js o web3.py para Ethereum, TronWeb para Tron y bitcoinjs-lib para Bitcoin.</li>
+    <li><strong>Procesos programados:</strong> funciones que consultan cada red y fuente a intervalos fijos.</li>
+    <li><strong>Excel:</strong> openpyxl o SheetJS para generar y sellar los archivos de control.</li>
+  </ul>
+
+  <h3 class="sub">8. Custodia: un sistema aparte</h3>
+  <p>Las herramientas de custodia mueven fondos. El libro solo lee. Se mantienen separados.</p>
+  <ul>
+    <li><strong>Safe:</strong> billetera multifirma para Ethereum y redes compatibles.</li>
+    <li><strong>Fireblocks o BitGo:</strong> custodia institucional con MPC y políticas de aprobación.</li>
+    <li><strong>Billeteras de hardware:</strong> opción para tesorería pequeña, siempre con más de una persona involucrada.</li>
+  </ul>
+  <div class="note crit">
+    <p>Ninguna llave privada ni frase semilla se pega nunca en una herramienta de consulta, en el libro ni en el Excel. Para leer una wallet basta con su dirección pública.</p>
+  </div>
+
+  <h3 class="sub">9. Cómo se traza una transacción de wallet a wallet</h3>
+  <ol>
+    <li><strong>Tomar el hash</strong> de la transacción que llegó al sistema.</li>
+    <li><strong>Abrirlo en el explorador</strong> de la red que corresponde: Etherscan, Tronscan o mempool.space.</li>
+    <li><strong>Confirmar el estado:</strong> que esté confirmada y que haya pasado el número de confirmaciones definido.</li>
+    <li><strong>Identificar origen y destino</strong> y clasificarlos: wallet propia, wallet de cliente, exchange u otra.</li>
+    <li><strong>Validar el token:</strong> que el contrato sea el oficial. Los contratos de USDT se verifican contra la lista oficial de Tether antes de configurarlos.</li>
+    <li><strong>Revisar el riesgo</strong> de la wallet de origen con la herramienta de analítica.</li>
+    <li><strong>Seguir hacia atrás</strong> si el origen es dudoso, hasta llegar a un exchange identificado o a un origen documentado.</li>
+    <li><strong>Guardar la evidencia:</strong> hash, enlace al explorador, respuesta de la API, bloque, hora y confirmaciones.</li>
+    <li><strong>Enlazar con el libro:</strong> el ID del asiento, el lote de compra o la venta en el archivo de Excel.</li>
+  </ol>
+
+  <h3 class="sub">10. Evidencia que se guarda por transacción</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Dato</th><th>Para qué</th></tr></thead>
+    <tbody>
+      <tr><td>Hash de la transacción y red</td><td>Identificar la operación sin ambigüedad.</td></tr>
+      <tr><td>Bloque, hora y confirmaciones</td><td>Probar cuándo ocurrió y que estaba confirmada.</td></tr>
+      <tr><td>Dirección de origen y de destino</td><td>Trazabilidad de wallet a wallet.</td></tr>
+      <tr><td>Contrato del token</td><td>Demostrar que no era un token falso.</td></tr>
+      <tr><td>Respuesta cruda de la API</td><td>Evidencia que no depende de una captura de pantalla.</td></tr>
+      <tr><td>Enlace al explorador</td><td>Verificación rápida por un auditor.</td></tr>
+      <tr><td>Puntaje de riesgo y fecha de consulta</td><td>Demostrar la debida diligencia.</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sub">11. Criterios para elegir cada herramienta</h3>
+  <ul>
+    <li>Cubre las redes que usamos: Bitcoin, Ethereum y Tron.</li>
+    <li>Tiene API estable y permite exportar los datos.</li>
+    <li>El costo se sostiene con el volumen esperado.</li>
+    <li>No obliga a entregar datos de clientes más allá de direcciones públicas.</li>
+    <li>Deja historial de consultas que sirva en una auditoría.</li>
+  </ul>
+
+  <h3 class="sub">12. Orden de adopción</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Etapa</th><th>Herramientas</th></tr></thead>
+    <tbody>
+      <tr><td>Desde el inicio</td><td>Exploradores, APIs de lectura, API de Binance, TRM, Supabase, SHA-256, OpenTimestamps y generación de Excel.</td></tr>
+      <tr><td>Antes de operar con clientes</td><td>Analítica on-chain comercial y custodia multifirma o MPC.</td></tr>
+      <tr><td>Con volumen</td><td>Nodos propios, monitoreo continuo y segundo proveedor de datos.</td></tr>
+    </tbody>
+  </table></div>
+  <h3 class="sub" id="costos-herramientas">13. Construir ahora, activar al ingresar dinero</h3>
+  <p>Casi todo el sistema se puede construir y conectar hoy con planes gratuitos y redes de prueba, sin dinero real. Cuando entre el primer dinero, las herramientas no se activan solas: cada una cae en uno de tres tipos, y cada tipo se activa de forma distinta.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Tipo</th><th>Herramientas</th><th>Qué hay que hacer para activarla</th><th>Tiempo</th></tr></thead>
+    <tbody>
+      <tr><td>Funcionan desde hoy</td><td>Exploradores, TRM, SHA-256, OpenTimestamps, librerías, API de Binance, APIs de Bitcoin</td><td>Nada. Se usan igual en pruebas y en producción.</td><td>Inmediato</td></tr>
+      <tr><td>Se activan cambiando de plan</td><td>Supabase, API de Etherscan, TronGrid, Alchemy o Infura, CoinGecko</td><td>Subir de plan en el panel del proveedor y cambiar la llave en la configuración.</td><td>Minutos</td></tr>
+      <tr><td>Requieren contrato y empresa</td><td>Chainalysis, Elliptic o TRM Labs; Fireblocks o BitGo; cuenta institucional de Binance OTC</td><td>Cotizar, pasar la revisión KYB del proveedor sobre tu empresa y firmar contrato. Requiere la sociedad constituida.</td><td>Semanas</td></tr>
+    </tbody>
+  </table></div>
+  <div class="grid2">
+    <div class="box"><h3>Probar sin dinero real</h3><p>Se usan las redes de prueba: Sepolia en Ethereum, Nile o Shasta en Tron, y testnet o signet en Bitcoin. Funcionan igual que las reales y su cripto no tiene valor.</p></div>
+    <div class="box"><h3>Conectores intercambiables</h3><p>Cada herramienta de pago se conecta a través de un adaptador. En pruebas responde un simulador. Al contratar, se cambia por el proveedor real en la configuración, sin reescribir el sistema.</p></div>
+  </div>
+  <div class="note">
+    <strong>Lo que hay que adelantar</strong>
+    <p>Las herramientas del tercer tipo son las que más tardan. Conviene cotizarlas en paralelo a la construcción, para que estén firmadas cuando llegue el primer cliente. Y Supabase debe pasar al plan Pro antes de guardar el primer dato real, porque el plan gratuito no tiene backups automáticos.</p>
+  </div>
+
+  <h3 class="sub">14. Ficha de cada herramienta: costo, proceso, área y función</h3>
+  <p>Cada ficha indica en qué proceso del libro participa la herramienta, qué área la usa, para qué sirve, qué pasa si no se usa, cuándo se activa y cómo llegar a ella.</p>
+  <div class="note crit"><p>Entrar siempre por estos enlaces o escribiendo la dirección a mano. Hay sitios falsos que imitan exchanges y billeteras para robar llaves y fondos.</p></div>
+  <div class="legend">
+    <span><span class="cost free">Gratis</span> sin costo</span>
+    <span><span class="cost tier">Plan gratuito</span> gratis con límites, luego pago</span>
+    <span><span class="cost paid">Pago</span> requiere plan o contrato</span>
+  </div>
+
+  <h4>Exploradores: verificación manual</h4>
+  <div class="tools">
+    <article class="tool">
+      <header><h3>Etherscan (web)</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://etherscan.io">etherscan.io</a><span class="how">Pegar el hash o la dirección en el buscador. No requiere cuenta.</span></p>
+      <dl>
+        <dt>Proceso</dt><dd>Verificación y auditoría (pasos 13 y 15)</dd>
+        <dt>Área</dt><dd>Cumplimiento, auditoría</dd>
+        <dt>Para qué</dt><dd>Ver a mano una transacción de ETH o de USDT en Ethereum y guardar el enlace como evidencia.</dd>
+        <dt>Si no se usa</dt><dd>Nadie puede comprobar una operación sin depender de los datos del propio sistema.</dd>
+        <dt>Se activa</dt><dd>Desde hoy</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>Tronscan</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://tronscan.org">tronscan.org</a><span class="how">Pegar el hash o la dirección en el buscador. No requiere cuenta.</span></p>
+      <dl>
+        <dt>Proceso</dt><dd>Verificación y auditoría (pasos 13 y 15)</dd>
+        <dt>Área</dt><dd>Cumplimiento, tesorería</dd>
+        <dt>Para qué</dt><dd>Verificar depósitos y retiros de USDT en TRC-20 y confirmar el contrato del token.</dd>
+        <dt>Si no se usa</dt><dd>La red con más volumen de USDT queda sin verificación manual, con más riesgo de aceptar tokens falsos.</dd>
+        <dt>Se activa</dt><dd>Desde hoy</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>mempool.space y Blockstream</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://mempool.space">mempool.space</a> <a href="https://mempool.space/docs/api">Documentación API</a> <a href="https://blockstream.info">blockstream.info</a><span class="how">La web y la API pública no requieren cuenta.</span></p>
+      <p class="price">Web y API pública sin llave. Blockstream permite unas 50 solicitudes por segundo; mempool.space aplica un límite que no publica.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Captura on-chain de Bitcoin (paso 7) y verificación</dd>
+        <dt>Área</dt><dd>Tecnología, cumplimiento</dd>
+        <dt>Para qué</dt><dd>Leer y verificar transacciones de BTC, sus comisiones y confirmaciones.</dd>
+        <dt>Si no se usa</dt><dd>Los movimientos de Bitcoin no entran al libro de forma automática.</dd>
+        <dt>Se activa</dt><dd>Desde hoy</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>Blockchair</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://blockchair.com">blockchair.com</a><span class="how">Pegar el hash o la dirección en el buscador.</span></p>
+      <p class="price">La consulta web es gratis. Su API no la verifiqué.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Verificación y auditoría</dd>
+        <dt>Área</dt><dd>Auditoría</dd>
+        <dt>Para qué</dt><dd>Tercera fuente para desempatar cuando dos exploradores no coinciden.</dd>
+        <dt>Si no se usa</dt><dd>Impacto bajo. Es un respaldo, no una pieza central.</dd>
+        <dt>Se activa</dt><dd>Cuando se necesite</dd>
+      </dl>
+    </article>
+  </div>
+
+  <h4>Captura automática de blockchain</h4>
+  <div class="tools">
+    <article class="tool">
+      <header><h3>API de Etherscan</h3><span class="cost tier">Plan gratuito</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://etherscan.io/apis">etherscan.io/apis</a> <a href="https://docs.etherscan.io">Documentación</a><span class="how">Crear una cuenta gratuita, entrar a API Keys y generar una llave.</span></p>
+      <p class="price">Gratis: 3 llamadas por segundo y hasta 100.000 al día, con Ethereum incluido. De pago: planes Lite a Pro Plus, hasta 1,5 millones al día.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Captura on-chain (paso 7)</dd>
+        <dt>Área</dt><dd>Tecnología</dd>
+        <dt>Para qué</dt><dd>Leer de forma automática las transferencias de ETH y USDT ERC-20 de nuestras wallets.</dd>
+        <dt>Si no se usa</dt><dd>Hay que digitar transacciones a mano, con errores y sin trazabilidad automática.</dd>
+        <dt>Se activa</dt><dd>Desde hoy. Se sube de plan si se superan los límites.</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>TronGrid</h3><span class="cost tier">Plan gratuito</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://www.trongrid.io">trongrid.io</a> <a href="https://chainstack.com">chainstack.com</a><span class="how">Crear una cuenta y generar la llave de API en el panel.</span></p>
+      <p class="price">Gratis: 100.000 solicitudes al día, 15 por segundo y 3 llaves. Planes mayores a la medida. Alternativa: Chainstack, con 3 millones al mes gratis y plan Growth de 49 USD al mes.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Captura on-chain (paso 7)</dd>
+        <dt>Área</dt><dd>Tecnología</dd>
+        <dt>Para qué</dt><dd>Leer de forma automática los movimientos de USDT en TRC-20.</dd>
+        <dt>Si no se usa</dt><dd>Probablemente la mayor parte del volumen de USDT quedaría sin captura automática.</dd>
+        <dt>Se activa</dt><dd>Desde hoy</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>Alchemy o Infura</h3><span class="cost tier">Plan gratuito</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://www.alchemy.com">alchemy.com</a> <a href="https://www.infura.io">infura.io</a><span class="how">Crear una cuenta y una app para obtener la llave.</span></p>
+      <p class="price">Alchemy: 30 millones de compute units al mes. Infura: 3 millones de créditos al día. Después, pago por uso o planes.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Captura on-chain y avisos en tiempo real (paso 7)</dd>
+        <dt>Área</dt><dd>Tecnología</dd>
+        <dt>Para qué</dt><dd>Respaldo de Etherscan y avisos inmediatos (webhooks) cuando llega un depósito.</dd>
+        <dt>Si no se usa</dt><dd>Si Etherscan falla, se detiene la captura de Ethereum, y los depósitos se detectan con retraso.</dd>
+        <dt>Se activa</dt><dd>Opcional al inicio. Recomendable antes de operar con clientes.</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>Nodos propios</h3><span class="cost paid">Pago</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://bitcoincore.org">bitcoincore.org</a> <a href="https://ethereum.org/en/developers/docs/nodes-and-clients/">Clientes de Ethereum</a><span class="how">Se instalan en un servidor propio o en la nube.</span></p>
+      <p class="price">Bitcoin Core y los clientes de Ethereum son gratuitos. Lo que cuesta es el servidor y su mantenimiento.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Captura on-chain (paso 7)</dd>
+        <dt>Área</dt><dd>Tecnología</dd>
+        <dt>Para qué</dt><dd>Leer la blockchain sin depender de terceros.</dd>
+        <dt>Si no se usa</dt><dd>Se depende de proveedores externos. Aceptable al inicio.</dd>
+        <dt>Se activa</dt><dd>Con volumen</dd>
+      </dl>
+    </article>
+  </div>
+
+  <h4>Exchange y tasas</h4>
+  <div class="tools">
+    <article class="tool">
+      <header><h3>API de Binance</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://developers.binance.com">developers.binance.com</a><span class="how">En la cuenta de Binance, entrar a Gestión de API y crear una llave solo de lectura.</span></p>
+      <p class="price">No tiene costo por uso, solo límites de consumo. Las comisiones de cada operación son aparte.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Captura de exchange (paso 8) y valoración (paso 10)</dd>
+        <dt>Área</dt><dd>Tesorería, contabilidad</dd>
+        <dt>Para qué</dt><dd>Traer depósitos, retiros, operaciones OTC, comisiones y el precio de ejecución.</dd>
+        <dt>Si no se usa</dt><dd>Las operaciones en Binance se cargan a mano y la conciliación con el exchange se vuelve manual.</dd>
+        <dt>Se activa</dt><dd>Desde hoy, con llave de solo lectura. La cuenta institucional OTC requiere la empresa.</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>TRM oficial</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://www.banrep.gov.co/es/estadisticas/trm">banrep.gov.co</a> <a href="https://www.superfinanciera.gov.co">superfinanciera.gov.co</a><span class="how">Publicación diaria. No requiere cuenta.</span></p>
+      <dl>
+        <dt>Proceso</dt><dd>Valoración y tasas (paso 10)</dd>
+        <dt>Área</dt><dd>Contabilidad</dd>
+        <dt>Para qué</dt><dd>Convertir a pesos todo lo que está en dólares con la tasa oficial del día.</dd>
+        <dt>Si no se usa</dt><dd>La valoración en COP queda sin una fuente oficial que la sustente ante la DIAN.</dd>
+        <dt>Se activa</dt><dd>Desde hoy</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>CoinGecko API</h3><span class="cost tier">Plan gratuito</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://www.coingecko.com/en/api">coingecko.com/en/api</a><span class="how">Crear una cuenta y generar la llave del plan gratuito.</span></p>
+      <p class="price">Gratis: 10.000 llamadas al mes y 100 por minuto. El uso comercial parece requerir plan de pago, desde unos 35 USD al mes.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Valoración y tasas (paso 10)</dd>
+        <dt>Área</dt><dd>Contabilidad</dd>
+        <dt>Para qué</dt><dd>Precio de referencia independiente para BTC y ETH.</dd>
+        <dt>Si no se usa</dt><dd>Se usa el precio de Binance. Es opcional.</dd>
+        <dt>Se activa</dt><dd>Si el contador pide una fuente independiente</dd>
+      </dl>
+    </article>
+  </div>
+
+  <h4>Base de datos, sellado y Excel</h4>
+  <div class="tools">
+    <article class="tool">
+      <header><h3>Supabase</h3><span class="cost tier">Plan gratuito</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://supabase.com">supabase.com</a> <a href="https://supabase.com/pricing">Precios</a> <a href="https://supabase.com/docs">Documentación</a><span class="how">Crear una cuenta y un proyecto nuevo.</span></p>
+      <p class="price">Free: 500 MB, se pausa tras 1 semana sin uso y no tiene backups automáticos. Pro: desde 25 USD al mes, 8 GB y backups diarios por 7 días.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Registro contable (pasos 3 a 5) y todo el sistema</dd>
+        <dt>Área</dt><dd>Tecnología, contabilidad</dd>
+        <dt>Para qué</dt><dd>Guardar el libro, la cadena de hashes, los eventos y las tasas.</dd>
+        <dt>Si no se usa</dt><dd>No hay libro. Es la pieza central del sistema.</dd>
+        <dt>Se activa</dt><dd>Free para construir. Pro antes del primer dato real.</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>SHA-256</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://docs.python.org/3/library/hashlib.html">Python hashlib</a> <a href="https://nodejs.org/api/crypto.html">Node.js crypto</a><span class="how">Viene incluido en Python y Node.js. No requiere cuenta.</span></p>
+      <dl>
+        <dt>Proceso</dt><dd>Cadena de hashes (paso 5)</dd>
+        <dt>Área</dt><dd>Tecnología, auditoría</dd>
+        <dt>Para qué</dt><dd>Crear la huella de cada asiento y de cada archivo de Excel.</dd>
+        <dt>Si no se usa</dt><dd>Un asiento podría modificarse sin que nadie lo detecte.</dd>
+        <dt>Se activa</dt><dd>Desde hoy</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>OpenTimestamps</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://opentimestamps.org">opentimestamps.org</a><span class="how">Herramienta abierta. No requiere cuenta.</span></p>
+      <dl>
+        <dt>Proceso</dt><dd>Anclaje en blockchain (paso 6)</dd>
+        <dt>Área</dt><dd>Auditoría</dd>
+        <dt>Para qué</dt><dd>Sellar en Bitcoin la raíz de Merkle del día.</dd>
+        <dt>Si no se usa</dt><dd>No existe una prueba externa de que el libro no cambió.</dd>
+        <dt>Se activa</dt><dd>Desde hoy</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>Anclaje en Ethereum</h3><span class="cost paid">Pago</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://ethereum.org/en/developers/docs/gas/">Gas en ethereum.org</a> <a href="https://etherscan.io/gastracker">Costo actual del gas</a><span class="how">Se envía desde una wallet de la empresa con un poco de ETH para el gas.</span></p>
+      <p class="price">El gas de una transacción al día. Varía según la congestión de la red.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Anclaje en blockchain (paso 6)</dd>
+        <dt>Área</dt><dd>Auditoría</dd>
+        <dt>Para qué</dt><dd>Segundo anclaje, verificable al instante en Etherscan.</dd>
+        <dt>Si no se usa</dt><dd>Queda solo el anclaje en Bitcoin, que es suficiente. Es opcional.</dd>
+        <dt>Se activa</dt><dd>Cuando se quiera un segundo respaldo</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>Librerías de cada red</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://docs.ethers.org">ethers.js</a> <a href="https://web3py.readthedocs.io">web3.py</a> <a href="https://github.com/tronprotocol/tronweb">TronWeb</a> <a href="https://github.com/bitcoinjs/bitcoinjs-lib">bitcoinjs-lib</a><span class="how">Se instalan con npm o pip.</span></p>
+      <p class="price">ethers.js, web3.py, TronWeb y bitcoinjs-lib. Código abierto.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Captura on-chain y conectores (pasos 7 y 8)</dd>
+        <dt>Área</dt><dd>Tecnología</dd>
+        <dt>Para qué</dt><dd>Leer e interpretar transacciones de cada red desde el código.</dd>
+        <dt>Si no se usa</dt><dd>Habría que programar cada protocolo desde cero.</dd>
+        <dt>Se activa</dt><dd>Desde hoy</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>openpyxl o SheetJS</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://openpyxl.readthedocs.io">openpyxl</a> <a href="https://docs.sheetjs.com">SheetJS</a><span class="how">Se instalan con pip o npm.</span></p>
+      <p class="price">Código abierto. SheetJS en su edición comunitaria.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Impuestos y archivos de Excel (paso 12 y sección D)</dd>
+        <dt>Área</dt><dd>Contabilidad</dd>
+        <dt>Para qué</dt><dd>Generar cada día el Excel de lotes y ventas de forma automática.</dd>
+        <dt>Si no se usa</dt><dd>El Excel se arma a mano, con errores y sin sello.</dd>
+        <dt>Se activa</dt><dd>Desde hoy</dd>
+      </dl>
+    </article>
+  </div>
+
+  <h4>Cumplimiento</h4>
+  <div class="tools">
+    <article class="tool">
+      <header><h3>Chainalysis, Elliptic o TRM Labs</h3><span class="cost paid">Pago</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://www.chainalysis.com">chainalysis.com</a> <a href="https://www.elliptic.co">elliptic.co</a> <a href="https://www.trmlabs.com">trmlabs.com</a><span class="how">Solicitar demo o cotización desde el sitio de cada uno.</span></p>
+      <p class="price">Sin precio público. Rangos citados: Chainalysis de 10.000 a más de 200.000 USD al año; TRM Labs de 50.000 a 500.000 USD al año; Elliptic no verificado. Contratos de 1 a 3 años. Chainalysis ofrece pruebas de 14 a 30 días.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Cumplimiento y trazabilidad (paso 13)</dd>
+        <dt>Área</dt><dd>Cumplimiento</dd>
+        <dt>Para qué</dt><dd>Puntuar el riesgo de cada wallet, detectar sanciones y seguir el origen de los fondos.</dd>
+        <dt>Si no se usa</dt><dd>No se puede demostrar la debida diligencia sobre las wallets. Hay riesgo de recibir fondos ilícitos y de perder las cuentas bancarias.</dd>
+        <dt>Se activa</dt><dd>Antes del primer cliente. Cotizar en paralelo a la construcción.</dd>
+      </dl>
+    </article>
+  </div>
+
+  <h4>Custodia</h4>
+  <div class="tools">
+    <article class="tool">
+      <header><h3>Safe</h3><span class="cost free">Gratis</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://app.safe.global">app.safe.global</a> <a href="https://safe.global">safe.global</a><span class="how">Conectar las wallets de los firmantes y crear la cuenta multifirma.</span></p>
+      <p class="price">Los contratos y la app son gratis. Solo se paga el gas de la red. No confirmé soporte para Tron.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Custodia y seguridad (paso 14)</dd>
+        <dt>Área</dt><dd>Tesorería</dd>
+        <dt>Para qué</dt><dd>Que mover fondos en Ethereum requiera la firma de varias personas.</dd>
+        <dt>Si no se usa</dt><dd>Una sola llave controla los fondos, con riesgo de robo o error.</dd>
+        <dt>Se activa</dt><dd>Antes de mover fondos reales</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>Billeteras de hardware</h3><span class="cost paid">Pago</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://www.ledger.com">ledger.com</a> <a href="https://trezor.io">trezor.io</a><span class="how">Comprar solo en la tienda oficial del fabricante.</span></p>
+      <p class="price">Pago único por dispositivo. Precio no verificado.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Custodia y seguridad (paso 14)</dd>
+        <dt>Área</dt><dd>Tesorería</dd>
+        <dt>Para qué</dt><dd>Guardar las llaves fuera de internet para la tesorería pequeña.</dd>
+        <dt>Si no se usa</dt><dd>Las llaves quedan en dispositivos conectados, más expuestas.</dd>
+        <dt>Se activa</dt><dd>Antes de mover fondos reales</dd>
+      </dl>
+    </article>
+    <article class="tool">
+      <header><h3>Fireblocks o BitGo</h3><span class="cost paid">Pago</span></header>
+      <p class="go"><span class="lbl">Cómo llegar</span><a href="https://www.fireblocks.com">fireblocks.com</a> <a href="https://www.bitgo.com">bitgo.com</a><span class="how">Contactar a ventas desde el sitio de cada uno.</span></p>
+      <p class="price">Fireblocks: plan Essentials reportado en 999 USD al mes, con compromiso de hasta 6 meses. BitGo: precio a la medida, con mínimos reportados de 1 millón de USD.</p>
+      <dl>
+        <dt>Proceso</dt><dd>Custodia y seguridad (paso 14)</dd>
+        <dt>Área</dt><dd>Tesorería</dd>
+        <dt>Para qué</dt><dd>Custodia institucional con MPC y políticas de aprobación.</dd>
+        <dt>Si no se usa</dt><dd>Se cubre con Safe y billeteras de hardware mientras el volumen sea bajo.</dd>
+        <dt>Se activa</dt><dd>Con volumen</dd>
+      </dl>
+    </article>
+  </div>
+
+  <h3 class="sub">15. Presupuesto de herramientas por etapa</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Etapa</th><th>Qué se usa</th><th>Costo aproximado</th></tr></thead>
+    <tbody>
+      <tr><td>Construir y probar</td><td>Planes gratuitos, redes de prueba y Supabase Free</td><td>Cerca de 0 USD</td></tr>
+      <tr><td>Piloto con fondos propios</td><td>Supabase Pro, Safe y billetera de hardware</td><td>Desde 25 USD al mes, más el gas y el costo único del hardware</td></tr>
+      <tr><td>Operar con clientes</td><td>Lo anterior más analítica on-chain y planes de pago si se superan los límites</td><td>Decenas de miles de USD al año, sobre todo por la analítica</td></tr>
+      <tr><td>Con volumen</td><td>Lo anterior más custodia institucional y nodos propios</td><td>Desde unos 999 USD al mes en custodia, más infraestructura</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note">
+    <p>Precios consultados el 14 de octubre de 2026 en páginas oficiales y comparadores de precios. Cambian con frecuencia: un rastreador de precios registró que Alchemy recortó cerca de un 70 % su plan gratuito en 2025. Confirmar cada precio en la página del proveedor antes de contratar.</p>
+  </div>
+  <p class="srcs">Fuentes: <a href="https://docs.etherscan.io/resources/rate-limits.md">Etherscan, límites</a> · <a href="https://docs.etherscan.io/supported-chains">Etherscan, redes</a> · <a href="https://chainstack.com/best-tron-rpc-providers-2026/">Chainstack, proveedores Tron</a> · <a href="https://support.alchemy.com/articles/5827006872-what-is-included-in-the-free-tier">Alchemy</a> · <a href="https://docs.infura.io/get-started/pricing/">Infura</a> · <a href="https://supabase.com/pricing">Supabase</a> · <a href="https://costbench.com/software/blockchain-data-api/coingecko-api/free-plan/">CoinGecko</a> · <a href="https://costbench.com/software/crypto-compliance/chainalysis">Chainalysis</a> · <a href="https://www.costbench.com/software/crypto-compliance/trm-labs/">TRM Labs</a> · <a href="https://costbench.com/compare/bitgo-vs-fireblocks/">Fireblocks y BitGo</a> · <a href="https://www.spark.money/tools/bitcoin-block-explorer-api-comparison">APIs de Bitcoin</a> · <a href="https://developers.binance.com/docs/binance-spot-api-docs/websocket-api/rate-limits">Binance</a> · <a href="https://eco.com/support/en/articles/15254042-safe-wallet-deep-dive-2026-multisig-and-smart-accounts">Safe</a></p>
+
+  <div class="deliver"><b>Entregable</b><span>Lista de herramientas elegidas, con proveedor, plan contratado, responsable y fecha de revisión.</span></div>
+</section>
+
+<!-- FASE 1 -->
+<section>
+  <span class="eyebrow">Fase 1 · Diseño</span>
+  <h2>Diseño del libro</h2>
+
+  <div class="step" id="p1">
+    <div class="n">1</div>
+    <div class="body">
+      <h3>Definir alcance y principios</h3>
+      <p class="goal">Objetivo: dejar por escrito qué registra el libro y qué reglas no se rompen nunca.</p>
+      <h4>Tareas</h4>
+      <ul>
+        <li>Listar activos y redes: USDT (TRC-20 y ERC-20), BTC, ETH, USD y COP.</li>
+        <li>Listar fuentes: wallets propias, wallets de clientes bajo custodia, cuentas en Binance, cuentas bancarias.</li>
+        <li>Fijar la moneda funcional: COP. Todo asiento se valora en COP, guardando también la cantidad original.</li>
+        <li>Principios: solo inserción, partida doble cuadrada, cada asiento con evidencia, separación de fondos de clientes y fondos propios.</li>
+        <li>Definir con el contador el método de costo (promedio ponderado o PEPS/FIFO) por activo.</li>
+      </ul>
+      <div class="deliver"><b>Entregable</b><span>Documento de alcance y principios aprobado por gerencia y contador.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p2">
+    <div class="n">2</div>
+    <div class="body">
+      <h3>Diseñar el plan de cuentas</h3>
+      <p class="goal">Objetivo: que cada wallet, cuenta bancaria y tipo de ingreso tenga su cuenta contable, alineada al PUC y a NIIF.</p>
+      <h4>Estructura sugerida (códigos finales con el contador)</h4>
+      <div class="tbl"><table>
+        <thead><tr><th>Grupo</th><th>Cuentas</th><th>Detalle por</th></tr></thead>
+        <tbody>
+          <tr><td>Activo · Bancos</td><td>Bancos COP, Bancos USD</td><td>Cada cuenta bancaria</td></tr>
+          <tr><td>Activo · Criptoactivos propios</td><td>USDT, BTC, ETH</td><td>Cada wallet y red</td></tr>
+          <tr><td>Activo · Saldos en exchange</td><td>Binance por activo</td><td>Cada subcuenta</td></tr>
+          <tr><td>Activo · Fondos de clientes</td><td>Cripto y fiat de clientes en custodia</td><td>Cada cliente</td></tr>
+          <tr><td>Pasivo · Obligaciones con clientes</td><td>Contrapartida de los fondos de clientes</td><td>Cada cliente</td></tr>
+          <tr><td>Ingresos</td><td>Spread, comisiones, diferencia en cambio</td><td>Tipo de servicio</td></tr>
+          <tr><td>Gastos</td><td>Comisiones de red (gas), comisiones de exchange y bancarias, GMF</td><td>Red o entidad</td></tr>
+        </tbody>
+      </table></div>
+      <div class="note"><p>Para la DIAN los criptoactivos son intangibles. Si se compran para revender en el giro del negocio, el contador puede clasificarlos como inventario. Esta decisión cambia la cuenta y el tratamiento en renta.</p></div>
+      <div class="deliver"><b>Entregable</b><span>Plan de cuentas cargado en la base de datos.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p3">
+    <div class="n">3</div>
+    <div class="body">
+      <h3>Diseñar el modelo de datos</h3>
+      <p class="goal">Objetivo: separar la evidencia cruda, los asientos contables y la cadena de verificación.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Tabla</th><th>Contenido</th></tr></thead>
+        <tbody>
+          <tr><td><code>accounts</code></td><td>Plan de cuentas.</td></tr>
+          <tr><td><code>wallets</code></td><td>Dirección, red, activo, dueño (propia o cliente) y cuenta contable asociada.</td></tr>
+          <tr><td><code>counterparties</code></td><td>Clientes y proveedores con su estado KYB y nivel de riesgo.</td></tr>
+          <tr><td><code>raw_events</code></td><td>Evidencia cruda: transacción on-chain, movimiento bancario o operación de exchange, tal como llegó.</td></tr>
+          <tr><td><code>journal_entries</code></td><td>Cabecera del asiento: fecha, descripción, evento origen, hash previo y hash propio.</td></tr>
+          <tr><td><code>journal_lines</code></td><td>Líneas débito/crédito: cuenta, activo, cantidad nativa, valor en COP, tasa usada.</td></tr>
+          <tr><td><code>fx_rates</code></td><td>Precios y TRM con fuente y marca de tiempo.</td></tr>
+          <tr><td><code>anchors</code></td><td>Raíz de Merkle diaria, red de anclaje, ID de la transacción y prueba.</td></tr>
+          <tr><td><code>reconciliations</code></td><td>Resultado diario de conciliación por cuenta, con diferencias.</td></tr>
+        </tbody>
+      </table></div>
+      <div class="deliver"><b>Entregable</b><span>Esquema de base de datos y migraciones versionadas.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FASE 2 -->
+<section>
+  <span class="eyebrow">Fase 2 · Núcleo del libro</span>
+  <h2>Núcleo inalterable</h2>
+
+  <div class="step" id="p4">
+    <div class="n">4</div>
+    <div class="body">
+      <h3>Implementar la partida doble inalterable</h3>
+      <p class="goal">Objetivo: que la base de datos misma impida asientos descuadrados, ediciones o borrados.</p>
+      <h4>Tareas</h4>
+      <ul>
+        <li>Validación en servidor: la suma de débitos en COP es igual a la suma de créditos en COP en cada asiento.</li>
+        <li>Permisos: las tablas del libro solo aceptan inserción. Ningún rol puede actualizar ni borrar.</li>
+        <li>Correcciones: solo con asiento de reverso que referencia al original.</li>
+        <li>Cantidades en unidades mínimas enteras (satoshis para BTC, wei para ETH, 6 decimales para USDT) para evitar errores de redondeo.</li>
+      </ul>
+      <h4>Ejemplo de asiento: cliente paga 1.000 USDT por TRC-20</h4>
+      <div class="tbl"><table>
+        <thead><tr><th>Cuenta</th><th class="n">Cantidad</th><th class="n">Débito COP</th><th class="n">Crédito COP</th></tr></thead>
+        <tbody>
+          <tr><td>Criptoactivos · USDT · wallet TRC-20 principal</td><td class="n">1.000 USDT</td><td class="n">4.000.000</td><td class="n"></td></tr>
+          <tr><td>Clientes · Empresa ABC</td><td class="n"></td><td class="n"></td><td class="n">4.000.000</td></tr>
+        </tbody>
+      </table></div>
+      <p class="goal">Valores ilustrativos: 1 USDT = 1 USD y TRM de ejemplo de 4.000 COP.</p>
+      <div class="deliver"><b>Entregable</b><span>Libro que rechaza por diseño asientos descuadrados y modificaciones.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p5">
+    <div class="n">5</div>
+    <div class="body">
+      <h3>Encadenar los asientos con hashes</h3>
+      <p class="goal">Objetivo: que cualquier modificación de un asiento antiguo rompa la cadena y sea detectable.</p>
+      <h4>Cómo funciona</h4>
+      <ul>
+        <li>Cada asiento se serializa siempre igual (mismo orden de campos, mismo formato).</li>
+        <li>Su hash es SHA-256 del hash del asiento anterior más su propio contenido.</li>
+        <li>El primer asiento (génesis) usa un valor fijo documentado.</li>
+        <li>Un proceso de verificación recorre la cadena y recalcula todos los hashes.</li>
+      </ul>
+<pre><span class="cm">// Lógica del encadenamiento (pseudocódigo)</span>
+payload   = serializar(asiento)        <span class="cm">// orden y formato fijos</span>
+hash_n    = SHA256(hash_(n-1) + payload)
+guardar(asiento, prev_hash = hash_(n-1), hash = hash_n)
+
+<span class="cm">// Verificación</span>
+para cada asiento en orden:
+  si SHA256(prev_hash + payload) != hash → ALERTA: libro alterado</pre>
+      <div class="deliver"><b>Entregable</b><span>Cadena de hashes activa y verificador ejecutable por auditoría.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p6">
+    <div class="n">6</div>
+    <div class="body">
+      <h3>Anclar el libro en una blockchain pública</h3>
+      <p class="goal">Objetivo: una prueba externa e independiente de que el libro existía así en una fecha determinada.</p>
+      <h4>Proceso diario</h4>
+      <ol>
+        <li>Al cierre del día, tomar los hashes de todos los asientos del día.</li>
+        <li>Calcular la raíz de Merkle: una sola huella que resume todos los asientos.</li>
+        <li>Publicar la raíz en Bitcoin con OpenTimestamps y, opcionalmente, en Ethereum o una red de bajo costo compatible.</li>
+        <li>Guardar en <code>anchors</code> la raíz, la red, el ID de la transacción y la prueba.</li>
+        <li>Para verificar un asiento: se entrega el asiento, su ruta de Merkle y el ID de la transacción de anclaje.</li>
+      </ol>
+      <div class="note ok"><p>Solo sale una huella de 32 bytes por día. No se puede reconstruir ningún dato a partir de ella, y aun así prueba que nada cambió.</p></div>
+      <div class="deliver"><b>Entregable</b><span>Anclaje diario automático y pantalla de verificación para auditores.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FASE 3 -->
+<section>
+  <span class="eyebrow">Fase 3 · Conexiones</span>
+  <h2>Conectar las fuentes</h2>
+
+  <div class="step" id="p7">
+    <div class="n">7</div>
+    <div class="body">
+      <h3>Capturar transacciones on-chain por red</h3>
+      <p class="goal">Objetivo: leer cada movimiento de las wallets, solo cuando esté confirmado, y guardarlo como evidencia.</p>
+      <div class="grid2">
+        <div class="box net cb"><h3>Bitcoin</h3><ul>
+          <li>Modelo UTXO: una transacción puede tener varias entradas y salidas.</li>
+          <li>Monitorear con claves públicas extendidas (xpub) en modo solo lectura.</li>
+          <li>Registrar la comisión de minería como gasto.</li>
+          <li>Umbral de confirmaciones configurable (referencia común: 3 a 6).</li>
+        </ul></div>
+        <div class="box net ce"><h3>Ethereum</h3><ul>
+          <li>Modelo de cuentas: leer transferencias de ETH y eventos <code>Transfer</code> de tokens ERC-20.</li>
+          <li>Registrar el gas pagado en ETH como gasto.</li>
+          <li>Esperar a que el bloque esté finalizado antes de contabilizar.</li>
+        </ul></div>
+        <div class="box net cu"><h3>USDT</h3><ul>
+          <li>Existe en varias redes: tratar TRC-20 y ERC-20 como subcuentas distintas.</li>
+          <li>Validar el contrato oficial del token para no registrar tokens falsos.</li>
+          <li>En Tron, la comisión se paga con energía o TRX: registrar el costo.</li>
+        </ul></div>
+        <div class="box net cf"><h3>Reglas comunes</h3><ul>
+          <li>Guardar hash de la transacción, bloque, hora, origen, destino y monto.</li>
+          <li>Evitar duplicados con clave única por red + hash + índice.</li>
+          <li>Detectar reorganizaciones de cadena y reversar si aplica.</li>
+        </ul></div>
+      </div>
+      <div class="note ok"><p>Las herramientas de cada red (Etherscan, Tronscan, mempool.space, TronGrid y otras) están en la sección <a href="#herramientas">C · Herramientas necesarias para la trazabilidad en la blockchain</a>.</p></div>
+      <div class="deliver"><b>Entregable</b><span>Conectores por red funcionando en modo solo lectura.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p8">
+    <div class="n">8</div>
+    <div class="body">
+      <h3>Capturar bancos y exchange</h3>
+      <p class="goal">Objetivo: que la pata fiat y las operaciones en Binance entren al libro con la misma disciplina que lo on-chain.</p>
+      <ul>
+        <li><strong>Binance:</strong> API con llave de solo lectura para depósitos, retiros, operaciones OTC y comisiones.</li>
+        <li><strong>Bancos COP:</strong> extractos por API si el banco la ofrece, o archivo diario estandarizado.</li>
+        <li><strong>Bancos USD:</strong> igual que COP, más el vínculo con la declaración de cambio cuando aplique.</li>
+        <li>Cada movimiento queda en <code>raw_events</code> con su documento de soporte.</li>
+      </ul>
+      <div class="deliver"><b>Entregable</b><span>Movimientos de Binance y bancos cargados a diario.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p9">
+    <div class="n">9</div>
+    <div class="body">
+      <h3>Definir reglas contables automáticas</h3>
+      <p class="goal">Objetivo: que cada tipo de evento genere su asiento sin intervención manual.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Evento</th><th>Débito</th><th>Crédito</th></tr></thead>
+        <tbody>
+          <tr><td>Cobro a cliente en USDT</td><td>Criptoactivos USDT</td><td>Clientes</td></tr>
+          <tr><td>Conversión USDT → COP</td><td>Bancos COP</td><td>Criptoactivos USDT; diferencia a ingreso o gasto</td></tr>
+          <tr><td>Compra de BTC con USDT</td><td>Criptoactivos BTC</td><td>Criptoactivos USDT</td></tr>
+          <tr><td>Comisión de red (gas)</td><td>Gastos comisiones de red</td><td>Criptoactivos de la red</td></tr>
+          <tr><td>Depósito de cliente en custodia</td><td>Fondos de clientes</td><td>Obligaciones con clientes</td></tr>
+          <tr><td>Spread en operación OTC</td><td>Bancos o cripto recibido</td><td>Ingreso por spread</td></tr>
+        </tbody>
+      </table></div>
+      <p>Los eventos que no coinciden con ninguna regla van a una bandeja de revisión manual. No se contabilizan solos.</p>
+      <div class="deliver"><b>Entregable</b><span>Catálogo de reglas aprobado por el contador y probado con casos reales.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p10">
+    <div class="n">10</div>
+    <div class="body">
+      <h3>Valoración y tasas de cambio</h3>
+      <p class="goal">Objetivo: valorar todo en COP con una fuente única, trazable y repetible.</p>
+      <ul>
+        <li><strong>USD → COP:</strong> TRM oficial del día.</li>
+        <li><strong>Cripto → USD:</strong> una fuente de precio definida (por ejemplo, el precio de ejecución en Binance, o un índice), con marca de tiempo.</li>
+        <li>Guardar en cada línea del asiento la tasa usada y su fuente.</li>
+        <li>Calcular costo y utilidad realizada con el método definido en el paso 1.</li>
+        <li>Valoración al cierre de mes y a 31 de diciembre para estados financieros y exógena.</li>
+      </ul>
+      <div class="deliver"><b>Entregable</b><span>Tabla de tasas con histórico y cálculo de utilidad realizada.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FASE 4 -->
+<section>
+  <span class="eyebrow">Fase 4 · Control</span>
+  <h2>Control, cumplimiento y salida a producción</h2>
+
+  <div class="step" id="p11">
+    <div class="n">11</div>
+    <div class="body">
+      <h3>Conciliación diaria</h3>
+      <p class="goal">Objetivo: que el saldo del libro cuadre con el saldo real en cada fuente, todos los días.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Se compara</th><th>Contra</th><th>Si no cuadra</th></tr></thead>
+        <tbody>
+          <tr><td>Saldo contable de cada wallet</td><td>Saldo on-chain de la dirección</td><td>Alerta y bloqueo del cierre del día</td></tr>
+          <tr><td>Saldo contable en Binance</td><td>Saldo reportado por la API</td><td>Alerta a tesorería</td></tr>
+          <tr><td>Saldo contable de bancos</td><td>Extracto bancario</td><td>Alerta a contabilidad</td></tr>
+          <tr><td>Fondos de clientes</td><td>Obligaciones con clientes</td><td>Alerta crítica: posible uso de fondos de clientes</td></tr>
+        </tbody>
+      </table></div>
+      <div class="deliver"><b>Entregable</b><span>Reporte diario de conciliación y alertas automáticas.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p12">
+    <div class="n">12</div>
+    <div class="body">
+      <h3>Impuestos y costo fiscal de los criptoactivos</h3>
+      <p class="goal">Objetivo: que el libro calcule solo la utilidad de cada venta, que es lo único sobre lo que se pagan impuestos, y la clasifique en el impuesto que le corresponde.</p>
+
+      <h4>Regla base</h4>
+      <p>El impuesto se calcula sobre la utilidad, no sobre el valor total de la venta. La utilidad es el precio de venta menos el costo fiscal, que es lo que costó adquirir esa cripto en pesos. Mientras no se venda, no hay impuesto: la valorización solo se reporta en el patrimonio.</p>
+
+      <h4>Ejemplo: 1.000 USDT comprados a 4.000 y vendidos a 4.300</h4>
+      <div class="tbl"><table>
+        <thead><tr><th>Concepto</th><th class="n">COP</th><th>Efecto tributario</th></tr></thead>
+        <tbody>
+          <tr><td>Compra: 1.000 USDT × 4.000</td><td class="n">4.000.000</td><td>Costo fiscal. No paga impuesto.</td></tr>
+          <tr><td>Venta: 1.000 USDT × 4.300</td><td class="n">4.300.000</td><td>Precio de venta.</td></tr>
+          <tr><td>Utilidad (venta − costo)</td><td class="n">300.000</td><td>Base del impuesto.</td></tr>
+        </tbody>
+      </table></div>
+
+      <h4>Qué impuesto cae sobre esa utilidad</h4>
+      <div class="tbl"><table>
+        <thead><tr><th>Quién vende</th><th>Impuesto</th><th>Tarifa</th><th class="n">Sobre 300.000</th></tr></thead>
+        <tbody>
+          <tr><td>Persona natural, tenencia menor a 2 años</td><td>Renta (se suma a los ingresos del año)</td><td>Tabla progresiva, 0 % a 39 %</td><td class="n">300.000 × tarifa marginal</td></tr>
+          <tr><td>Persona natural, tenencia de 2 años o más</td><td>Ganancia ocasional</td><td>15 %</td><td class="n">45.000</td></tr>
+          <tr><td>Empresa, cripto como inventario</td><td>Renta</td><td>35 %</td><td class="n">105.000</td></tr>
+          <tr><td>Empresa, cripto como activo fijo con 2 años o más</td><td>Ganancia ocasional</td><td>15 %</td><td class="n">45.000</td></tr>
+        </tbody>
+      </table></div>
+      <div class="note ok"><p>Los dos impuestos son independientes y no se acumulan. Cada venta cae en uno solo, según el tiempo de tenencia y la clasificación del activo.</p></div>
+
+      <h4>Eventos que generan impuesto</h4>
+      <ul>
+        <li>Venta de cripto por pesos o dólares.</li>
+        <li>Intercambio de una cripto por otra (por ejemplo USDT por BTC), que la DIAN trata como una enajenación. Validar con el contador.</li>
+        <li>Pago de bienes o servicios con cripto.</li>
+      </ul>
+
+      <h4>Lo que el libro debe guardar para calcularlo</h4>
+      <ul>
+        <li><strong>Lotes de compra.</strong> Cada compra es un lote con fecha, cantidad, costo en COP y la tasa usada.</li>
+        <li><strong>Método de costo.</strong> El definido en el paso 1 (promedio ponderado o PEPS), aplicado igual todos los años.</li>
+        <li><strong>Tiempo de tenencia por lote.</strong> Para separar las ventas de menos de 2 años de las de 2 años o más.</li>
+        <li><strong>Utilidad realizada por venta.</strong> Una línea por operación, con el impuesto que le corresponde. Las pérdidas también se registran.</li>
+        <li><strong>Costos de transacción.</strong> Comisiones y gas asociados a cada compra o venta. Definir con el contador cómo entran en el costo.</li>
+      </ul>
+      <div class="note ok"><p>Estos datos viven en un archivo de Excel generado desde el libro, con la fecha de cada transacción, el tipo de cripto, su trazabilidad, si se vendió y a qué tasa. Ver la sección <a href="#excel">D · Archivos de Excel</a>.</p></div>
+
+      <h4>USDT recibidos de otros países</h4>
+      <p>El país de origen no cambia la forma de declarar. Colombia grava a sus residentes sobre lo que reciben, venga de donde venga. Lo que decide el tratamiento es el motivo por el que llegan los USDT.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Por qué llegan los USDT</th><th>Tratamiento</th></tr></thead>
+        <tbody>
+          <tr><td>Pago de un cliente por un servicio o una venta</td><td>Ingreso ordinario. Se registra en COP al valor del día de llegada y todo el valor es ingreso. Si es una exportación de servicios, revisar con el contador la exención de IVA.</td></tr>
+          <tr><td>Un cliente le compra USDT (usted como proveedor de liquidez)</td><td>El ingreso es lo que recibe por la venta. Se resta el costo fiscal de esos USDT y el impuesto es sobre la utilidad.</td></tr>
+          <tr><td>Dinero de un tercero que usted solo canaliza</td><td>No es ingreso. Es un pasivo, "dinero de terceros", hasta que se entregue. Exige contrato y registro claros.</td></tr>
+          <tr><td>Traslado desde una cuenta propia en otro país</td><td>No es ingreso. Es una transferencia interna. Hay que justificar el origen de los fondos y probablemente declarar los activos en el exterior.</td></tr>
+        </tbody>
+      </table></div>
+      <h4>Qué cambia cuando el dinero viene de fuera</h4>
+      <ul>
+        <li><strong>Impuestos pagados en el exterior.</strong> Si le retuvieron un impuesto afuera, en algunos casos se toma como descuento. Se revisa caso por caso.</li>
+        <li><strong>Riesgo y cumplimiento.</strong> Las operaciones con billeteras de otros países suben el riesgo para la UIAF y SAGRILAFT. Hay que conocer al cliente, revisar listas de sanciones y revisar la jurisdicción (paso 13).</li>
+        <li><strong>Intercambio de información.</strong> Los reportes de exchanges entre países pueden cruzarse. Lo que reporte un Binance de otro país sobre el cliente puede coincidir con lo que Binance Colombia reporte de usted.</li>
+        <li><strong>Datos en el libro.</strong> Cada ingreso guarda país, contraparte, motivo del pago, TRM o precio de referencia y hash de la transacción.</li>
+      </ul>
+
+      <h4>Caso: USDT desde Binance Argentina, vendidos por pesos en Colombia</h4>
+      <p>No existe arancel ni impuesto por la transferencia entre países. El arancel solo grava mercancías físicas que pasan por aduana, y el USDT es un activo intangible. Recibir los USDT tampoco paga impuesto. Los impuestos aparecen al venderlos por pesos.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Concepto</th><th>¿Aplica?</th><th>Base de cálculo</th></tr></thead>
+        <tbody>
+          <tr><td>Arancel o impuesto por la transferencia entre países</td><td>No</td><td>—</td></tr>
+          <tr><td>Renta de la empresa</td><td>Sí, 35 %</td><td>Utilidad: precio de venta menos costo de los USDT y gastos</td></tr>
+          <tr><td>ICA (impuesto municipal)</td><td>Sí, muy probablemente</td><td>Ingreso bruto, no utilidad. La tarifa depende de la actividad registrada</td></tr>
+          <tr><td>IVA</td><td>No sobre la venta del USDT. Sí sobre una comisión o tarifa de servicio aparte</td><td>La comisión</td></tr>
+          <tr><td>GMF (4×1000)</td><td>Sí</td><td>Cada salida de pesos de una cuenta bancaria</td></tr>
+          <tr><td>Comisiones de Binance y de red</td><td>No son impuesto</td><td>Se registran como costo</td></tr>
+        </tbody>
+      </table></div>
+      <div class="note crit"><strong>Revisar el ICA antes de fijar tarifas</strong><p>En un negocio de liquidez hay mucho volumen y poco margen. Si el ICA se calcula sobre todo el valor vendido, puede pesar más que la renta. Algunos municipios permiten tomar como base solo el margen en ciertas actividades. Confirmarlo con el contador antes de definir los precios.</p></div>
+      <div class="note"><strong>Lo que no es impuesto pero sí se exige</strong><p>Cambiario: el USDT no es divisa, así que la transferencia entre países no lleva declaración de cambio. Si entran o salen dólares reales por un banco, sigue el régimen cambiario. Los impuestos de quien envía desde Argentina son asunto de esa persona y de su país. Para usted, la operación cuenta como de riesgo internacional.</p></div>
+
+      <h4>Reportes que salen de este paso</h4>
+      <div class="tbl"><table>
+        <thead><tr><th>Reporte</th><th>Qué toma del libro</th><th>Cuándo</th></tr></thead>
+        <tbody>
+          <tr><td>Declaración de renta</td><td>Utilidad realizada del año por tipo de impuesto y saldo a 31 de diciembre en el patrimonio.</td><td>Anual</td></tr>
+          <tr><td>Exógena, formato 1012, concepto 1206</td><td>Valor patrimonial de los criptoactivos a 31 de diciembre.</td><td>Anual</td></tr>
+          <tr><td>CARF</td><td>Transacciones de usuarios reportables.</td><td>Año 2026 se reporta hasta mayo de 2027</td></tr>
+          <tr><td>IVA</td><td>Comisiones e intermediación (la venta de cripto en sí no lleva IVA).</td><td>Según periodo de IVA</td></tr>
+          <tr><td>ICA</td><td>Ingresos brutos de la actividad de compraventa de cripto, según el municipio.</td><td>Según calendario municipal</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="note">
+        <strong>Estado de la norma</strong>
+        <p>La reforma que proponía cambiar el tratamiento de la cripto fue hundida en el Congreso, y la Corte Constitucional tumbó la emergencia económica con la que el Gobierno intentó reemplazarla. Sigue vigente el régimen anterior. Si el tratamiento cambia, se ajustan las reglas del módulo de impuestos y no la estructura del libro. Confirmar siempre con el contador antes de cada declaración.</p>
+      </div>
+      <div class="deliver"><b>Entregable</b><span>Módulo de costo fiscal por lotes, utilidad realizada por venta y reporte anual de utilidad por tipo de impuesto.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p13">
+    <div class="n">13</div>
+    <div class="body">
+      <h3>Trazabilidad y cumplimiento</h3>
+      <p class="goal">Objetivo: que desde cualquier asiento se llegue al cliente, a la evidencia y al análisis de riesgo.</p>
+      <ul>
+        <li>Cada asiento enlaza con: evento crudo, transacción on-chain o bancaria, cliente y su expediente KYB.</li>
+        <li>Puntaje de riesgo de cada wallet externa con una herramienta de análisis on-chain.</li>
+        <li>Datos de origen y beneficiario para transferencias entre proveedores (Travel Rule).</li>
+        <li>Exportadores: reporte mensual de clientes y transacciones a la UIAF, reporte anual CARF en XML a la DIAN y saldos a 31 de diciembre para exógena.</li>
+        <li>Conservar evidencia al menos 5 años, como exige el CARF.</li>
+      </ul>
+      <div class="deliver"><b>Entregable</b><span>Ficha de trazabilidad por transacción y exportadores regulatorios.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p14">
+    <div class="n">14</div>
+    <div class="body">
+      <h3>Seguridad y accesos</h3>
+      <p class="goal">Objetivo: que el sistema contable nunca pueda mover fondos.</p>
+      <ul>
+        <li>El libro nunca guarda llaves privadas. Solo direcciones y claves públicas de solo lectura.</li>
+        <li>Llaves de API de exchange y bancos con permiso de solo lectura.</li>
+        <li>Roles separados: quien registra, quien aprueba ajustes, quien audita.</li>
+        <li>Bitácora de accesos y acciones, también encadenada con hashes.</li>
+        <li>Copias de seguridad cifradas y prueba de restauración trimestral.</li>
+      </ul>
+      <div class="note crit"><p>La custodia de fondos (wallets multifirma o MPC) es un sistema separado del libro. Mezclarlos aumenta el riesgo de robo.</p></div>
+      <h4>Billetera fría propia: cómo se reporta y cómo se documenta</h4>
+      <p>Caso típico: Binance como custodia operativa y una billetera de hardware como reserva de seguridad. La billetera fría no se registra ante la DIAN, pero sí queda documentada en el libro.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>Pregunta</th><th>Respuesta</th></tr></thead>
+        <tbody>
+          <tr><td>¿Hay que dar la dirección a la DIAN?</td><td>No hay un registro de billeteras personales. Quien reporta es el proveedor de servicios (Binance), según la Res. 000240/2025. Un retiro hacia una billetera externa puede aparecer en ese reporte, por lo que la dirección puede llegar a la DIAN por esa vía.</td></tr>
+          <tr><td>¿Hay que declarar lo que contiene?</td><td>Sí. Los criptoactivos en la billetera fría son patrimonio y se declaran a su costo fiscal, igual que los que están en Binance. En información exógena: formato 1012, concepto 1206.</td></tr>
+          <tr><td>¿Mover fondos de Binance a la fría genera impuesto?</td><td>No. Es una transferencia interna entre cuentas propias, no una venta. El costo fiscal no cambia. La comisión de red se registra como gasto.</td></tr>
+          <tr><td>¿Y si la DIAN, la UIAF o un banco preguntan?</td><td>Hay que poder demostrar que la dirección es propia y reconstruir cada traslado desde el libro.</td></tr>
+        </tbody>
+      </table></div>
+      <h4>Qué debe quedar en el libro</h4>
+      <ul>
+        <li>La dirección registrada como cuenta propia, tipo "custodia fría", con la red (TRC-20, ERC-20, Bitcoin).</li>
+        <li>Prueba de control: mensaje firmado con esa billetera, factura de compra del dispositivo o captura de su configuración, con fecha, guardada como evidencia y con su hash.</li>
+        <li>Cada traslado como asiento de transferencia interna, con hash de la transacción, fecha, cantidad y comisión de red.</li>
+        <li>Conciliación periódica: saldo de la dirección en el explorador (Etherscan, Tronscan, mempool.space) contra el saldo del libro.</li>
+      </ul>
+      <h4>Reglas de operación entre Binance y la billetera fría</h4>
+      <ul>
+        <li>Binance guarda el saldo operativo. La billetera fría guarda la reserva.</li>
+        <li>Lista blanca de direcciones de retiro en Binance, con solo la dirección de la billetera fría.</li>
+        <li>Mover la reserva exige dos personas: quien ejecuta y quien aprueba.</li>
+        <li>Primero se envía una prueba pequeña y se confirma la llegada antes de mover el monto completo.</li>
+        <li>La frase de recuperación nunca se guarda en el libro, en la nube ni en fotos.</li>
+      </ul>
+      <div class="note"><p>Los detalles que exige la Res. 000240/2025 sobre transferencias a billeteras externas deben confirmarse con el contador antes de operar con clientes.</p></div>
+      <div class="deliver"><b>Entregable</b><span>Matriz de roles y permisos, y política de llaves.</span></div>
+    </div>
+  </div>
+
+  <div class="step" id="p15">
+    <div class="n">15</div>
+    <div class="body">
+      <h3>Reportes, pruebas y salida a producción</h3>
+      <p class="goal">Objetivo: entrar en producción con datos reales verificados y un panel útil para gerencia y auditoría.</p>
+      <h4>Reportes</h4>
+      <ul>
+        <li>Balance y estado de resultados por activo y por red.</li>
+        <li>Posición diaria: saldos en cada wallet, exchange y banco.</li>
+        <li>Libro mayor y auxiliares con enlace a la evidencia.</li>
+        <li>Pantalla de verificación: el auditor elige un asiento y ve su hash, su ruta de Merkle y el anclaje en blockchain.</li>
+      </ul>
+      <h4>Pruebas antes de producción</h4>
+      <ul>
+        <li>Operar un mes en paralelo con la contabilidad actual y comparar.</li>
+        <li>Probar casos difíciles: comisiones, reversos, depósitos duplicados, tokens falsos, reorganizaciones de cadena.</li>
+        <li>Intentar alterar un asiento en pruebas y confirmar que el verificador lo detecta.</li>
+        <li>Revisión del contador y del revisor fiscal antes de apagar el sistema anterior.</li>
+      </ul>
+      <div class="deliver"><b>Entregable</b><span>Sistema en producción, manual de operación y acta de aprobación.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- C -->
+<section id="excel">
+  <span class="eyebrow">D · Anexo</span>
+  <h2>Archivos de Excel</h2>
+  <p>El libro vive en la base de datos, pero el control de lotes, ventas y tasas debe poder abrirse en Excel. Es el archivo que revisa el contador para la declaración de renta y el que sigue un auditor para recorrer una operación de principio a fin. Esta sección define cómo se organiza.</p>
+  <div class="note crit">
+    <strong>Regla de oro</strong>
+    <p>El Excel es una copia generada desde el libro, no el libro. Si alguien edita celdas a mano, el archivo deja de coincidir con la contabilidad. Por eso se genera automáticamente, se sella con un hash y se entrega en solo lectura.</p>
+  </div>
+
+  <h3 class="sub">1. Qué preguntas debe responder el archivo</h3>
+  <div class="grid2">
+    <div class="box"><h3>¿Cuándo?</h3><p>Fecha de cada compra y de cada venta.</p></div>
+    <div class="box"><h3>¿Qué cripto?</h3><p>Activo (USDT, BTC, ETH) y red (TRC-20, ERC-20, Bitcoin, Ethereum).</p></div>
+    <div class="box"><h3>¿De dónde y hacia dónde?</h3><p>Hash de la transacción, wallet, cliente o exchange y asiento contable.</p></div>
+    <div class="box"><h3>¿Se vendió?</h3><p>Estado de cada lote: disponible, parcial o vendido, y cuánto queda.</p></div>
+    <div class="box"><h3>¿A qué tasa?</h3><p>Precio unitario de compra y de venta, y la TRM o precio de referencia usado.</p></div>
+    <div class="box"><h3>¿Cuánto ganó y qué impuesto?</h3><p>Utilidad realizada, días de tenencia y tipo de impuesto.</p></div>
+  </div>
+
+  <h3 class="sub">2. Hojas del archivo</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Hoja</th><th>Para qué sirve</th><th>Quién la usa</th></tr></thead>
+    <tbody>
+      <tr><td>LOTES</td><td>Cada compra de cripto como un lote, con su costo y su estado.</td><td>Tesorería, contador</td></tr>
+      <tr><td>VENTAS</td><td>Cada venta, a qué tasa, y la utilidad que dejó.</td><td>Tesorería, contador</td></tr>
+      <tr><td>TRAZABILIDAD</td><td>Qué lote o lotes cubrieron cada venta. Une compras con ventas.</td><td>Auditoría, contador</td></tr>
+      <tr><td>INVENTARIO</td><td>Saldo por activo, red y wallet, comparado con el saldo on-chain.</td><td>Tesorería, cumplimiento</td></tr>
+      <tr><td>TASAS</td><td>TRM y precios de referencia por fecha, con su fuente.</td><td>Contador</td></tr>
+      <tr><td>RESUMEN</td><td>Utilidad por mes, activo y tipo de impuesto, y saldos a 31 de diciembre.</td><td>Gerencia, contador</td></tr>
+      <tr><td>CONTROL</td><td>Fecha de generación, hash del archivo, raíz de Merkle del día e ID del anclaje.</td><td>Auditoría</td></tr>
+      <tr><td>AJUSTES_CONTADOR</td><td>Notas y ajustes del contador, sin tocar las hojas de origen.</td><td>Contador</td></tr>
+    </tbody>
+  </table></div>
+<pre>LOTES (compras) ──┐
+                  ├──► TRAZABILIDAD ──► RESUMEN (impuestos, patrimonio)
+VENTAS ───────────┘
+TASAS ──► alimenta LOTES, VENTAS e INVENTARIO
+CONTROL ──► sella el archivo con hash y anclaje</pre>
+
+  <h3 class="sub">3. Hoja LOTES (compras)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Columna</th><th>Contenido</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td>ID lote</td><td>Identificador único que no se reutiliza.</td><td>L-0001</td></tr>
+      <tr><td>Fecha de compra</td><td>Formato AAAA-MM-DD.</td><td>2026-10-14</td></tr>
+      <tr><td>Activo</td><td>USDT, BTC o ETH.</td><td>USDT</td></tr>
+      <tr><td>Red</td><td>TRC-20, ERC-20, Bitcoin o Ethereum.</td><td>TRC-20</td></tr>
+      <tr><td>Cantidad comprada</td><td>Hasta 8 decimales.</td><td>1.000</td></tr>
+      <tr><td>Precio unitario (COP)</td><td>Lo que costó cada unidad.</td><td>4.000</td></tr>
+      <tr><td>Costo total (COP)</td><td>Cantidad por precio unitario.</td><td>4.000.000</td></tr>
+      <tr><td>Tasa usada</td><td>TRM o precio de referencia, con su fuente.</td><td>TRM 4.000</td></tr>
+      <tr><td>Comisiones (COP)</td><td>Bancarias, de exchange o de red asociadas a la compra.</td><td>0</td></tr>
+      <tr><td>Costo fiscal (COP)</td><td>Costo total más comisiones, según lo defina el contador.</td><td>4.000.000</td></tr>
+      <tr><td>Clasificación</td><td>Inventario, activo fijo o inversión.</td><td>Inversión</td></tr>
+      <tr><td>Origen</td><td>De dónde vino: Binance OTC, banco o cliente.</td><td>Binance OTC</td></tr>
+      <tr><td>Hash o ID de operación</td><td>Hash on-chain o ID de la operación en el exchange o banco.</td><td>TX-a91f…</td></tr>
+      <tr><td>Wallet destino</td><td>Alias o dirección de la wallet que recibió.</td><td>WAL-TRX-01</td></tr>
+      <tr><td>Cantidad disponible</td><td>Lo que queda sin vender (fórmula).</td><td>1.000</td></tr>
+      <tr><td>Estado</td><td>Disponible, parcial o vendido (fórmula).</td><td>Disponible</td></tr>
+      <tr><td>ID asiento</td><td>Asiento del libro que respalda la compra.</td><td>A-000123</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sub">4. Hoja VENTAS</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Columna</th><th>Contenido</th><th>Ejemplo</th></tr></thead>
+    <tbody>
+      <tr><td>ID venta</td><td>Identificador único.</td><td>V-0001</td></tr>
+      <tr><td>Fecha de venta</td><td>Formato AAAA-MM-DD.</td><td>2026-12-20</td></tr>
+      <tr><td>Activo y red</td><td>Qué se vendió y por qué red.</td><td>USDT TRC-20</td></tr>
+      <tr><td>Cantidad vendida</td><td>Unidades vendidas.</td><td>1.000</td></tr>
+      <tr><td>Precio unitario de venta (COP)</td><td>A qué tasa se vendió.</td><td>4.300</td></tr>
+      <tr><td>Tasa usada</td><td>TRM o precio de referencia del día de venta, con su fuente.</td><td>TRM 4.300</td></tr>
+      <tr><td>Ingreso total (COP)</td><td>Cantidad por precio de venta.</td><td>4.300.000</td></tr>
+      <tr><td>Comisiones de venta (COP)</td><td>Bancarias, de exchange o de red asociadas a la venta.</td><td>0</td></tr>
+      <tr><td>Lote(s) usados</td><td>IDs de los lotes que cubrieron la venta.</td><td>L-0001</td></tr>
+      <tr><td>Costo fiscal asignado (COP)</td><td>Suma tomada de la hoja TRAZABILIDAD.</td><td>4.000.000</td></tr>
+      <tr><td>Utilidad realizada (COP)</td><td>Ingreso menos comisiones menos costo asignado. Si es negativa, es pérdida.</td><td>300.000</td></tr>
+      <tr><td>Días de tenencia</td><td>Fecha de venta menos fecha de compra.</td><td>67</td></tr>
+      <tr><td>Tipo de impuesto</td><td>Renta, ganancia ocasional o mixto.</td><td>Renta</td></tr>
+      <tr><td>Tarifa aplicada e impuesto estimado</td><td>Referencia para provisionar. La liquidación final la hace el contador.</td><td>Según tarifa</td></tr>
+      <tr><td>Contraparte</td><td>Cliente o exchange que compró.</td><td>Cliente ABC</td></tr>
+      <tr><td>Hash o ID de operación</td><td>Evidencia de la venta.</td><td>TX-7c2e…</td></tr>
+      <tr><td>ID asiento</td><td>Asiento del libro que respalda la venta.</td><td>A-000241</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3 class="sub">5. Hoja TRAZABILIDAD (lote contra venta)</h3>
+  <p>Una venta puede tomar cripto de varios lotes, y cada lote tiene su propia fecha de compra y su propio costo. Por eso esta hoja tiene una fila por cada porción de lote consumida.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Columna</th><th>Contenido</th></tr></thead>
+    <tbody>
+      <tr><td>ID venta y ID lote</td><td>Los dos extremos del vínculo.</td></tr>
+      <tr><td>Cantidad tomada</td><td>Cuántas unidades de ese lote se usaron en esa venta.</td></tr>
+      <tr><td>Costo unitario del lote</td><td>Costo fiscal por unidad de ese lote.</td></tr>
+      <tr><td>Fecha de compra y fecha de venta</td><td>Para calcular el tiempo de tenencia de esa porción.</td></tr>
+      <tr><td>Días de tenencia</td><td>De esa porción, no de la venta completa.</td></tr>
+      <tr><td>Utilidad de la porción</td><td>Precio de venta menos costo de esa porción.</td></tr>
+      <tr><td>Tipo de impuesto de la porción</td><td>Renta o ganancia ocasional, según su propio tiempo de tenencia.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note">
+    <strong>Por qué importa</strong>
+    <p>Si una venta de 1.500 USDT toma 1.000 de un lote de hace 3 años y 500 de un lote de hace 2 meses, una parte paga ganancia ocasional y la otra paga renta. En la hoja VENTAS el tipo de impuesto aparece como "mixto" y el detalle está en TRAZABILIDAD.</p>
+  </div>
+  <div class="note">
+    <strong>Método de costo y antigüedad</strong>
+    <p>Para medir el tiempo de tenencia hay que saber de qué lote sale cada unidad vendida. Con PEPS (primero en entrar, primero en salir) o con identificación específica eso es directo. Con promedio ponderado los lotes pierden su identidad, y el contador debe definir cómo se determina la antigüedad. Esta decisión se toma en el paso 1.</p>
+  </div>
+
+  <h3 class="sub">6. Fórmulas clave</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Campo</th><th>Fórmula en Excel (en español)</th></tr></thead>
+    <tbody>
+      <tr><td>Costo total</td><td><code>=Cantidad*PrecioUnitario</code></td></tr>
+      <tr><td>Cantidad disponible</td><td><code>=CantidadComprada-SUMAR.SI(TRAZABILIDAD!IDLote;IDLote;TRAZABILIDAD!CantidadTomada)</code></td></tr>
+      <tr><td>Estado del lote</td><td><code>=SI(Disponible=0;"Vendido";SI(Disponible&lt;Comprada;"Parcial";"Disponible"))</code></td></tr>
+      <tr><td>Días de tenencia</td><td><code>=FechaVenta-FechaCompra</code></td></tr>
+      <tr><td>Tipo de impuesto</td><td><code>=SI(Clasificacion="Inventario";"Renta";SI(FechaVenta&gt;=FECHA.MES(FechaCompra;24);"Ganancia ocasional";"Renta"))</code></td></tr>
+      <tr><td>Utilidad realizada</td><td><code>=Ingreso-Comisiones-CostoAsignado</code></td></tr>
+    </tbody>
+  </table></div>
+  <p>El tipo de impuesto compara la fecha de venta con la fecha de compra más 24 meses. Si el activo está clasificado como inventario, siempre es renta, sin importar el tiempo.</p>
+
+  <h3 class="sub">7. Ejemplo con datos ilustrativos</h3>
+  <h4>Hoja LOTES</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>ID lote</th><th>Fecha compra</th><th>Activo y red</th><th class="n">Cantidad</th><th class="n">Precio unit.</th><th class="n">Costo fiscal</th><th>Clasificación</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>L-0001</td><td>2026-10-14</td><td>USDT TRC-20</td><td class="n">1.000</td><td class="n">4.000</td><td class="n">4.000.000</td><td>Inversión</td><td>Vendido</td></tr>
+      <tr><td>L-0002</td><td>2024-03-03</td><td>USDT TRC-20</td><td class="n">500</td><td class="n">3.900</td><td class="n">1.950.000</td><td>Inversión</td><td>Vendido</td></tr>
+    </tbody>
+  </table></div>
+  <h4>Hoja VENTAS</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>ID venta</th><th>Fecha venta</th><th class="n">Cantidad</th><th class="n">Precio venta</th><th>Tasa usada</th><th class="n">Ingreso</th><th>Lote</th><th class="n">Costo asignado</th><th class="n">Utilidad</th><th class="n">Días</th><th>Tipo de impuesto</th></tr></thead>
+    <tbody>
+      <tr><td>V-0001</td><td>2026-12-20</td><td class="n">1.000</td><td class="n">4.300</td><td>TRM 4.300</td><td class="n">4.300.000</td><td>L-0001</td><td class="n">4.000.000</td><td class="n">300.000</td><td class="n">67</td><td>Renta</td></tr>
+      <tr><td>V-0002</td><td>2026-12-20</td><td class="n">500</td><td class="n">4.300</td><td>TRM 4.300</td><td class="n">2.150.000</td><td>L-0002</td><td class="n">1.950.000</td><td class="n">200.000</td><td class="n">1.022</td><td>Ganancia ocasional</td></tr>
+    </tbody>
+  </table></div>
+  <p>V-0001 se vendió a los 67 días y su utilidad de 300.000 va a renta. V-0002 se vendió después de más de 2 años y su utilidad de 200.000 paga ganancia ocasional al 15 %, es decir 30.000. Los datos son solo de ejemplo.</p>
+
+  <h3 class="sub">8. Reglas de uso y versionado</h3>
+  <ol>
+    <li><strong>Se genera solo.</strong> Un proceso diario crea el archivo desde el libro. Nadie digita datos en LOTES, VENTAS ni TRAZABILIDAD.</li>
+    <li><strong>Una fila por transacción.</strong> Sin celdas combinadas, fechas en formato AAAA-MM-DD y montos como número, sin texto ni símbolos.</li>
+    <li><strong>Precisión.</strong> Excel guarda unos 15 dígitos significativos. En el archivo las cantidades se muestran con hasta 8 decimales para control, y la precisión completa queda en el libro.</li>
+    <li><strong>Nombre y versión.</strong> Archivo diario: <code>control-cripto_AAAA-MM-DD_vN.xlsx</code>. Cierre de mes: <code>control-cripto_cierre_AAAA-MM_vN.xlsx</code>.</li>
+    <li><strong>Sellado.</strong> El hash SHA-256 de cada archivo se guarda en la hoja CONTROL y en el libro, y entra en la raíz de Merkle del día que se ancla en blockchain. Así el contador puede probar que su archivo es el original.</li>
+    <li><strong>Correcciones.</strong> Se hacen en el libro con un asiento de reverso y el archivo se regenera. El contador anota sus ajustes en AJUSTES_CONTADOR, nunca sobre las hojas de origen.</li>
+    <li><strong>Acceso.</strong> Los operadores ven el archivo en solo lectura, con las hojas bloqueadas.</li>
+    <li><strong>Saldos iniciales.</strong> Los lotes comprados antes de que existiera el libro se cargan con su fecha y costo originales, y con su soporte.</li>
+    <li><strong>Conservación.</strong> Mínimo 5 años, como exige el CARF. El contador define el plazo contable.</li>
+  </ol>
+  <div class="deliver"><b>Entregable</b><span>Plantilla de Excel con las ocho hojas, fórmulas protegidas y un proceso que la genera y sella cada día.</span></div>
+</section>
+
+<!-- E · Parte II -->
+<section id="legal">
+  <div class="part">
+    <span class="eyebrow">Parte II · Tema aparte</span>
+    <h2>Proceso legal para la constitución como proveedor de liquidez en Colombia</h2>
+    <p>Esta parte no habla del libro contable sino de la empresa que lo va a usar. Va separada porque es un tema legal y societario, pero es parte del proyecto: el libro y los reportes de las secciones anteriores le sirven a esta empresa para demostrar cumplimiento.</p>
+  </div>
+  <div class="note crit">
+    <strong>Aviso</strong>
+    <p>Este es un esquema de trabajo, no asesoría jurídica. Los estatutos, el acuerdo entre socios y el contrato con Minus los debe redactar un abogado societario, y los temas tributarios los confirma el contador. Úselo como brief para ahorrar horas de asesoría.</p>
+  </div>
+
+  <h3 class="sub" id="legal-estructura">E.1 Estructura: empresa independiente</h3>
+  <p>La recomendación es constituir una SAS nueva para el proveedor de liquidez, separada de Minus. Minus le licencia la tecnología y cobra por ella.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Criterio</th><th>Empresa independiente (recomendada)</th><th>Dentro de Minus</th></tr></thead>
+    <tbody>
+      <tr><td>Riesgo regulatorio</td><td>El riesgo de la UIAF, SAGRILAFT y la DIAN queda aislado. Un problema ahí no toca a Minus.</td><td>Todo el riesgo cae sobre el negocio de automatización.</td></tr>
+      <tr><td>Bancos</td><td>Pueden abrir cuenta a una empresa con un solo objeto social, más claro de evaluar.</td><td>Un banco que ve cripto dentro de una agencia de IA puede cerrar la cuenta de todo Minus.</td></tr>
+      <tr><td>Clientes de Minus</td><td>Los clientes inmobiliarios y de construcción no se mezclan con cripto.</td><td>El nombre de Minus queda ligado a la actividad cripto.</td></tr>
+      <tr><td>Contabilidad e impuestos</td><td>Libros, ICA e inventario cripto propios.</td><td>Mezcla ingresos de servicios con compraventa de activos y complica ICA y renta.</td></tr>
+      <tr><td>Venta o inversión</td><td>Se puede vender o recibir inversión en una sola de las dos.</td><td>Para vender una, hay que separarla primero.</td></tr>
+      <tr><td>Costo</td><td>Constitución, cuentas, contador y revisor fiscal duplicados.</td><td>Más barato al inicio.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note ok"><p>Dentro de Minus solo tendría sentido si no se van a mover fondos de clientes ni activos propios en volumen, es decir, si en la práctica solo se vende software de trazabilidad.</p></div>
+
+  <h3 class="sub" id="legal-pasos">E.2 Constitución paso a paso</h3>
+  <p>La forma más común es una SAS (Ley 1258 de 2008), por documento privado inscrito en la Cámara de Comercio. Solo se necesita escritura pública si se aportan bienes que la exigen, como inmuebles.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Paso</th><th>Qué se hace</th><th>Dónde</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Verificar que el nombre esté disponible.</td><td>RUES</td></tr>
+      <tr><td>2</td><td>Redactar los estatutos y el acuerdo entre socios (E.4).</td><td>Abogado societario</td></tr>
+      <tr><td>3</td><td>Inscribir la sociedad y obtener la matrícula mercantil.</td><td>Cámara de Comercio</td></tr>
+      <tr><td>4</td><td>Sacar el RUT y el NIT, y agregar las responsabilidades que correspondan a la actividad, como la 67 (Res. 000240/2025). Confirmar cuál aplica.</td><td>DIAN y contador</td></tr>
+      <tr><td>5</td><td>Abrir la cuenta bancaria. El objeto social y la explicación del negocio pesan mucho.</td><td>Banco</td></tr>
+      <tr><td>6</td><td>Inscribirse en el ICA del municipio, activar facturación electrónica y contratar contador.</td><td>Municipio, DIAN, contador</td></tr>
+      <tr><td>7</td><td>Montar el cumplimiento antes de operar: oficial de cumplimiento, manual SAGRILAFT y registro ante la UIAF (E.6).</td><td>Cumplimiento</td></tr>
+    </tbody>
+  </table></div>
+  <p>El revisor fiscal es obligatorio solo si se superan ciertos topes de activos o ingresos. Se revisa cada año con el contador.</p>
+
+  <h3 class="sub" id="legal-objeto">E.3 Objeto social</h3>
+  <p>Conviene que sea específico, porque los bancos lo leen.</p>
+  <ul>
+    <li>Compraventa, intermediación y custodia de activos virtuales por cuenta propia.</li>
+    <li>Provisión de liquidez a empresas y personas.</li>
+    <li>Consultoría en operaciones con activos virtuales.</li>
+    <li>Al final, cualquier otra actividad comercial lícita.</li>
+  </ul>
+  <div class="note"><p>El desarrollo de software no va en este objeto. Eso lo hace Minus.</p></div>
+
+  <h3 class="sub" id="legal-socios">E.4 Acuerdo entre los dos socios</h3>
+  <p>Con dos socios, estos puntos deben quedar por escrito antes de constituir.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Tema</th><th>Recomendación</th></tr></thead>
+    <tbody>
+      <tr><td>Participación</td><td>Una división desigual, por ejemplo 51/49, evita bloqueos. Con 50/50 se necesita una regla de desempate.</td></tr>
+      <tr><td>Roles</td><td>Un representante legal principal y un suplente. Una persona lidera lo comercial y otra la tecnología.</td></tr>
+      <tr><td>Aportes</td><td>Quién aporta capital, quién aporta trabajo y qué pasa si alguien no aporta.</td></tr>
+      <tr><td>Permanencia</td><td>Acciones que se ganan en el tiempo (vesting) y cláusulas de salida si un socio se va.</td></tr>
+      <tr><td>Decisiones</td><td>Cuáles requieren acuerdo de ambos: endeudarse, vender, cambiar el objeto, admitir socios.</td></tr>
+      <tr><td>Dividendos</td><td>Cuánto se reparte y cuánto queda como reserva para cubrir el riesgo de operación.</td></tr>
+      <tr><td>Exclusividad</td><td>Que ninguno haga el mismo negocio por fuera.</td></tr>
+      <tr><td>Propiedad intelectual</td><td>Cesión firmada de todo lo construido hacia Minus.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note crit"><strong>Partes vinculadas</strong><p>Los mismos dos socios serán dueños de ambas empresas. El contrato entre ellas es una operación entre vinculados: debe pactarse a precio de mercado y quedar aprobado por escrito por los socios. Si no, la DIAN o un banco pueden cuestionar el precio.</p></div>
+
+  <h3 class="sub" id="legal-contrato">E.5 Contrato entre la nueva empresa y Minus</h3>
+  <p>Un contrato marco con dos anexos.</p>
+  <div class="grid2">
+    <div class="box"><h3>Anexo 1 · Licencia de uso</h3><p>Modalidad SaaS. Minus conserva la propiedad del código y la SAS recibe el derecho de usarlo, con tarifa mensual.</p></div>
+    <div class="box"><h3>Anexo 2 · Desarrollo y mantenimiento</h3><p>Lo que Minus construye o ajusta para la SAS, cobrado por proyecto o por horas.</p></div>
+  </div>
+  <h4>Cláusulas que no deben faltar</h4>
+  <div class="tbl"><table>
+    <thead><tr><th>Cláusula</th><th>Qué dice</th></tr></thead>
+    <tbody>
+      <tr><td>Objeto y alcance</td><td>Qué módulos se licencian: libro, agentes, trazabilidad, reportes.</td></tr>
+      <tr><td>Propiedad intelectual</td><td>El código es de Minus. Los datos del libro son siempre de la SAS.</td></tr>
+      <tr><td>Precio</td><td>A precio de mercado, con la forma de ajuste anual. Anotar cómo se justificó.</td></tr>
+      <tr><td>Nivel de servicio</td><td>Disponibilidad, tiempos de respuesta y soporte.</td></tr>
+      <tr><td>Seguridad</td><td>Minus nunca guarda llaves privadas ni mueve fondos (principio del paso 14).</td></tr>
+      <tr><td>Datos personales</td><td>Ley 1581: quién es responsable y quién es encargado del tratamiento.</td></tr>
+      <tr><td>Confidencialidad</td><td>En ambos sentidos.</td></tr>
+      <tr><td>Salida</td><td>Qué pasa al terminar: entrega de datos, exportación del libro y plazo de transición.</td></tr>
+      <tr><td>Responsabilidad</td><td>Límite de responsabilidad de Minus por errores del software.</td></tr>
+      <tr><td>Cumplimiento</td><td>Minus no actúa como operador. La responsabilidad ante la UIAF y la DIAN es de la SAS.</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note"><strong>Impuestos del contrato</strong><p>La licencia y los servicios llevan IVA y retención en la fuente. La compraventa de cripto no lleva IVA, lo que puede limitar el descuento del IVA pagado a Minus. Confirmarlo con el contador antes de fijar la tarifa.</p></div>
+
+  <h3 class="sub" id="legal-cumplimiento">E.6 Antes de operar con clientes</h3>
+  <ul>
+    <li><strong>UIAF.</strong> Registro y reportes mensuales de clientes y transacciones (Res. 314/2021).</li>
+    <li><strong>SAGRILAFT.</strong> Oficial de cumplimiento, manual y debida diligencia intensificada para activos virtuales (Supersociedades, Cap. X).</li>
+    <li><strong>DIAN.</strong> Responsabilidad en el RUT y reportes CARF (Res. 000240/2025).</li>
+    <li><strong>Libro.</strong> Los pasos 11 a 15 de la Parte I entregan los reportes que estas entidades piden.</li>
+    <li><strong>Licencia.</strong> En Colombia no existe una licencia específica para esta actividad. La protección es el cumplimiento demostrable.</li>
+  </ul>
+
+  <h3 class="sub" id="legal-orden">E.7 Orden recomendado y entregables</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Orden</th><th>Documento o acto</th><th>Quién</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Cesión de propiedad intelectual entre los socios hacia Minus</td><td>Abogado</td></tr>
+      <tr><td>2</td><td>Acuerdo entre socios de la nueva SAS</td><td>Abogado</td></tr>
+      <tr><td>3</td><td>Estatutos e inscripción de la SAS</td><td>Abogado y Cámara de Comercio</td></tr>
+      <tr><td>4</td><td>RUT, cuenta bancaria, ICA y facturación</td><td>Contador</td></tr>
+      <tr><td>5</td><td>Contrato marco con Minus y sus anexos</td><td>Abogado</td></tr>
+      <tr><td>6</td><td>Manual SAGRILAFT, oficial de cumplimiento y registro UIAF</td><td>Cumplimiento</td></tr>
+    </tbody>
+  </table></div>
+  <div class="deliver"><b>Entregable</b><span>SAS constituida, acuerdo entre socios firmado, contrato con Minus y cumplimiento listo para operar.</span></div>
+</section>
+
+<!-- F -->
+<section id="crono">
+  <span class="eyebrow">F · Cierre</span>
+  <h2>Cronograma</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Fase</th><th>Pasos</th><th class="n">Semanas</th><th>Responsable</th></tr></thead>
+    <tbody>
+      <tr><td>1 · Diseño</td><td>1 a 3</td><td class="n">1–3</td><td>Producto + contador</td></tr>
+      <tr><td>2 · Núcleo del libro</td><td>4 a 6</td><td class="n">3–6</td><td>Backend / datos</td></tr>
+      <tr><td>3 · Conexiones</td><td>7 a 10</td><td class="n">5–10</td><td>Backend + contador</td></tr>
+      <tr><td>4 · Control</td><td>11 a 15</td><td class="n">9–14</td><td>Backend + cumplimiento</td></tr>
+    </tbody>
+  </table></div>
+  <p>Las fases 2 y 3 se solapan: los conectores se pueden construir mientras se termina el núcleo.</p>
+</section>
+
+<!-- D -->
+<footer id="versiones">
+  <span class="eyebrow">G · Control de versiones</span>
+  <div class="tbl"><table>
+    <thead><tr><th>Versión</th><th>Fecha</th><th>Cambios</th></tr></thead>
+    <tbody><tr><td>v1.7</td><td>14 oct 2026</td><td>Nueva Parte II, sección E: proceso legal para la constitución como proveedor de liquidez en Colombia (estructura independiente, constitución paso a paso, objeto social, acuerdo entre socios, contrato con Minus, cumplimiento y orden de entregables). Cronograma y Control de versiones pasan a F y G.</td></tr><tr><td>v1.6</td><td>14 oct 2026</td><td>Paso 12 ampliado: USDT recibidos de otros países (tratamiento según el motivo del pago), caso Binance Argentina a Colombia sin arancel, renta, ICA, IVA y GMF, y fila de ICA en los reportes.</td></tr><tr><td>v1.5</td><td>14 oct 2026</td><td>Paso 14 ampliado: reporte y documentación de la billetera fría propia (qué reporta Binance, qué se declara, transferencias internas, prueba de control, reglas Binance–fría).</td></tr><tr><td>v1.4</td><td>14 oct 2026</td><td>Sección C ampliada: cómo construir ahora y activar al ingresar dinero, ficha de cada herramienta (costo, proceso, área, función, qué pasa si no se usa y cuándo se activa) presupuesto por etapa y enlace oficial con indicaciones de acceso en cada ficha. Nueva entrada C.1 en el índice.</td></tr><tr><td>v1.3</td><td>14 oct 2026</td><td>Nueva sección C, Herramientas necesarias para la trazabilidad en la blockchain: exploradores (Etherscan, Tronscan, mempool.space), APIs y nodos, analítica de riesgo, custodia, sellado, procedimiento de trazado wallet a wallet y orden de adopción. Las secciones Excel, Cronograma y Versiones pasan a D, E y F.</td></tr><tr><td>v1.2</td><td>14 oct 2026</td><td>Nueva sección C, Archivos de Excel: hojas, columnas de lotes y ventas, trazabilidad lote-venta, fórmulas, ejemplo y reglas de uso y versionado.</td></tr><tr><td>v1.1</td><td>14 oct 2026</td><td>Nuevo paso 12: impuestos y costo fiscal de los criptoactivos (utilidad por lotes, renta vs ganancia ocasional, ejemplo con USDT y reportes). Los pasos 12 a 14 anteriores pasan a ser 13 a 15.</td></tr><tr><td>v1.0</td><td>14 oct 2026</td><td>Versión inicial: arquitectura en capas y paso a paso de 14 pasos en 4 fases para libro contable con anclaje en blockchain y trazabilidad de USDT, BTC, ETH, USD y COP.</td></tr></tbody>
+  </table></div>
+  <p>El tratamiento contable y tributario (clasificación de criptoactivos, método de costo, reglas de asientos) debe validarse con el contador antes de producción. Los umbrales de confirmación por red son configurables.</p>
+</footer>
+
+</div>
+
+</body>
+</html>
