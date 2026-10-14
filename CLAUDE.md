@@ -15,6 +15,7 @@ Antes llamado "Pasarela de pago USDT". Desde el 14 de octubre de 2026 es un **pr
   - Pagos en Colombia, directo en pesos colombianos: los maneja la **pasarela en pesos** correspondiente (la construye Zuhay).
   - Pagos en USDT desde cualquier parte del mundo: los maneja **este proyecto**.
 - **Primeros clientes:** Hellominus y Zuhay. Después pueden sumarse otras compañías.
+- **Cómo entran y salen los pagos (decidido por Juan el 14 de octubre de 2026):** los pagos en USDT entran **directo al proveedor de liquidez**, y el proveedor hace la **dispersión en pesos desde una cuenta de Bancolombia**. Hellominus y DEVMINUS reciben pagos en cripto, pero quien dispersa es el proveedor. Es el modelo de mayor carga regulatoria (recibe y paga fondos de terceros): pendiente de validar con abogado y contador. **La dispersión va a la empresa cliente** (Hellominus o DEVMINUS), que reparte a sus anfitriones por su cuenta: el proveedor no paga a anfitriones ni a otros terceros.
 - Hellominus ya **no es el dueño ni el comercio** de este sistema: es un cliente más. Cada cliente es un proyecto (`project_id`) con su entidad legal (`legal_entity_id`).
 
 **Reemplazado por este enfoque** (decisiones del 4 de octubre): "el dinero llega a la cuenta de Hellominus", "Hellominus es el `merchant`", "Hellominus es el primer proyecto y primera entidad legal de la pasarela" y "Hellominus construye la pasarela". El esquema de datos ya es multi-cliente, pero el contrato de la API v1 y varios textos hay que revisarlos contra la documentación nueva.
