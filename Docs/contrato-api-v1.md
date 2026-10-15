@@ -104,7 +104,7 @@ Solo si el estado es `CREATED` o `AWAITING_PAYMENT`. En otro estado devuelve `40
 
 Los estados de fallo y `HELD_COMPLIANCE` se exponen **sin causa**. El cliente debe tratarlos como "en proceso" y no mostrarle al pagador un motivo. Terminales: `SETTLED, REFUNDED, REJECTED, CANCELLED`.
 
-**Decidido (14 de octubre de 2026, Juan):** la reserva se confirma cuando el pago es válido en la red, es decir en el estado `CONFIRMED`, sin esperar a que se conviertan los USDT ni a que salgan los pesos. El evento que el cliente espera es `order.confirmed`. **ABIERTO (#4):** como se confirma antes de convertir y de dispersar, falta definir quién asume el riesgo de precio y el capital de trabajo entre ese momento y la dispersión.
+**Decidido (14 de octubre de 2026, Juan):** la reserva se confirma cuando el pago es válido en la red, es decir en el estado `CONFIRMED`, sin esperar a que se conviertan los USDT ni a que salgan los pesos. El evento que el cliente espera es `order.confirmed`. **Decidido:** como se confirma antes de convertir y de dispersar, el proveedor asume el riesgo de precio entre ese momento y la dispersión.
 
 ## 4. Reembolsos (ABIERTO, brecha 1 del estándar)
 
@@ -146,21 +146,30 @@ X-Signature: t=1760000000,v1=<hmac_sha256(secret, t + "." + body)>
 
 ## 6b. Cómo se entera el cliente de que llegó el pago (sincronía)
 
-El cliente nunca debe adivinar. **Decidido (14 de octubre de 2026, Juan):** el aviso automático lo envía **el proveedor de liquidez**, porque es quien recibe los USDT y el único que sabe en cada momento qué pasó con el pago; el cliente (Hellominus, DEVMINUS) no tiene que estar mirando. **Propuesto, pendiente de decisión:** la consulta de respaldo, el cuadre diario y el uso del correo.
+**Decidido (14 de octubre de 2026, Juan):**
+- El proveedor es quien avisa, porque es quien recibe los USDT y el único que sabe qué pasó con el pago.
+- La confirmación a Hellominus es un **correo** que el proveedor envía **inmediatamente** después de que el pago es válido en la red (estado `CONFIRMED`).
+- El proveedor **asume la volatilidad**: confirma antes de convertir, y el riesgo de precio entre la confirmación y la conversión es suyo.
+- Ese mismo pago se **registra en el libro contable** en el momento de confirmarse, con: hash de la transacción, red, fecha y hora exacta (UTC), monto, direcciones de origen y destino, referencia de la orden y resultado del análisis de riesgo.
+- El pagador debe haber hecho el KYC en un exchange (Binance u otro que cumpla los criterios del proveedor) y pagar desde su cuenta, a su nombre. El proveedor mantiene una lista de exchanges aceptados y sus criterios (paso 3.10 del plan). El KYC propio del proveedor sigue siendo necesario.
+
+**Contenido del correo (propuesta):** referencia de la orden (`external_ref`), monto en USDT y en pesos, hash con enlace al explorador, fecha y hora exacta, y estado.
 
 | Canal | Para qué sirve | ¿Confirma una reserva? |
 |---|---|---|
-| **Webhook firmado** (principal) | El proveedor avisa al servidor del cliente cada vez que cambia el estado de una orden. Es automático e inmediato. | **Sí**, si la firma es válida y el evento es el acordado en el paso 0.7. |
-| **Consulta** `GET /v1/orders/{id}` (respaldo) | El cliente pregunta el estado cuando no le llegó el aviso o cuando se reinicia su servidor. | **Sí**, si devuelve el estado acordado. |
-| **Conciliación diaria** `GET /v1/settlements` | Cada día se compara lo que el proveedor liquidó con lo que el cliente tiene registrado. | No: detecta diferencias. |
-| **Correo** | Avisa a personas (operaciones, cumplimiento). | **Nunca.** No dispara ninguna acción automática. |
-| **Leer la blockchain por su cuenta** | Comprobación extra. | **No.** Ver abajo. |
+| **Correo inmediato** | Es el aviso que decidió Juan. | **Sí** (decisión de Juan). |
+| **Webhook firmado** (recomendado, no decidido) | Mismo evento, pero para que el servidor del cliente lo procese solo. | Sí, si se adopta. |
+| **Consulta** `GET /v1/orders/{id}` | Comprobar el estado cuando hay dudas o se perdió un aviso. | Sí, si devuelve `CONFIRMED`. |
+| **Conciliación diaria** `GET /v1/settlements` | Cuadrar lo liquidado contra lo registrado. | No: detecta diferencias. |
+| **Leer la blockchain por su cuenta** | Comprobación extra. | **No.** |
 
-**Por qué el correo no sirve para confirmar:** llega con retraso o no llega, se puede falsificar (alguien podría mandar un correo falso que diga "pago recibido"), no se puede procesar sin errores y no evita que se procese dos veces.
+**Riesgos del correo, y cómo reducirlos (recomendación, no decisión):** un correo puede llegar tarde, perderse o falsificarse (alguien podría mandar uno que diga "pago recibido"), y si lo procesa una persona puede equivocarse o duplicar. Para reducirlo, sin cambiar lo decidido:
+1. Enviarlo desde el dominio de la empresa con SPF, DKIM y DMARC configurados, para que no se pueda falsificar fácilmente.
+2. Incluir la referencia de la orden y el hash con enlace al explorador, para que quien lo recibe pueda comprobarlo.
+3. Que Hellominus compruebe la orden con una consulta antes de confirmar, o que se envíe también el webhook firmado desde el mismo evento.
+4. Guardar una copia de cada correo enviado en el expediente de la operación.
 
-**Por qué el cliente no debe confirmar mirando la blockchain:** ve que llegaron USDT, pero no sabe si la billetera de origen fue marcada por el análisis de riesgo, ni si la orden quedó en revisión de cumplimiento, ni cuántas confirmaciones exige la red. Podría confirmar una reserva con dinero que luego se retiene.
-
-**Regla:** el cliente confirma una reserva solo con un webhook firmado y válido, o con una consulta que devuelva el estado acordado. Si el aviso no llega, consulta. Si no cuadran los números al final del día, la conciliación lo muestra.
+**Por qué el cliente no debe confirmar mirando la blockchain:** ve que llegaron USDT, pero no sabe si la billetera de origen fue marcada por el análisis de riesgo, ni si la orden quedó en revisión de cumplimiento. Podría confirmar una reserva con dinero que luego se retiene.
 
 ## 7. Qué consume cada cliente
 
@@ -182,7 +191,7 @@ El cliente nunca debe adivinar. **Decidido (14 de octubre de 2026, Juan):** el a
 1. ¿Zuhay es cliente directo o recibe los avisos a través de Hellominus? Dijiste primero "Hellominus y Zuhay" y después "Hellominus y DEVMINUS".
 2. ¿Qué datos del pagador final exige el abogado (país, nombre, identificación)? (#1)
 3. ¿Principal o agente? (#8)
-4. ~~¿Qué estado confirma la reserva?~~ Resuelto: `CONFIRMED`, pago válido en la red. Queda abierto quién asume el riesgo de precio (#4).
+4. ~~¿Qué estado confirma la reserva?~~ Resuelto: `CONFIRMED`, pago válido en la red. El riesgo de precio lo asume el proveedor.
 5. ¿Política de reembolso? (#3)
 6. ¿Redes habilitadas en v1: solo `tron`, o también `polygon`? (#5)
 7. ¿El alta de comercios es interna del proveedor?

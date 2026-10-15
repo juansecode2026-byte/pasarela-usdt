@@ -6,11 +6,11 @@ Versión en checklist de Docs/plan-paso-a-paso-proveedor-de-liquidez.md . Une la
 
 Actualizado: 14 de octubre de 2026 · Nombre del proveedor: provisional · Lo legal y tributario está sin validar por abogado y contador.
 
-**Avance registrado:** 10 hechos y 2 en curso, de 91 pasos.
+**Avance registrado:** 11 hechos y 2 en curso, de 94 pasos.
 
 Leyenda: `[x]` hecho · `[~]` en curso · `[ ]` pendiente. Cada paso trae su responsable.
 
-## Fase 0. Decisiones previas (sin código) (4/13)
+## Fase 0. Decisiones previas (sin código) (5/13)
 
 _Bloquean lo demás. Socios, abogado y contador._
 
@@ -20,13 +20,13 @@ _Bloquean lo demás. Socios, abogado y contador._
 - [ ] **0.4** Rol: principal (balance propio) o agente (por cuenta del cliente) — _Contador_
 - [ ] **0.5** Datos exigidos a los pagadores finales (personas) — _Abogado_
 - [x] **0.6** Activos iniciales: solo USDT (contra pesos). BTC, ETH y USD quedan para después — _Juan_
-- [x] **0.7** Cuándo se confirma la reserva: cuando el pago es válido en la red (CONFIRMED). Queda abierto quién asume el riesgo de precio hasta la dispersión — _Juan_
+- [x] **0.7** Cuándo se confirma la reserva: cuando el pago es válido en la red (CONFIRMED). El proveedor asume la volatilidad — _Juan_
 - [ ] **0.8** Política de reembolso — _Socios y abogado_
 - [ ] **0.9** Red inicial (TRON o Polygon) — _Socios_
 - [ ] **0.10** Clientes directos: Hellominus y DEVMINUS. Confirmar si Zuhay (CRM de ventas de la landing de Hellominus, su socio) también es cliente de la API — _Socios_
 - [x] **0.11** Pagos entran al proveedor; dispersión a la empresa cliente desde Bancolombia — _Juan_
 - [x] **0.12** El proveedor es una empresa independiente, separada de DEVMINUS — _Juan_
-- [ ] **0.13** Pagos solo desde cuentas verificadas de exchange y a nombre del pagador (control 1 del libro v1.8), o desde cualquier billetera: cambia el producto — _Socios y abogado_
+- [x] **0.13** El pagador debe haber hecho el KYC en un exchange (Binance u otro que cumpla los criterios del proveedor) y pagar desde su cuenta, a su nombre (control 1 del libro v1.8). El KYC propio del proveedor sigue siendo necesario — _Juan_
 
 ## Fase 1. Constituir la sociedad (1/11)
 
@@ -55,7 +55,7 @@ _1 a 2 semanas. Contador._
 - [ ] **2.5** Inscripción en el ICA del municipio — _Contador_
 - [ ] **2.6** Política de IVA y tratamiento del spread por escrito — _Contador_
 
-## Fase 3. Cumplimiento (SAGRILAFT) (0/9)
+## Fase 3. Cumplimiento (SAGRILAFT) (0/10)
 
 _4 a 8 semanas. Oficial de cumplimiento._
 
@@ -68,6 +68,7 @@ _4 a 8 semanas. Oficial de cumplimiento._
 - [ ] **3.7** Inscripción en SIREL (UIAF) y prueba de formatos — _Oficial de cumplimiento_
 - [ ] **3.8** Controles mínimos por pago en el manual SAGRILAFT (siete puntos del paso 13 del libro v1.8); el abogado define el KYC simplificado y sus datos mínimos — _Oficial de cumplimiento_
 - [ ] **3.9** Revisar los términos de Binance para cuentas de negocio antes de operar: puede cerrar la cuenta si la actividad no corresponde al perfil — _Tesorería_
+- [ ] **3.10** Lista de exchanges aceptados y sus criterios (KYC verificable, regulados), revisada cada cierto tiempo. Por ahora Binance; otros se agregan con el abogado y el oficial de cumplimiento — _Oficial de cumplimiento_
 
 ## Fase 4. Bancos y régimen cambiario (0/5)
 
@@ -121,7 +122,7 @@ _En paralelo a las fases 1 a 6. Supabase a Pro antes del primer dato real._
 - [ ] **7.15** Seguridad: custodia fuera del libro, secretos, roles, copias de seguridad — _Equipo técnico_
 - [ ] **7.16** Pruebas del ciclo completo en redes de prueba — _Equipo técnico_
 
-## Fase 7 · Infraestructura y bloqueos técnicos (2/13)
+## Fase 7 · Infraestructura y bloqueos técnicos (2/15)
 
 _Situaciones que salieron en el camino. Bloquean pasos de la fase 7._
 
@@ -137,7 +138,9 @@ _Situaciones que salieron en el camino. Bloquean pasos de la fase 7._
 - [x] **7.26** Contexto desde .md: cada HTML tiene su .md gemelo; se lee el .md y se regenera al actualizar el HTML (scripts/sincronizar-md.py) — _Equipo técnico_
 - [x] **7.27** Sincronización automática HTML y .md: gancho de Claude Code al editar un HTML y gancho de git antes de cada commit — _Equipo técnico_
 - [ ] **7.28** Cuentas propias del proyecto, separadas de DEVMINUS: hoy Supabase está en la misma organización que proyectos de Hellominus y de DEVMINUS, y GitHub es una cuenta personal. Crear organización propia y transferirlas a la SAS al constituirla — _Socios y equipo técnico_
-- [~] **7.29** Aviso automático del proveedor al cliente (decidido), más consulta de respaldo y conciliación diaria (propuestas); el correo solo avisa a personas — _Socios y equipo técnico_
+- [~] **7.29** Aviso al cliente: el proveedor le envía un correo inmediato a Hellominus (decidido); webhook firmado y consulta como respaldo (recomendación) — _Socios y equipo técnico_
+- [ ] **7.30** Correo de confirmación: dominio de la empresa con SPF, DKIM y DMARC, plantilla con los datos del pago y prueba de entrega — _Equipo técnico_
+- [ ] **7.31** Registrar cada pago confirmado en el libro con hash, fecha y hora exacta, montos, direcciones, orden y análisis de riesgo — _Equipo técnico_
 
 ## Fase 8. Lanzamiento controlado (0/7)
 
@@ -185,7 +188,7 @@ Cada vez que se complete un paso o un grupo de pasos con un efecto real, se agre
 - **Evidencia:** DECISIONES.md y CLAUDE.md del 14 de octubre de 2026.
 - **Qué habilita:** Reescribir el contrato de la API (hecho, borrador 2) y saber a quién se le verifica la cuenta bancaria: una empresa por cliente.
 - **Qué falta o qué riesgo queda:** Es el modelo de mayor carga regulatoria (recibe dinero de personas). Debe validarlo un abogado y un contador antes de mover dinero real.
-- **Pasos del checklist:** 0.6, 0.7, 0.11, 0.12, 7.2
+- **Pasos del checklist:** 0.6, 0.7, 0.11, 0.12, 0.13, 7.2
 
 ### Resultado 4. Libro contable v1.8 escrito, pendiente de pruebas
 

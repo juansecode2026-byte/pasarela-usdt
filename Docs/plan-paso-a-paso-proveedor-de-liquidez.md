@@ -40,13 +40,13 @@ Bloquean lo demás. Se cierran con los socios, el abogado y el contador.
 | 0.4 | Rol: **principal** (compra y vende con su balance) o **agente** (ejecuta por cuenta del cliente) | Pendiente, con contador |
 | 0.5 | Clientes objetivo y pagadores: los clientes son empresas (KYB), pero los **pagadores finales serán personas**. Qué datos se les exigen | Pendiente, con abogado |
 | 0.6 | Activos iniciales: solo USDT (contra pesos); BTC, ETH y USD después | **Decidido** (14 oct 2026) |
-| 0.7 | Cuándo se confirma la reserva: cuando el pago es válido en la red (CONFIRMED). Falta definir quién asume el riesgo de precio hasta la dispersión | **Decidido** (14 oct 2026) |
+| 0.7 | Cuándo se confirma la reserva: cuando el pago es válido en la red (CONFIRMED). El proveedor asume la volatilidad | **Decidido** (14 oct 2026) |
 | 0.8 | Política de reembolso | Pendiente |
 | 0.9 | Red inicial (TRON o Polygon) | Pendiente |
 | 0.10 | Clientes directos: Hellominus y DEVMINUS. Confirmar si Zuhay (CRM de ventas de la landing de Hellominus, socio de Hellominus) también es cliente de la API | Pendiente |
 | 0.11 | Los pagos entran directo al proveedor y la dispersión va a la empresa cliente desde Bancolombia | **Decidido** (14 oct 2026) |
 | 0.12 | El proveedor es una empresa independiente, separada de DEVMINUS | **Decidido** (14 oct 2026) |
-| 0.13 | Pagos solo desde cuentas verificadas de exchange y a nombre del pagador (control 1 del libro v1.8), o desde cualquier billetera: cambia el producto | Pendiente |
+| 0.13 | El pagador debe haber hecho el KYC en un exchange (Binance u otro que cumpla los criterios del proveedor) y pagar desde su cuenta, a su nombre (control 1 del libro v1.8) | **Decidido** (14 oct 2026) |
 
 ## Fase 1. Constituir la sociedad
 
@@ -88,6 +88,7 @@ Quién: oficial de cumplimiento. 4 a 8 semanas.
 7. Inscripción como reportante ante la UIAF en SIREL y prueba de los formatos.
 8. Controles mínimos por pago (siete puntos del paso 13 del libro v1.8). El KYC de Binance no reemplaza el propio.
 9. Revisar los términos de Binance para cuentas de negocio antes de operar.
+10. **Lista de exchanges aceptados y sus criterios** (verifican identidad, están regulados): el pagador puede venir de cualquier exchange con KYC, pero solo de los que estén en la lista. Por ahora, Binance.
 
 ## Fase 4. Bancos y régimen cambiario
 
@@ -161,7 +162,9 @@ Situaciones que salieron en el camino.
 | 7.26 | Contexto desde `.md`: cada HTML tiene su `.md` gemelo y se regenera con `scripts/sincronizar-md.py` | **Hecho** |
 | 7.27 | Sincronización automática HTML y `.md`: gancho de Claude Code al editar un HTML y gancho de git antes de cada commit | **Hecho** |
 | 7.28 | Cuentas propias del proyecto, separadas de DEVMINUS: hoy Supabase comparte organización con proyectos de Hellominus y de DEVMINUS, y GitHub es una cuenta personal | Pendiente |
-| 7.29 | Aviso automático del proveedor al cliente (decidido); consulta de respaldo y conciliación diaria (propuestas); el correo solo avisa a personas | **En curso** |
+| 7.29 | Aviso al cliente: el proveedor le envía un correo inmediato a Hellominus (decidido); webhook firmado y consulta como respaldo (recomendación) | **En curso** |
+| 7.30 | Correo de confirmación: dominio de la empresa con SPF, DKIM y DMARC, plantilla con los datos del pago y prueba de entrega | Pendiente |
+| 7.31 | Registrar cada pago confirmado en el libro con hash, fecha y hora exacta, montos, direcciones, orden y análisis de riesgo | Pendiente |
 
 **Se construye ya, con planes gratuitos y redes de prueba, sin dinero real.** Las herramientas que exigen contrato y empresa (análisis on-chain, custodia institucional, Binance institucional) se cotizan en paralelo para que estén firmadas al llegar el primer cliente. **Supabase debe pasar a Pro antes de guardar el primer dato real.**
 

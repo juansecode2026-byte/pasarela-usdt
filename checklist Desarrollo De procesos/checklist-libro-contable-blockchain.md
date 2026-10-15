@@ -6,7 +6,7 @@ Versión en checklist de Libro de contabilidad blockchain/libro-contable-blockch
 
 Actualizado: 14 de octubre de 2026 · El tratamiento contable y tributario debe validarlo el contador antes de producción.
 
-**Avance registrado:** 6 hechos y 23 en curso, de 102 pasos.
+**Avance registrado:** 6 hechos y 23 en curso, de 103 pasos.
 
 Leyenda: `[x]` hecho · `[~]` en curso · `[ ]` pendiente. Cada paso trae su responsable.
 
@@ -103,13 +103,14 @@ _La pata fiat con la misma disciplina que la cadena._
 - [ ] **8.3** Después del inicio (solo USDT al inicio): Bancos USD, con vínculo a la declaración de cambio — _Tecnología y contador_
 - [~] **8.4** Cada movimiento en eventos crudos con su soporte — _Tecnología_
 
-## Paso 9. Reglas contables automáticas (0/3)
+## Paso 9. Reglas contables automáticas (0/4)
 
 _Lo que no coincide con una regla va a revisión manual; no se contabiliza solo._
 
 - [ ] **9.1** Catálogo: cobro en USDT, conversión, compra de BTC con USDT, gas, custodia, spread OTC — _Contador y tecnología_
 - [ ] **9.2** Bandeja de revisión manual para eventos sin regla — _Tecnología_
 - [ ] **9.3** Catálogo aprobado por el contador y probado con casos reales — _Contador_
+- [ ] **9.4** Registrar cada pago confirmado en el libro de inmediato, con hash de la transacción, red, fecha y hora exacta, montos, direcciones, orden y análisis de riesgo — _Tecnología_
 
 ## Paso 10. Valoración y tasas de cambio (0/5)
 
