@@ -21,7 +21,7 @@ Leer en este orden, siempre los `.md`:
 2. `DECISIONES.md`: qué se aceptó, qué se reemplazó y qué sigue abierto.
 3. `checklist Desarrollo De procesos/checklist-proveedor-de-liquidez.md` y `checklist-libro-contable-blockchain.md`: estado paso a paso y análisis de resultados.
 4. `Docs/contrato-api-v1.md`: contrato de la API (borrador).
-5. Libro y proveedor de liquidez (definen este proyecto), en `Libro de contabilidad blockchain/`: `libro-contable-blockchain_v1.7_2026-10-14.md` y `proveedor-liquidez_v1.0_2026-10-14.md`.
+5. Libro y proveedor de liquidez (definen este proyecto), en `Libro de contabilidad blockchain/`: `libro-contable-blockchain_v1.8_2026-10-14.md` y `proveedor-liquidez_v1.0_2026-10-14.md`.
 6. `Docs/pasarela-usdt-colombia-estandar.md`: estándar técnico anterior (flujo, máquina de estados, reglas, Binance, modelo de datos, API, cumplimiento). **Parcialmente superado** por el enfoque nuevo; sigue valiendo para la máquina de estados y las reglas de pagos. Todo lo regulatorio (UIAF, DIAN, Binance) está **sin verificar**: lo validan un abogado y un contador.
 
 ## Enfoque (decidido por Juan el 14 de octubre de 2026)
@@ -41,13 +41,15 @@ Leer en este orden, siempre los `.md`:
 
 Cuatro documentos del 14 de octubre de 2026, copiados desde Descargas. Mandan sobre el estándar anterior donde se contradigan.
 
-- En `Libro de contabilidad blockchain/`: `libro-contable-blockchain_v1.7` y `proveedor-liquidez_v1.0`. **Son los que definen este proyecto**: la ruta de 8 fases del proveedor de liquidez y, en la Parte II del libro, la constitución de la SAS independiente.
-- En `productos Consultoría Pasarelas de pago Agentizadas (IA)/`: `plan-comercial_v2.0` y `niveles-cripto_v1.0`. Es material comercial de Minus (los tres niveles y sus precios): un producto de consultoría, **no** parte de lo que construye este proyecto.
+- En `Libro de contabilidad blockchain/`: `libro-contable-blockchain_v1.8` y `proveedor-liquidez_v1.0`. **Son los que definen este proyecto**: la ruta de 8 fases del proveedor de liquidez y, en la Parte II del libro, la constitución de la SAS independiente.
+- En `productos Consultoría Pasarelas de pago Agentizadas (IA)/`: `plan-comercial_v2.0` y `niveles-cripto_v1.0`. Es material comercial de DEVMINUS (los tres niveles y sus precios): un producto de consultoría, **no** parte de lo que construye este proyecto.
 - El modelo que describen es de **contraparte (RFQ)**: el cliente pide precio, recibe una cotización firme de 10 a 30 segundos, acepta y se liquida. No es el flujo "una dirección de depósito por orden" del estándar anterior. Cómo encaja el pago de un pagador final del mundo en ese modelo está abierto (`DECISIONES.md`).
 
 ## Checklists (en `checklist Desarrollo De procesos/`)
 
 HTML para ir marcando el avance: `checklist-proveedor-de-liquidez.html` (el plan por fases) y `checklist-libro-contable-blockchain.html` (los 15 pasos del libro). Cada uno cierra con **Análisis de resultados**: un resultado numerado por cada avance real, con cinco campos fijos (qué se logró, evidencia, qué habilita, qué falta o qué riesgo queda, pasos del checklist). Cuando un paso cambie de estado, se actualiza en el arreglo `FASES` del archivo y se agrega su resultado. Los documentos originales no se mueven.
+
+Cada paso tiene una **guía plegada** en el arreglo `GUIAS` del mismo HTML, con campos `e` (en simple), `s` (para qué sirve), `a` (antes necesitas), `d` (dónde), `u` (enlace), `p` (qué hacer), `x` (ejemplo que explica el concepto y qué significa cumplir el paso), `v` (evidencia que se guarda), `l` (listo cuando) y `o` (ojo con). Un paso nuevo en `FASES` necesita su entrada en `GUIAS`. Lo regulatorio de las guías (DIAN, UIAF, Supersociedades) es orientativo: lo confirma el contador o el abogado.
 
 ## Alcance
 
@@ -58,6 +60,9 @@ HTML para ir marcando el avance: `checklist-proveedor-de-liquidez.html` (el plan
 ## Reglas de este proyecto
 
 - **No construir el módulo de pagos antes de cerrar el modelo legal y el reparto del dinero** (Fase 0). Mientras tanto, solo el primer tramo independiente: entidad legal y proyecto, vinculación, bitácora encadenada por hash y expediente por operación.
+- **Separación de DEVMINUS (libro v1.8, Parte II):** el proyecto es de los dos socios y, cuando exista, de la SAS del proveedor. No hay contrato de licencia con DEVMINUS. No se reutiliza código, agentes, módulos ni cuentas de DEVMINUS; el proyecto usa cuentas propias (correo, GitHub, Supabase, dominio) que se transfieren a la SAS al constituirla.
+- **Mientras no exista la SAS**, no se pasa dinero de clientes por una cuenta personal de Binance ni por una cuenta bancaria personal.
+- **Solo USDT al inicio** (decidido el 14 de octubre de 2026): BTC, ETH y dólares no se operan todavía, aunque el libro contable los soporte.
 - Dinero siempre en enteros (centavos de COP, 6 decimales de USDT). Nunca flotantes.
 - La tabla de transiciones de la orden no se modifica sin pruebas.
 - Idempotencia por red y hash de transacción.

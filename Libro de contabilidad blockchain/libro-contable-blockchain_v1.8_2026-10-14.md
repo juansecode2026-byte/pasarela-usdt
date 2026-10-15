@@ -1,6 +1,6 @@
 # Libro Contable Blockchain
 
-> Versión en Markdown de `libro-contable-blockchain_v1.7_2026-10-14.html`, generada con `scripts/sincronizar-md.py`. No editar a mano: se regenera desde el HTML. El HTML tiene las partes interactivas.
+> Versión en Markdown de `libro-contable-blockchain_v1.8_2026-10-14.html`, generada con `scripts/sincronizar-md.py`. No editar a mano: se regenera desde el HTML. El HTML tiene las partes interactivas.
 
 Minus · Guía de construcción
 
@@ -15,7 +15,7 @@ USD
 COP
 
 Versión
-:   v1.7
+:   v1.8
 
 Fecha
 :   14 oct 2026
@@ -1123,6 +1123,43 @@ Objetivo: que desde cualquier asiento se llegue al cliente, a la evidencia y al 
 - Exportadores: reporte mensual de clientes y transacciones a la UIAF, reporte anual CARF en XML a la DIAN y saldos a 31 de diciembre para exógena.
 - Conservar evidencia al menos 5 años, como exige el CARF.
 
+#### Clientes en el exterior que pagan como persona natural
+
+Ejemplo: un cliente en México paga en USDT desde su cuenta de Binance o de Lemon Cash. Los impuestos del cliente son suyos y del SAT. Lo que corresponde a la empresa es lo siguiente.
+
+| Tema | Del cliente | De la empresa |
+| --- | --- | --- |
+| Impuestos sobre el pago | Declarar en México lo que gastó o vendió en cripto. | Registrar el ingreso en pesos al valor del día de llegada y facturarlo. Si es exportación, confirmar el tratamiento de IVA con el contador. |
+| Conocer al cliente | Entregar sus datos. | Verificar quién paga: identificación, país, actividad, propósito y origen de los fondos. |
+| Origen de los fondos | — | No recibir fondos sancionados, robados o ilícitos. Revisar la dirección con la herramienta de análisis de riesgo y guardar el reporte. |
+| Evidencia y reportes | — | Guardar el soporte al menos 5 años y reportar operaciones sospechosas a la UIAF. |
+
+Una cláusula en los términos que diga que cada cliente responde por sus impuestos sirve como aclaración, pero no libera a la empresa de sus obligaciones. La herramienta de análisis deja prueba de la debida diligencia, no traslada la responsabilidad.
+
+#### Qué cubre y qué no cubre el KYC de Binance
+
+Cuando el servicio de liquidez se ejecuta por Binance (pagos, P2P u OTC), Binance verifica a los dueños de las cuentas, pero ese control protege a Binance. La obligación de conocer al cliente sigue siendo de la empresa.
+
+| Binance sí cubre | Binance no cubre |
+| --- | --- |
+| Verificar la identidad de los dueños de las cuentas de su plataforma. | Entregarle a la empresa el KYC del cliente. En un pago o una operación P2P se ve poco: un nombre o apodo y el monto. |
+| Rechazar cuentas sin verificar y bloquear cuentas sospechosas. | Reemplazar la obligación ante la UIAF y SAGRILAFT. Si una autoridad pregunta quién compró, la respuesta no puede ser "Binance lo sabe". |
+| Su propio monitoreo de riesgo, que baja el riesgo frente a una billetera anónima. | Verificar para qué usa el cliente el servicio ni si el dinero es de un tercero. |
+
+Binance puede cerrar la cuenta si detecta actividad que no corresponde a un perfil de negocio. Revisar sus términos para cuentas de negocio antes de operar con clientes, porque cambian con frecuencia.
+
+#### Controles mínimos por cada pago
+
+1. Aceptar pagos solo de cuentas verificadas en Binance y a nombre del cliente. Rechazar pagos de terceros.
+2. Pedir un KYC propio proporcional al riesgo. Simplificado en montos pequeños, más estricto a medida que suben el monto o la frecuencia.
+3. Ligar cada pago a un cliente con una orden de pago de monto y referencia únicos, el hash de la transacción y el comprobante del retiro a su nombre.
+4. En el exchange del cliente la dirección que se ve suele ser la del exchange, no la del cliente. Por eso el análisis de riesgo no basta para saber quién pagó.
+5. Pasar cada pago por la herramienta de análisis de riesgo y guardar el resultado.
+6. Registrar en el libro que se usó la verificación de Binance y qué más hizo la empresa.
+7. Fijar un límite de monto o frecuencia por cliente a partir del cual se pide más documentación.
+
+Hasta qué punto se acepta un KYC simplificado y qué datos mínimos pedir debe definirlo un abogado en el manual SAGRILAFT. Si se vende de forma habitual a personas en México, revisar si aplica alguna regla mexicana a la actividad.
+
 **Entregable**Ficha de trazabilidad por transacción y exportadores regulatorios.
 
 14
@@ -1367,11 +1404,11 @@ Esta parte no habla del libro contable sino de la empresa que lo va a usar. Va s
 
 **Aviso**
 
-Este es un esquema de trabajo, no asesoría jurídica. Los estatutos, el acuerdo entre socios y el contrato con Minus los debe redactar un abogado societario, y los temas tributarios los confirma el contador. Úselo como brief para ahorrar horas de asesoría.
+Este es un esquema de trabajo, no asesoría jurídica. Los estatutos, el acuerdo entre socios y la cesión de propiedad intelectual los debe redactar un abogado societario, y los temas tributarios los confirma el contador. Úselo como brief para ahorrar horas de asesoría.
 
 ### E.1 Estructura: empresa independiente
 
-La recomendación es constituir una SAS nueva para el proveedor de liquidez, separada de Minus. Minus le licencia la tecnología y cobra por ella.
+La recomendación es constituir una SAS nueva para el proveedor de liquidez, totalmente aparte de Minus y de cualquier otra empresa, con los dos socios como dueños. Todo lo que se construya para este proyecto queda a nombre de esa empresa.
 
 | Criterio | Empresa independiente (recomendada) | Dentro de Minus |
 | --- | --- | --- |
@@ -1409,7 +1446,7 @@ Conviene que sea específico, porque los bancos lo leen.
 - Consultoría en operaciones con activos virtuales.
 - Al final, cualquier otra actividad comercial lícita.
 
-El desarrollo de software no va en este objeto. Eso lo hace Minus.
+Si más adelante la empresa va a vender software o consultoría de formalización a terceros, esa actividad debe incluirse en el objeto, o hacerse desde otra empresa. Decidirlo antes de redactar los estatutos.
 
 ### E.4 Acuerdo entre los dos socios
 
@@ -1424,63 +1461,78 @@ Con dos socios, estos puntos deben quedar por escrito antes de constituir.
 | Decisiones | Cuáles requieren acuerdo de ambos: endeudarse, vender, cambiar el objeto, admitir socios. |
 | Dividendos | Cuánto se reparte y cuánto queda como reserva para cubrir el riesgo de operación. |
 | Exclusividad | Que ninguno haga el mismo negocio por fuera. |
-| Propiedad intelectual | Cesión firmada de todo lo construido hacia Minus. |
+| Propiedad intelectual | Cesión firmada de todo lo construido por cada socio hacia la nueva SAS cuando exista (E.5). |
 
-**Partes vinculadas**
+### E.5 Propiedad del código y separación de Minus
 
-Los mismos dos socios serán dueños de ambas empresas. El contrato entre ellas es una operación entre vinculados: debe pactarse a precio de mercado y quedar aprobado por escrito por los socios. Si no, la DIAN o un banco pueden cuestionar el precio.
+El proyecto debe quedar a nombre de los dos socios y de la nueva empresa, sin depender de Minus. Como Minus tampoco está constituida legalmente, hoy no existe una empresa a la cual cederle nada.
 
-### E.5 Contrato entre la nueva empresa y Minus
+#### Quién es dueño del código antes de que exista la SAS
 
-Un contrato marco con dos anexos.
+Mientras la SAS no exista, el código es de quienes lo escriben, los dos socios, a título personal y en conjunto. Por eso conviene dejar por escrito dos documentos.
 
-### Anexo 1 · Licencia de uso
+### 1 · Acuerdo de proyecto entre los socios
 
-Modalidad SaaS. Minus conserva la propiedad del código y la SAS recibe el derecho de usarlo, con tarifa mensual.
+Dice que el proyecto es de ambos, en qué porcentaje y que se cederá a la nueva SAS cuando se constituya. Se firma antes de construir.
 
-### Anexo 2 · Desarrollo y mantenimiento
+### 2 · Cesión a la SAS
 
-Lo que Minus construye o ajusta para la SAS, cobrado por proyecto o por horas.
+Cuando la SAS exista, cada socio le cede los derechos sobre lo construido. Desde ahí el código es de la empresa.
 
-#### Cláusulas que no deben faltar
+#### Cómo mantener la separación de Minus
 
-| Cláusula | Qué dice |
-| --- | --- |
-| Objeto y alcance | Qué módulos se licencian: libro, agentes, trazabilidad, reportes. |
-| Propiedad intelectual | El código es de Minus. Los datos del libro son siempre de la SAS. |
-| Precio | A precio de mercado, con la forma de ajuste anual. Anotar cómo se justificó. |
-| Nivel de servicio | Disponibilidad, tiempos de respuesta y soporte. |
-| Seguridad | Minus nunca guarda llaves privadas ni mueve fondos (principio del paso 14). |
-| Datos personales | Ley 1581: quién es responsable y quién es encargado del tratamiento. |
-| Confidencialidad | En ambos sentidos. |
-| Salida | Qué pasa al terminar: entrega de datos, exportación del libro y plazo de transición. |
-| Responsabilidad | Límite de responsabilidad de Minus por errores del software. |
-| Cumplimiento | Minus no actúa como operador. La responsabilidad ante la UIAF y la DIAN es de la SAS. |
+- **No reutilizar** código, agentes, módulos ni cuentas de Minus en este proyecto. Si se hace, Minus o sus clientes podrían reclamar derechos sobre esa parte.
+- **Cuentas propias del proyecto:** correo, GitHub, Supabase y dominio distintos de los de Minus. Se transfieren a la SAS cuando exista.
+- **Verificar contratos con terceros.** Si alguno de los socios tiene un contrato de trabajo o de servicios que reclame lo que cada uno crea, revisarlo antes de construir. Lo que un empleado crea dentro de su contrato suele pertenecer al empleador, según lo pactado.
+- **Si Minus presta algún servicio** a la SAS en el futuro, se firma un contrato a precio de mercado y se trata como operación entre partes vinculadas, aprobada por escrito por los socios.
 
-**Impuestos del contrato**
+### E.6 Qué se puede hacer sin empresa y qué la necesita
 
-La licencia y los servicios llevan IVA y retención en la fuente. La compraventa de cripto no lleva IVA, lo que puede limitar el descuento del IVA pagado a Minus. Confirmarlo con el contador antes de fijar la tarifa.
+Construir no se frena por la falta de la empresa. Lo que se bloquea es operar con dinero de clientes y contratar las cuentas institucionales.
 
-### E.6 Antes de operar con clientes
+| Etapa | Qué se hace | Por qué no necesita la empresa |
+| --- | --- | --- |
+| Fase 1 · Diseño | Alcance, plan de cuentas, modelo de datos. | Es solo trabajo de diseño. |
+| Fase 2 · Núcleo | Libro de partida doble, cadena de hashes y anclaje. | Son software y bases de datos. El anclaje con OpenTimestamps es gratis. |
+| Fase 3 · Conexiones | Lectura de direcciones en los exploradores, con redes de prueba. | Los exploradores públicos y las redes de prueba no piden KYC empresarial. |
+| Fase 4 · Control | Conciliación, módulo de impuestos, Excel y reportes. | Se prueban con datos simulados. |
+| Seguridad | Roles, bitácora y política de llaves. | Es configuración propia. |
+
+#### Lo que sí necesita la empresa constituida
+
+- La cuenta empresarial de Binance, incluida la cuenta institucional u OTC. Piden RUT, cámara de comercio y verificación de socios.
+- La cuenta bancaria del negocio.
+- Los contratos de custodia institucional (Fireblocks o BitGo) y de analítica de riesgo (Chainalysis, Elliptic o TRM Labs).
+- El registro ante la UIAF y el oficial de cumplimiento.
+- Operar con dinero de clientes y emitir facturas.
+
+**Qué no hacer mientras tanto**
+
+No pasar dinero de clientes por una cuenta personal de Binance ni por una cuenta bancaria personal. Binance suele restringir el uso de cuentas personales para operar a nombre de terceros, un banco puede cerrar una cuenta personal con movimientos de negocio, y esos movimientos quedarían registrados a nombre de una persona.
+
+Como cada herramienta se conecta por adaptador, al tener la empresa solo cambia la configuración, no el código (sección C).
+
+### E.7 Antes de operar con clientes
 
 - **UIAF.** Registro y reportes mensuales de clientes y transacciones (Res. 314/2021).
 - **SAGRILAFT.** Oficial de cumplimiento, manual y debida diligencia intensificada para activos virtuales (Supersociedades, Cap. X).
 - **DIAN.** Responsabilidad en el RUT y reportes CARF (Res. 000240/2025).
 - **Libro.** Los pasos 11 a 15 de la Parte I entregan los reportes que estas entidades piden.
+- **Clientes del exterior y KYC.** Ver el paso 13 de la Parte I: lo que cubre y lo que no cubre el KYC de Binance, y los controles mínimos por pago.
 - **Licencia.** En Colombia no existe una licencia específica para esta actividad. La protección es el cumplimiento demostrable.
 
-### E.7 Orden recomendado y entregables
+### E.8 Orden recomendado y entregables
 
 | Orden | Documento o acto | Quién |
 | --- | --- | --- |
-| 1 | Cesión de propiedad intelectual entre los socios hacia Minus | Abogado |
+| 1 | Acuerdo de proyecto entre los socios, antes de construir | Abogado |
 | 2 | Acuerdo entre socios de la nueva SAS | Abogado |
 | 3 | Estatutos e inscripción de la SAS | Abogado y Cámara de Comercio |
 | 4 | RUT, cuenta bancaria, ICA y facturación | Contador |
-| 5 | Contrato marco con Minus y sus anexos | Abogado |
+| 5 | Cesión de lo construido hacia la SAS y traspaso de las cuentas del proyecto | Abogado |
 | 6 | Manual SAGRILAFT, oficial de cumplimiento y registro UIAF | Cumplimiento |
 
-**Entregable**SAS constituida, acuerdo entre socios firmado, contrato con Minus y cumplimiento listo para operar.
+**Entregable**SAS constituida, acuerdo entre socios firmado, código cedido a la SAS y cumplimiento listo para operar.
 
 F · Cierre
 
@@ -1499,6 +1551,7 @@ G · Control de versiones
 
 | Versión | Fecha | Cambios |
 | --- | --- | --- |
+| v1.8 | 14 oct 2026 | Paso 13 ampliado: clientes del exterior que pagan como persona natural, qué cubre y qué no cubre el KYC de Binance, y controles mínimos por pago. Parte II: el proyecto queda a nombre de los socios y la SAS, sin contrato con Minus (nueva E.5 de propiedad y separación); nueva E.6 con lo que se puede hacer sin empresa; E.7 y E.8 renumeradas. |
 | v1.7 | 14 oct 2026 | Nueva Parte II, sección E: proceso legal para la constitución como proveedor de liquidez en Colombia (estructura independiente, constitución paso a paso, objeto social, acuerdo entre socios, contrato con Minus, cumplimiento y orden de entregables). Cronograma y Control de versiones pasan a F y G. |
 | v1.6 | 14 oct 2026 | Paso 12 ampliado: USDT recibidos de otros países (tratamiento según el motivo del pago), caso Binance Argentina a Colombia sin arancel, renta, ICA, IVA y GMF, y fila de ICA en los reportes. |
 | v1.5 | 14 oct 2026 | Paso 14 ampliado: reporte y documentación de la billetera fría propia (qué reporta Binance, qué se declara, transferencias internas, prueba de control, reglas Binance–fría). |

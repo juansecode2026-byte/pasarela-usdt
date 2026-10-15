@@ -2,11 +2,11 @@
 
 > Versión en Markdown de `checklist-libro-contable-blockchain.html`, generada con `scripts/sincronizar-md.py`. No editar a mano: se regenera desde el HTML. La guía de cada paso (sitio y pasos) y la marcación interactiva están solo en el HTML.
 
-Versión en checklist de Libro de contabilidad blockchain/libro-contable-blockchain_v1.7 : 15 pasos en 4 fases, herramientas, archivos de Excel y la Parte II legal. Un libro de partida doble, inalterable, encadenado con hashes y anclado cada día en una blockchain pública.
+Versión en checklist de Libro de contabilidad blockchain/libro-contable-blockchain_v1.8 : 15 pasos en 4 fases, herramientas, archivos de Excel y la Parte II legal. Un libro de partida doble, inalterable, encadenado con hashes y anclado cada día en una blockchain pública.
 
 Actualizado: 14 de octubre de 2026 · El tratamiento contable y tributario debe validarlo el contador antes de producción.
 
-**Avance registrado:** 5 hechos y 23 en curso, de 95 pasos.
+**Avance registrado:** 6 hechos y 23 en curso, de 102 pasos.
 
 Leyenda: `[x]` hecho · `[~]` en curso · `[ ]` pendiente. Cada paso trae su responsable.
 
@@ -53,7 +53,7 @@ _Separar evidencia cruda, asientos y cadena de verificación._
 - [~] **3.1** Tablas: cuentas, wallets, contrapartes, eventos crudos, asientos, líneas, tasas, anclas, conciliaciones — _Tecnología_
 - [~] **3.2** Migraciones versionadas y probadas — _Tecnología_
 - [ ] **3.3** Base de pruebas local operativa (contraseña perdida; guardar la nueva en pgpass.conf) — _Juan y tecnología_
-- [ ] **3.4** Correr las 40 pruebas del libro v1.7 (bloqueado por 3.3) — _Tecnología_
+- [ ] **3.4** Correr las 40 pruebas del libro v1.8 (bloqueado por 3.3) — _Tecnología_
 - [ ] **3.5** Aplicar la migración del libro en Supabase después de que pasen las pruebas — _Tecnología_
 
 ## Paso 4. Partida doble inalterable (0/4)
@@ -88,8 +88,8 @@ _Solo sale una huella de 32 bytes por día; ningún dato de clientes._
 
 _Fase 3 · Conexiones. Solo transacciones confirmadas, guardadas como evidencia._
 
-- [ ] **7.1** Bitcoin: lectura por xpub, comisión como gasto, confirmaciones configurables — _Tecnología_
-- [ ] **7.2** Ethereum: transferencias y eventos Transfer ERC-20, gas como gasto, bloque finalizado — _Tecnología_
+- [ ] **7.1** Después del inicio (solo USDT al inicio): Bitcoin: lectura por xpub, comisión como gasto, confirmaciones configurables — _Tecnología_
+- [ ] **7.2** Después del inicio (solo USDT al inicio): Ethereum: transferencias y eventos Transfer ERC-20, gas como gasto, bloque finalizado — _Tecnología_
 - [ ] **7.3** USDT: TRC-20 y ERC-20 como subcuentas, contrato oficial validado, costo de energía — _Tecnología_
 - [x] **7.4** Sin duplicados: clave única por red, hash e índice — _Tecnología_
 - [ ] **7.5** Detectar reorganizaciones de cadena y reversar — _Tecnología_
@@ -100,7 +100,7 @@ _La pata fiat con la misma disciplina que la cadena._
 
 - [ ] **8.1** Binance: depósitos, retiros, operaciones OTC y comisiones (solo lectura) — _Tecnología_
 - [ ] **8.2** Bancos COP: extractos por API o archivo diario estandarizado — _Tecnología_
-- [ ] **8.3** Bancos USD, con vínculo a la declaración de cambio — _Tecnología y contador_
+- [ ] **8.3** Después del inicio (solo USDT al inicio): Bancos USD, con vínculo a la declaración de cambio — _Tecnología y contador_
 - [~] **8.4** Cada movimiento en eventos crudos con su soporte — _Tecnología_
 
 ## Paso 9. Reglas contables automáticas (0/3)
@@ -143,7 +143,7 @@ _El impuesto se calcula sobre la utilidad, no sobre el valor vendido._
 - [ ] **12.6** Revisar el ICA sobre ingresos brutos antes de fijar tarifas — _Contador_
 - [ ] **12.7** Reportes: renta, exógena 1012/1206, CARF, IVA, ICA — _Contador_
 
-## Paso 13. Trazabilidad y cumplimiento (0/5)
+## Paso 13. Trazabilidad y cumplimiento (0/9)
 
 _Desde cualquier asiento se llega al cliente, la evidencia y el riesgo._
 
@@ -152,6 +152,10 @@ _Desde cualquier asiento se llega al cliente, la evidencia y el riesgo._
 - [ ] **13.3** Datos de origen y beneficiario (Travel Rule) — _Cumplimiento_
 - [ ] **13.4** Exportadores: UIAF mensual, CARF anual en XML, saldos para exógena — _Tecnología_
 - [ ] **13.5** Conservar evidencia al menos 5 años — _Tecnología_
+- [ ] **13.6** Cliente del exterior que paga como persona natural: registrar el ingreso en pesos al valor del día de llegada, facturarlo y confirmar con el contador el IVA si es exportación — _Contador_
+- [ ] **13.7** El KYC de Binance no reemplaza el propio: verificar identificación, país, actividad, propósito y origen de fondos, y registrar en el libro qué se usó de Binance — _Oficial de cumplimiento_
+- [ ] **13.8** Siete controles mínimos por pago: cuentas verificadas a nombre del cliente, KYC proporcional, orden con monto y referencia únicos, análisis de riesgo, registro en el libro y límite por cliente — _Oficial de cumplimiento_
+- [ ] **13.9** Cláusula en los términos: cada cliente responde por sus impuestos. Aclara, pero no libera a la empresa de sus obligaciones — _Abogado_
 
 ## Paso 14. Seguridad, accesos y billetera fría (1/8)
 
@@ -184,16 +188,19 @@ _Generados desde el libro y sellados; nunca la fuente de verdad._
 - [ ] **D.2** Generación y sellado diario (hash SHA-256 en la hoja de control y en la raíz del día) — _Tecnología_
 - [ ] **D.3** Saldos iniciales de lotes anteriores con su soporte — _Contador_
 
-## Parte II. Constitución como proveedor de liquidez (0/6)
+## Parte II. Constitución como proveedor de liquidez (1/9)
 
 _Orden recomendado de entregables (sección E.7). Lo redacta un abogado._
 
-- [ ] **E.1** Cesión de propiedad intelectual de los socios hacia Minus — _Abogado_
+- [ ] **E.1** Acuerdo de proyecto entre los socios, antes de construir (ya hay código escrito) — _Abogado_
 - [ ] **E.2** Acuerdo entre socios de la nueva SAS — _Abogado_
 - [ ] **E.3** Estatutos con objeto social específico e inscripción de la SAS — _Abogado y Cámara de Comercio_
 - [ ] **E.4** RUT, cuenta bancaria, ICA y facturación — _Contador_
-- [ ] **E.5** Contrato marco con Minus: licencia SaaS y desarrollo, a precio de mercado — _Abogado_
+- [ ] **E.5** Cesión de lo construido hacia la SAS y traspaso de las cuentas del proyecto. Sin contrato de licencia con DEVMINUS — _Abogado_
 - [ ] **E.6** Manual SAGRILAFT, oficial de cumplimiento y registro ante la UIAF — _Cumplimiento_
+- [ ] **E.7** Separación de DEVMINUS: no reutilizar su código, agentes ni cuentas; cuentas propias del proyecto (correo, GitHub, Supabase, dominio) — _Socios_
+- [ ] **E.8** Revisar contratos de trabajo o de servicios de los socios que reclamen lo que cada uno crea — _Abogado_
+- [x] **E.9** Regla vigente: sin SAS no se pasa dinero de clientes por cuentas personales de Binance ni del banco — _Todos_
 
 ## Análisis de resultados
 
@@ -215,7 +222,7 @@ Cada vez que se complete un paso o un grupo de pasos con un efecto real, se agre
 - **Qué falta o qué riesgo queda:** Falta registrar en ella los accesos reales cuando exista la aplicación.
 - **Pasos del checklist:** 14.4
 
-### Resultado 2. Núcleo del libro v1.7 escrito, pendiente de pruebas
+### Resultado 2. Núcleo del libro v1.8 escrito, pendiente de pruebas
 
 - **Qué se logró:** Migración con activos genéricos (COP, USD, USDT, BTC, ETH en unidades mínimas, 1 ETH = 10^18 wei), plan de cuentas por entidad, asientos solo por una función que valida el cuadre y los sella con hash, reversos, verificador de la cadena, raíz de Merkle diaria, tasas con fuente, eventos crudos con su hash, wallets solo con direcciones públicas y conciliación.
 - **Evidencia:** supabase/migrations/20261014000001_libro_v17.sql y 40 pruebas nuevas escritas en supabase/tests/esquema.test.sql .
@@ -238,3 +245,11 @@ Cada vez que se complete un paso o un grupo de pasos con un efecto real, se agre
 - **Qué habilita:** Construir el detector de depósitos de forma idempotente: reintentos y reconexiones no duplican dinero.
 - **Qué falta o qué riesgo queda:** Falta el detector y el manejo de reorganizaciones de cadena (7.5).
 - **Pasos del checklist:** 7.4
+
+### Resultado 5. Libro contable v1.8 sincronizado con el proyecto
+
+- **Qué se logró:** La v1.8 reemplazó a la v1.8 como único documento del libro en el proyecto. Se actualizaron los dos checklists, el plan y el CLAUDE.md con sus dos cambios: el paso 13 ampliado (clientes del exterior que pagan como persona natural, qué cubre y qué no el KYC de Binance, siete controles por pago) y una Parte II distinta (sin contrato de licencia con DEVMINUS: el proyecto es de los socios y de la SAS).
+- **Evidencia:** Un solo archivo del libro en Libro de contabilidad blockchain/ ; la v1.8 queda en el historial de git. Pasos nuevos o corregidos: 0.13, 1.1, 1.4, 1.9 a 1.11, 3.8, 3.9, 6.4 y 7.28 del plan, y 13.6 a 13.9, E.1, E.5 y E.7 a E.9 de este checklist.
+- **Qué habilita:** Trabajar con un solo texto vigente, y ver qué pasos del plan cambian de sentido: ya no hay contrato SAS–DEVMINUS, y el software puede ir en el objeto social.
+- **Qué falta o qué riesgo queda:** 1. El acuerdo de proyecto entre los socios se firma antes de construir, y ya hay código escrito. 2. El proyecto de Supabase está en la misma organización que proyectos de Hellominus y de DEVMINUS, y el repositorio está en una cuenta personal: la v1.8 pide cuentas propias (7.28). 3. El control 1 (aceptar pagos solo de cuentas verificadas a nombre del cliente) no calza con un pagador que paga desde cualquier billetera (0.13). 4. Según la v1.8, DEVMINUS todavía no está constituida legalmente, así que hoy no hay empresa a la cual cederle nada: por eso el acuerdo es entre los socios. El modelo de datos de la migración no cambia.
+- **Pasos del checklist:** Pasos pendientes: 13.6 a 13.9, E.1, E.5 y E.7 a E.9 (en este checklist) y 0.13, 1.1, 1.9, 1.10, 3.8, 6.4 y 7.28 (en el del proveedor).

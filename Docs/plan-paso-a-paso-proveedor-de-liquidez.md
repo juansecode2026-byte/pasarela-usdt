@@ -8,7 +8,7 @@ Sale de los documentos de `Libro de contabilidad blockchain/` (ruta de 8 fases y
 
 ## Qué vamos a construir, en una frase
 
-Una empresa independiente (SAS nueva, separada de Minus) que **recibe USDT de pagadores de cualquier parte del mundo, los convierte a pesos y los dispersa desde Bancolombia a la empresa cliente** (Hellominus, DEVMINUS), dejando cada operación documentada para la UIAF y la DIAN.
+Una empresa independiente (SAS nueva, separada de DEVMINUS) que **recibe USDT de pagadores de cualquier parte del mundo, los convierte a pesos y los dispersa desde Bancolombia a la empresa cliente** (Hellominus, DEVMINUS), dejando cada operación documentada para la UIAF y la DIAN.
 
 ## Estado de un vistazo
 
@@ -39,26 +39,30 @@ Bloquean lo demás. Se cierran con los socios, el abogado y el contador.
 | 0.3 | Modelo legal: proveedor directo, orquestador o cobro propio | Pendiente, con abogado y contador |
 | 0.4 | Rol: **principal** (compra y vende con su balance) o **agente** (ejecuta por cuenta del cliente) | Pendiente, con contador |
 | 0.5 | Clientes objetivo y pagadores: los clientes son empresas (KYB), pero los **pagadores finales serán personas**. Qué datos se les exigen | Pendiente, con abogado |
-| 0.6 | Activos iniciales: USDT contra COP; BTC, ETH y USD después | Propuesto |
-| 0.7 | Cuándo se confirma la reserva (pago válido en cadena o pesos ya salidos) | Pendiente |
+| 0.6 | Activos iniciales: solo USDT (contra pesos); BTC, ETH y USD después | **Decidido** (14 oct 2026) |
+| 0.7 | Cuándo se confirma la reserva: cuando el pago es válido en la red (CONFIRMED). Falta definir quién asume el riesgo de precio hasta la dispersión | **Decidido** (14 oct 2026) |
 | 0.8 | Política de reembolso | Pendiente |
 | 0.9 | Red inicial (TRON o Polygon) | Pendiente |
 | 0.10 | Clientes directos: Hellominus y DEVMINUS. Confirmar si Zuhay (CRM de ventas de la landing de Hellominus, socio de Hellominus) también es cliente de la API | Pendiente |
 | 0.11 | Los pagos entran directo al proveedor y la dispersión va a la empresa cliente desde Bancolombia | **Decidido** (14 oct 2026) |
-| 0.12 | El proveedor es una empresa independiente, separada de Minus | **Decidido** (14 oct 2026) |
+| 0.12 | El proveedor es una empresa independiente, separada de DEVMINUS | **Decidido** (14 oct 2026) |
+| 0.13 | Pagos solo desde cuentas verificadas de exchange y a nombre del pagador (control 1 del libro v1.8), o desde cualquier billetera: cambia el producto | Pendiente |
 
 ## Fase 1. Constituir la sociedad
 
 Quién: socios, abogado societario, Cámara de Comercio. Plazo de referencia: 2 a 4 semanas.
 
-1. Cesión de la propiedad intelectual de los socios hacia Minus, antes de nada.
+1. **Acuerdo de proyecto entre los socios**: el proyecto es de ambos, en qué porcentaje, y se cederá a la SAS cuando exista. Se firma antes de construir, y ya hay código escrito.
 2. Verificar el nombre en el RUES y reservar el **dominio y el correo** de la empresa (ver nota al final).
 3. Redactar el **acuerdo entre socios**: participación, roles, aportes, permanencia, decisiones que requieren a ambos, dividendos, exclusividad.
-4. Redactar **estatutos** con un objeto social específico (compraventa, intermediación y custodia de activos virtuales; provisión de liquidez; consultoría). El desarrollo de software no va ahí: lo hace Minus.
+4. Redactar **estatutos** con un objeto social específico (compraventa, intermediación y custodia de activos virtuales; provisión de liquidez; consultoría). Decidir antes si el software o la consultoría de formalización van en el objeto o se hacen desde otra empresa.
 5. Inscribir la SAS en la Cámara de Comercio (matrícula mercantil).
 6. Registrar beneficiarios finales y composición accionaria clara. Los bancos lo revisan primero.
 7. Contratar contador con experiencia en cripto. Revisor fiscal si se superan los topes.
-8. Correo corporativo con dominio propio, distinto del de Minus, cuando exista el nombre (ver nota al final).
+8. Correo corporativo con dominio propio, distinto del de DEVMINUS, cuando exista el nombre (ver nota al final).
+9. **Separar el proyecto de DEVMINUS**: no reutilizar su código, agentes, módulos ni cuentas; cuentas propias de correo, GitHub, Supabase y dominio.
+10. Revisar los contratos de trabajo o de servicios de cada socio que puedan reclamar lo que crea.
+11. Regla vigente: mientras no exista la SAS, no pasar dinero de clientes por cuentas personales de Binance ni del banco.
 
 ## Fase 2. Inscripción y obligaciones ante la DIAN
 
@@ -82,6 +86,8 @@ Quién: oficial de cumplimiento. 4 a 8 semanas.
 5. Contratar la herramienta de análisis on-chain de billeteras (Chainalysis, Elliptic o TRM Labs).
 6. Política de Travel Rule.
 7. Inscripción como reportante ante la UIAF en SIREL y prueba de los formatos.
+8. Controles mínimos por pago (siete puntos del paso 13 del libro v1.8). El KYC de Binance no reemplaza el propio.
+9. Revisar los términos de Binance para cuentas de negocio antes de operar.
 
 ## Fase 4. Bancos y régimen cambiario
 
@@ -111,7 +117,7 @@ Quién: abogado. 2 a 4 semanas.
 1. **Acuerdo marco** con cada cliente (Hellominus, DEVMINUS, y Zuhay si aplica): cómo se cotiza, cuándo una operación queda cerrada, plazos, errores de precio, envíos a direcciones erradas, incumplimientos.
 2. Anexo de cumplimiento: el cliente entrega información KYB y acepta el monitoreo.
 3. Política de tarifas y spreads por escrito, con los impuestos dentro del precio.
-4. **Contrato entre la SAS y Minus**: licencia de uso de la tecnología (SaaS) y desarrollo y mantenimiento. A precio de mercado, aprobado por escrito por los socios, porque es entre vinculados.
+4. **Cesión de lo construido hacia la SAS** y traspaso de las cuentas del proyecto. No hay contrato de licencia con DEVMINUS; si DEVMINUS presta algún servicio en el futuro, contrato a precio de mercado aprobado por escrito por los socios (partes vinculadas).
 5. Términos de redes soportadas y de uso de datos personales (Ley 1581).
 
 ## Fase 7. Tecnología (lo que construimos)
@@ -123,7 +129,7 @@ Se puede avanzar en paralelo a las fases 1 a 6. Código en este repositorio; bas
 | 7.1 | Repositorio privado y proyecto de Supabase | **Hecho** |
 | 7.2 | Contrato de la API | **Hecho** (borrador 2, puntos abiertos) |
 | 7.3 | Esquema base: clientes, llaves de API, órdenes, cadena, bitácora (4 migraciones, 29 pruebas) | **Hecho** |
-| 7.4 | **Libro contable v1.7**: activos genéricos, asientos con hash encadenado, anclaje diario, tasas, eventos crudos y conciliación | **En curso** |
+| 7.4 | **Libro contable v1.8**: activos genéricos, asientos con hash encadenado, anclaje diario, tasas, eventos crudos y conciliación | **En curso** |
 | 7.5 | Máquina de estados de la orden, con pruebas | Pendiente |
 | 7.6 | Vinculación de clientes (KYB, límites, cuenta bancaria) | Pendiente |
 | 7.7 | API de órdenes con idempotencia y llave por cliente | Pendiente |
@@ -144,8 +150,8 @@ Situaciones que salieron en el camino.
 | # | Paso | Estado |
 |---|---|---|
 | 7.17 | Restablecer la base de pruebas local (se perdió su contraseña) y guardar la nueva en `%APPDATA%\postgresql\pgpass.conf` | Pendiente |
-| 7.18 | Correr las 40 pruebas nuevas del libro v1.7 (bloqueado por 7.17) | Pendiente |
-| 7.19 | Aplicar el libro v1.7 en Supabase después de las pruebas | Pendiente |
+| 7.18 | Correr las 40 pruebas nuevas del libro v1.8 (bloqueado por 7.17) | Pendiente |
+| 7.19 | Aplicar el libro v1.8 en Supabase después de las pruebas | Pendiente |
 | 7.20 | Probar el comportamiento de la base en Supabase (escrituras de prueba bloqueadas por permisos) | Pendiente |
 | 7.21 | Supabase a plan Pro antes del primer dato real | Pendiente |
 | 7.22 | Contraseña de la base de Supabase: la define Juan, nunca en el chat ni en el repositorio | Pendiente |
@@ -154,6 +160,8 @@ Situaciones que salieron en el camino.
 | 7.25 | Decidir si se restaura el proyecto pausado `crm-productividad-hello-minus` | Pendiente |
 | 7.26 | Contexto desde `.md`: cada HTML tiene su `.md` gemelo y se regenera con `scripts/sincronizar-md.py` | **Hecho** |
 | 7.27 | Sincronización automática HTML y `.md`: gancho de Claude Code al editar un HTML y gancho de git antes de cada commit | **Hecho** |
+| 7.28 | Cuentas propias del proyecto, separadas de DEVMINUS: hoy Supabase comparte organización con proyectos de Hellominus y de DEVMINUS, y GitHub es una cuenta personal | Pendiente |
+| 7.29 | Aviso automático del proveedor al cliente (decidido); consulta de respaldo y conciliación diaria (propuestas); el correo solo avisa a personas | **En curso** |
 
 **Se construye ya, con planes gratuitos y redes de prueba, sin dinero real.** Las herramientas que exigen contrato y empresa (análisis on-chain, custodia institucional, Binance institucional) se cotizan en paralelo para que estén firmadas al llegar el primer cliente. **Supabase debe pasar a Pro antes de guardar el primer dato real.**
 
@@ -181,4 +189,4 @@ Quién: todos.
 
 ## Nota sobre el correo y el dominio
 
-El correo de la empresa se crea **cuando esté definido el nombre y exista la SAS**, con un dominio propio y distinto del de Minus. Un correo con el dominio de Minus ligaría la actividad cripto a la agencia, que es justo lo que la estructura independiente busca evitar. Para el dossier bancario y los procesos KYB conviene un correo con dominio propio, no uno gratuito.
+El correo de la empresa se crea **cuando esté definido el nombre y exista la SAS**, con un dominio propio y distinto del de DEVMINUS. Un correo con el dominio de DEVMINUS ligaría la actividad cripto a la agencia, que es justo lo que la estructura independiente busca evitar. Para el dossier bancario y los procesos KYB conviene un correo con dominio propio, no uno gratuito.

@@ -90,7 +90,7 @@ Registra la empresa cliente y abre su vinculación (KYB).
 - `payer`: **el pagador final es una persona**, no una empresa. Esto sube el KYC y el monitoreo. **ABIERTO (#1)**: qué datos del pagador se exigen (país, tipo, y nombre e identificación cuando el acumulado se acerca al umbral CARF). Hasta definirlo, solo `type` y `country`. Un pagador de un país sancionado se rechaza con `422 payer_not_allowed` antes de crear la orden.
 - `metadata` es libre, hasta 2 KB, sin datos personales del pagador.
 - No hay campo `splits`: el reparto a anfitriones es interno del cliente.
-- **ABIERTO (#4)**: `payment_valid_until`, la hora hasta la cual el pago sigue siendo válido (las confirmaciones de red pueden llegar después de `expires_at`). El cliente debe retener la disponibilidad al menos hasta ahí.
+- **ABIERTO**: `payment_valid_until`, la hora hasta la cual el pago sigue siendo válido (las confirmaciones de red pueden llegar después de `expires_at`). El cliente debe retener la disponibilidad al menos hasta ahí.
 
 ### `GET /v1/orders/{id}`
 Orden completa más `history: [{ from, to, event, at }]`. Con `?expand=payment` agrega `usdt_received`, `confirmations`, `tx_hash`.
@@ -104,7 +104,7 @@ Solo si el estado es `CREATED` o `AWAITING_PAYMENT`. En otro estado devuelve `40
 
 Los estados de fallo y `HELD_COMPLIANCE` se exponen **sin causa**. El cliente debe tratarlos como "en proceso" y no mostrarle al pagador un motivo. Terminales: `SETTLED, REFUNDED, REJECTED, CANCELLED`.
 
-**ABIERTO (#4)**: qué estado confirma la reserva (`CONFIRMED` por pago válido en cadena, o `SETTLED` cuando los pesos ya salieron).
+**Decidido (14 de octubre de 2026, Juan):** la reserva se confirma cuando el pago es válido en la red, es decir en el estado `CONFIRMED`, sin esperar a que se conviertan los USDT ni a que salgan los pesos. El evento que el cliente espera es `order.confirmed`. **ABIERTO (#4):** como se confirma antes de convertir y de dispersar, falta definir quién asume el riesgo de precio y el capital de trabajo entre ese momento y la dispersión.
 
 ## 4. Reembolsos (ABIERTO, brecha 1 del estándar)
 
@@ -144,6 +144,24 @@ X-Signature: t=1760000000,v1=<hmac_sha256(secret, t + "." + body)>
 - Reintentos: 1 min, 5 min, 30 min, 2 h, 12 h; después alerta al equipo del proveedor.
 - El secreto de firma es por cliente y se rota aceptando dos secretos durante una ventana.
 
+## 6b. Cómo se entera el cliente de que llegó el pago (sincronía)
+
+El cliente nunca debe adivinar. **Decidido (14 de octubre de 2026, Juan):** el aviso automático lo envía **el proveedor de liquidez**, porque es quien recibe los USDT y el único que sabe en cada momento qué pasó con el pago; el cliente (Hellominus, DEVMINUS) no tiene que estar mirando. **Propuesto, pendiente de decisión:** la consulta de respaldo, el cuadre diario y el uso del correo.
+
+| Canal | Para qué sirve | ¿Confirma una reserva? |
+|---|---|---|
+| **Webhook firmado** (principal) | El proveedor avisa al servidor del cliente cada vez que cambia el estado de una orden. Es automático e inmediato. | **Sí**, si la firma es válida y el evento es el acordado en el paso 0.7. |
+| **Consulta** `GET /v1/orders/{id}` (respaldo) | El cliente pregunta el estado cuando no le llegó el aviso o cuando se reinicia su servidor. | **Sí**, si devuelve el estado acordado. |
+| **Conciliación diaria** `GET /v1/settlements` | Cada día se compara lo que el proveedor liquidó con lo que el cliente tiene registrado. | No: detecta diferencias. |
+| **Correo** | Avisa a personas (operaciones, cumplimiento). | **Nunca.** No dispara ninguna acción automática. |
+| **Leer la blockchain por su cuenta** | Comprobación extra. | **No.** Ver abajo. |
+
+**Por qué el correo no sirve para confirmar:** llega con retraso o no llega, se puede falsificar (alguien podría mandar un correo falso que diga "pago recibido"), no se puede procesar sin errores y no evita que se procese dos veces.
+
+**Por qué el cliente no debe confirmar mirando la blockchain:** ve que llegaron USDT, pero no sabe si la billetera de origen fue marcada por el análisis de riesgo, ni si la orden quedó en revisión de cumplimiento, ni cuántas confirmaciones exige la red. Podría confirmar una reserva con dinero que luego se retiene.
+
+**Regla:** el cliente confirma una reserva solo con un webhook firmado y válido, o con una consulta que devuelva el estado acordado. Si el aviso no llega, consulta. Si no cuadran los números al final del día, la conciliación lo muestra.
+
 ## 7. Qué consume cada cliente
 
 | Cliente | Llama | Recibe |
@@ -164,7 +182,7 @@ X-Signature: t=1760000000,v1=<hmac_sha256(secret, t + "." + body)>
 1. ¿Zuhay es cliente directo o recibe los avisos a través de Hellominus? Dijiste primero "Hellominus y Zuhay" y después "Hellominus y DEVMINUS".
 2. ¿Qué datos del pagador final exige el abogado (país, nombre, identificación)? (#1)
 3. ¿Principal o agente? (#8)
-4. ¿Qué estado confirma la reserva? (#4)
+4. ~~¿Qué estado confirma la reserva?~~ Resuelto: `CONFIRMED`, pago válido en la red. Queda abierto quién asume el riesgo de precio (#4).
 5. ¿Política de reembolso? (#3)
 6. ¿Redes habilitadas en v1: solo `tron`, o también `polygon`? (#5)
 7. ¿El alta de comercios es interna del proveedor?

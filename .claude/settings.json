@@ -10,7 +10,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python scripts/hook-sincronizar-md.py"
+            "command": "python \"$CLAUDE_PROJECT_DIR/scripts/hook-sincronizar-md.py\""
           }
         ]
       }

@@ -1,4 +1,4 @@
--- 005 Libro contable v1.7 (ver "Libro de contabilidad blockchain/libro-contable-blockchain_v1.7").
+-- 005 Libro contable (modelo de datos de la v1.7; la v1.8 no lo cambia). Ver "Libro de contabilidad blockchain/libro-contable-blockchain_v1.8".
 -- Reemplaza el libro de la migración 004 (solo COP y USDT, por proyecto). Esas tablas estaban vacías.
 --
 -- Principios: partida doble cuadrada; solo inserción (los errores se corrigen con un asiento de reverso);

@@ -6,11 +6,11 @@ Versión en checklist de Docs/plan-paso-a-paso-proveedor-de-liquidez.md . Une la
 
 Actualizado: 14 de octubre de 2026 · Nombre del proveedor: provisional · Lo legal y tributario está sin validar por abogado y contador.
 
-**Avance registrado:** 7 hechos y 2 en curso, de 83 pasos.
+**Avance registrado:** 10 hechos y 2 en curso, de 91 pasos.
 
 Leyenda: `[x]` hecho · `[~]` en curso · `[ ]` pendiente. Cada paso trae su responsable.
 
-## Fase 0. Decisiones previas (sin código) (2/12)
+## Fase 0. Decisiones previas (sin código) (4/13)
 
 _Bloquean lo demás. Socios, abogado y contador._
 
@@ -19,26 +19,30 @@ _Bloquean lo demás. Socios, abogado y contador._
 - [ ] **0.3** Modelo legal: proveedor directo, orquestador o cobro propio — _Abogado y contador_
 - [ ] **0.4** Rol: principal (balance propio) o agente (por cuenta del cliente) — _Contador_
 - [ ] **0.5** Datos exigidos a los pagadores finales (personas) — _Abogado_
-- [~] **0.6** Activos iniciales: USDT contra COP; BTC, ETH y USD después — _Socios_
-- [ ] **0.7** Cuándo se confirma la reserva (pago en cadena o pesos salidos) — _Socios y clientes_
+- [x] **0.6** Activos iniciales: solo USDT (contra pesos). BTC, ETH y USD quedan para después — _Juan_
+- [x] **0.7** Cuándo se confirma la reserva: cuando el pago es válido en la red (CONFIRMED). Queda abierto quién asume el riesgo de precio hasta la dispersión — _Juan_
 - [ ] **0.8** Política de reembolso — _Socios y abogado_
 - [ ] **0.9** Red inicial (TRON o Polygon) — _Socios_
 - [ ] **0.10** Clientes directos: Hellominus y DEVMINUS. Confirmar si Zuhay (CRM de ventas de la landing de Hellominus, su socio) también es cliente de la API — _Socios_
 - [x] **0.11** Pagos entran al proveedor; dispersión a la empresa cliente desde Bancolombia — _Juan_
-- [x] **0.12** El proveedor es una empresa independiente, separada de Minus — _Juan_
+- [x] **0.12** El proveedor es una empresa independiente, separada de DEVMINUS — _Juan_
+- [ ] **0.13** Pagos solo desde cuentas verificadas de exchange y a nombre del pagador (control 1 del libro v1.8), o desde cualquier billetera: cambia el producto — _Socios y abogado_
 
-## Fase 1. Constituir la sociedad (0/8)
+## Fase 1. Constituir la sociedad (1/11)
 
 _2 a 4 semanas. Socios, abogado societario, Cámara de Comercio._
 
-- [ ] **1.1** Cesión de la propiedad intelectual de los socios hacia Minus — _Abogado_
+- [ ] **1.1** Acuerdo de proyecto entre los socios: el proyecto es de ambos y se cederá a la SAS cuando exista. Se firma antes de construir, y ya hay código escrito — _Abogado_
 - [ ] **1.2** Verificar el nombre en el RUES y reservar dominio y correo propios — _Socios_
 - [ ] **1.3** Acuerdo entre socios: participación, roles, aportes, permanencia, decisiones, dividendos, exclusividad — _Abogado_
-- [ ] **1.4** Estatutos con objeto social de activos virtuales (sin desarrollo de software) — _Abogado_
+- [ ] **1.4** Estatutos con objeto social específico de activos virtuales; decidir antes si incluye software o consultoría, o si eso se hace desde otra empresa — _Abogado_
 - [ ] **1.5** Inscripción en la Cámara de Comercio (matrícula mercantil) — _Abogado_
 - [ ] **1.6** Registro de beneficiarios finales y composición accionaria — _Abogado_
 - [ ] **1.7** Contador con experiencia en cripto; revisor fiscal si se superan topes — _Socios_
-- [ ] **1.8** Correo corporativo con dominio propio, distinto del de Minus, creado cuando exista el nombre. No usar un correo gratuito para bancos, Binance, DIAN ni UIAF — _Socios_
+- [ ] **1.8** Correo corporativo con dominio propio, distinto del de DEVMINUS, creado cuando exista el nombre. No usar un correo gratuito para bancos, Binance, DIAN ni UIAF — _Socios_
+- [ ] **1.9** Separar el proyecto de DEVMINUS: no reutilizar su código, agentes, módulos ni cuentas; cuentas propias de correo, GitHub, Supabase y dominio, que se transfieren a la SAS al constituirla — _Socios_
+- [ ] **1.10** Revisar los contratos de trabajo o de servicios de cada socio que puedan reclamar lo que crea (lo creado dentro de un contrato suele ser del empleador) — _Abogado_
+- [x] **1.11** Regla vigente: mientras no exista la SAS, no pasar dinero de clientes por una cuenta personal de Binance ni por una cuenta bancaria personal — _Todos_
 
 ## Fase 2. DIAN (0/6)
 
@@ -51,7 +55,7 @@ _1 a 2 semanas. Contador._
 - [ ] **2.5** Inscripción en el ICA del municipio — _Contador_
 - [ ] **2.6** Política de IVA y tratamiento del spread por escrito — _Contador_
 
-## Fase 3. Cumplimiento (SAGRILAFT) (0/7)
+## Fase 3. Cumplimiento (SAGRILAFT) (0/9)
 
 _4 a 8 semanas. Oficial de cumplimiento._
 
@@ -62,6 +66,8 @@ _4 a 8 semanas. Oficial de cumplimiento._
 - [ ] **3.5** Herramienta de análisis on-chain contratada (Chainalysis, Elliptic o TRM Labs) — _Oficial de cumplimiento_
 - [ ] **3.6** Política de Travel Rule — _Oficial de cumplimiento_
 - [ ] **3.7** Inscripción en SIREL (UIAF) y prueba de formatos — _Oficial de cumplimiento_
+- [ ] **3.8** Controles mínimos por pago en el manual SAGRILAFT (siete puntos del paso 13 del libro v1.8); el abogado define el KYC simplificado y sus datos mínimos — _Oficial de cumplimiento_
+- [ ] **3.9** Revisar los términos de Binance para cuentas de negocio antes de operar: puede cerrar la cuenta si la actividad no corresponde al perfil — _Tesorería_
 
 ## Fase 4. Bancos y régimen cambiario (0/5)
 
@@ -91,7 +97,7 @@ _2 a 4 semanas. Abogado._
 - [ ] **6.1** Acuerdo marco con cada cliente (Hellominus, DEVMINUS, Zuhay si aplica) — _Abogado_
 - [ ] **6.2** Anexo de cumplimiento (KYB y monitoreo) — _Abogado_
 - [ ] **6.3** Política de tarifas y spreads, con impuestos dentro del precio — _Socios y contador_
-- [ ] **6.4** Contrato SAS–Minus: licencia SaaS y desarrollo, a precio de mercado — _Abogado_
+- [ ] **6.4** Cesión de lo construido por los socios hacia la SAS y traspaso de las cuentas del proyecto. Sin contrato de licencia con DEVMINUS; si DEVMINUS presta un servicio, contrato a precio de mercado entre vinculados — _Abogado_
 - [ ] **6.5** Términos de redes soportadas y de datos personales (Ley 1581) — _Abogado_
 
 ## Fase 7. Tecnología (lo que construimos) (3/16)
@@ -101,7 +107,7 @@ _En paralelo a las fases 1 a 6. Supabase a Pro antes del primer dato real._
 - [x] **7.1** Repositorio privado y proyecto de Supabase — _Equipo técnico_
 - [x] **7.2** Contrato de la API (borrador 2) — _Equipo técnico_
 - [x] **7.3** Esquema base: clientes, llaves, órdenes, cadena, bitácora (29 pruebas) — _Equipo técnico_
-- [~] **7.4** Libro contable v1.7: activos genéricos, hash por asiento, anclaje, tasas, eventos crudos, conciliación — _Equipo técnico_
+- [~] **7.4** Libro contable v1.8: activos genéricos, hash por asiento, anclaje, tasas, eventos crudos, conciliación — _Equipo técnico_
 - [ ] **7.5** Máquina de estados de la orden, con pruebas — _Equipo técnico_
 - [ ] **7.6** Vinculación de clientes (KYB, límites, cuenta bancaria) — _Equipo técnico_
 - [ ] **7.7** API de órdenes con idempotencia y llave por cliente — _Equipo técnico_
@@ -115,13 +121,13 @@ _En paralelo a las fases 1 a 6. Supabase a Pro antes del primer dato real._
 - [ ] **7.15** Seguridad: custodia fuera del libro, secretos, roles, copias de seguridad — _Equipo técnico_
 - [ ] **7.16** Pruebas del ciclo completo en redes de prueba — _Equipo técnico_
 
-## Fase 7 · Infraestructura y bloqueos técnicos (2/11)
+## Fase 7 · Infraestructura y bloqueos técnicos (2/13)
 
 _Situaciones que salieron en el camino. Bloquean pasos de la fase 7._
 
 - [ ] **7.17** Restablecer la base de pruebas local: se perdió su contraseña (estaba en una carpeta temporal). Guardar la nueva en %APPDATA%\postgresql\pgpass.conf, fuera del repositorio — _Juan y equipo técnico_
-- [ ] **7.18** Correr las 40 pruebas nuevas del libro v1.7 (bloqueado por 7.17) — _Equipo técnico_
-- [ ] **7.19** Aplicar el libro v1.7 en Supabase después de que pasen sus pruebas — _Equipo técnico_
+- [ ] **7.18** Correr las 40 pruebas nuevas del libro v1.8 (bloqueado por 7.17) — _Equipo técnico_
+- [ ] **7.19** Aplicar el libro v1.8 en Supabase después de que pasen sus pruebas — _Equipo técnico_
 - [ ] **7.20** Probar el comportamiento de la base en Supabase: las escrituras de prueba fueron bloqueadas 5 veces por el sistema de permisos — _Equipo técnico_
 - [ ] **7.21** Supabase a plan Pro antes del primer dato real (el gratuito se pausa y no tiene copias automáticas) — _Socios_
 - [ ] **7.22** Contraseña de la base de Supabase: la define Juan en el panel, nunca en el chat ni en el repositorio — _Juan_
@@ -130,6 +136,8 @@ _Situaciones que salieron en el camino. Bloquean pasos de la fase 7._
 - [ ] **7.25** Decidir si se restaura el proyecto de Supabase pausado (crm-productividad-hello-minus) — _Juan_
 - [x] **7.26** Contexto desde .md: cada HTML tiene su .md gemelo; se lee el .md y se regenera al actualizar el HTML (scripts/sincronizar-md.py) — _Equipo técnico_
 - [x] **7.27** Sincronización automática HTML y .md: gancho de Claude Code al editar un HTML y gancho de git antes de cada commit — _Equipo técnico_
+- [ ] **7.28** Cuentas propias del proyecto, separadas de DEVMINUS: hoy Supabase está en la misma organización que proyectos de Hellominus y de DEVMINUS, y GitHub es una cuenta personal. Crear organización propia y transferirlas a la SAS al constituirla — _Socios y equipo técnico_
+- [~] **7.29** Aviso automático del proveedor al cliente (decidido), más consulta de respaldo y conciliación diaria (propuestas); el correo solo avisa a personas — _Socios y equipo técnico_
 
 ## Fase 8. Lanzamiento controlado (0/7)
 
@@ -177,9 +185,9 @@ Cada vez que se complete un paso o un grupo de pasos con un efecto real, se agre
 - **Evidencia:** DECISIONES.md y CLAUDE.md del 14 de octubre de 2026.
 - **Qué habilita:** Reescribir el contrato de la API (hecho, borrador 2) y saber a quién se le verifica la cuenta bancaria: una empresa por cliente.
 - **Qué falta o qué riesgo queda:** Es el modelo de mayor carga regulatoria (recibe dinero de personas). Debe validarlo un abogado y un contador antes de mover dinero real.
-- **Pasos del checklist:** 0.11, 0.12, 7.2
+- **Pasos del checklist:** 0.6, 0.7, 0.11, 0.12, 7.2
 
-### Resultado 4. Libro contable v1.7 escrito, pendiente de pruebas
+### Resultado 4. Libro contable v1.8 escrito, pendiente de pruebas
 
 - **Qué se logró:** Migración del libro con activos genéricos (COP, USD, USDT, BTC, ETH), asientos encadenados por hash, reversos, raíz de Merkle diaria, tasas, eventos crudos y conciliación.
 - **Evidencia:** Archivo supabase/migrations/20261014000001_libro_v17.sql y sus pruebas en supabase/tests/esquema.test.sql .
