@@ -11,6 +11,8 @@ Fuentes: `Docs/pasarela-usdt-colombia-estandar.html` (flujo y reglas), `Libro de
 3. El **pagador paga directo al proveedor de liquidez** (a esa dirección). El proveedor analiza la billetera de origen, espera confirmaciones y convierte USDT a pesos.
 4. El proveedor **dispersa los pesos desde Bancolombia a la cuenta del merchant** (la empresa cliente), y avisa por webhook. El proveedor no paga a anfitriones ni a otros terceros: el cliente reparte por su cuenta.
 
+**Regla de flujo limpio (decidida el 14 de octubre de 2026):** el proveedor solo recibe pagos de pagadores **en cripto**. No acepta transferencias bancarias de pagadores, ni en pesos ni en dólares. La API no tiene, por eso, ningún medio de pago distinto de USDT.
+
 ## 1. Convenciones
 
 - **Base**: `https://<host>/v1`. Solo HTTPS. Cambios incompatibles van en `/v2`; agregar campos opcionales no rompe `v1`.

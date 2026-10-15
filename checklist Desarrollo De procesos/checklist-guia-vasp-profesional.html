@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Checklist guía VASP</title>
+<style>
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --line:#e3e0d8; --text:#1d1f23; --muted:#5f6670;
+  --accent:#1f6f5c; --accent-soft:#e3f1ec; --warn:#a2650c; --warn-soft:#fbf0dc;
+  --todo:#6b7280; --todo-soft:#eef0f3; --focus:#1f6f5c;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121417; --surface:#1a1d21; --line:#2c3138; --text:#e7e9ec; --muted:#a2a9b3;
+    --accent:#5cc4a6; --accent-soft:#1c3a32; --warn:#e7b25a; --warn-soft:#3a2f1c;
+    --todo:#9aa3ae; --todo-soft:#252a31; --focus:#5cc4a6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121417; --surface:#1a1d21; --line:#2c3138; --text:#e7e9ec; --muted:#a2a9b3;
+  --accent:#5cc4a6; --accent-soft:#1c3a32; --warn:#e7b25a; --warn-soft:#3a2f1c;
+  --todo:#9aa3ae; --todo-soft:#252a31; --focus:#5cc4a6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:920px;margin:0 auto;padding:32px 16px 80px}
+h1{font-size:clamp(26px,4vw,34px);line-height:1.15;margin:0 0 8px}
+h2{font-size:21px;margin:0}
+h3{font-size:17px;margin:0 0 6px}
+p{margin:0 0 12px}
+.lede{color:var(--muted);max-width:46em}
+.meta{font-size:14px;color:var(--muted);margin-bottom:24px}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px;border-radius:4px}
+.summary{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:20px 0 28px}
+.bar{height:10px;background:var(--todo-soft);border-radius:99px;overflow:hidden;margin:10px 0 6px}
+.bar span{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+.tools{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+button{font:inherit;font-size:14px;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);margin-top:12px}
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:0 0 16px;overflow:hidden}
+.phase-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.phase-head small{color:var(--muted);font-size:13px;white-space:nowrap}
+.phase-note{padding:10px 18px 0;color:var(--muted);font-size:14px}
+ul.items{list-style:none;margin:0;padding:6px 8px 10px}
+ul.items li{border-radius:8px}
+ul.items label{display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:start;padding:9px 10px;cursor:pointer}
+ul.items label:hover{background:var(--todo-soft)}
+input[type=checkbox]{width:18px;height:18px;margin:3px 0 0;accent-color:var(--accent)}
+.txt .code{font-weight:600;margin-right:4px}
+.who{display:block;font-size:13px;color:var(--muted)}
+li.checked .txt{color:var(--muted)}
+li.checked .txt .main{text-decoration:line-through;text-decoration-color:var(--line)}
+.badge{font-size:12px;padding:2px 8px;border-radius:99px;white-space:nowrap;border:1px solid transparent}
+.b-hecho{background:var(--accent-soft);color:var(--accent)}
+.b-curso{background:var(--warn-soft);color:var(--warn)}
+.b-pend{background:var(--todo-soft);color:var(--todo)}
+.hide-done li.checked{display:none}
+section.analisis{margin-top:40px}
+section.analisis > h2{font-size:24px;margin-bottom:8px}
+ol.results{padding-left:0;list-style:none;counter-reset:r;margin:16px 0 0}
+ol.results > li{counter-increment:r;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+ol.results > li > h3::before{content:"Resultado " counter(r) ". ";color:var(--accent)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:8px 0 0}
+dt{font-weight:600;font-size:14px}
+dd{margin:0;font-size:15px}
+.example{border:1px dashed var(--accent);background:var(--accent-soft);border-radius:12px;padding:16px 18px;margin:16px 0}
+.example h3{color:var(--accent)}
+.note{font-size:14px;color:var(--muted)}
+@media (max-width:560px){
+  dl{grid-template-columns:1fr} dt{margin-top:6px}
+  ul.items label{grid-template-columns:22px 1fr} .badge{grid-column:2;justify-self:start}
+}
+@media (prefers-reduced-motion:reduce){.bar span{transition:none}}
+@media print{.tools{display:none} .phase,.summary,ol.results>li{break-inside:avoid}}
+/* guias */
+[hidden]{display:none !important}
+.row{display:grid;grid-template-columns:22px 1fr auto auto;gap:10px;align-items:start;padding:9px 10px;border-radius:8px}
+.row:hover{background:var(--todo-soft)}
+button.title{background:none;border:0;padding:0;margin:0;text-align:left;color:inherit;font:inherit;cursor:pointer;border-radius:4px}
+button.title:hover .main{text-decoration:underline}
+li.checked button.title:hover .main{text-decoration:line-through}
+.ir{display:inline-block;margin-left:8px;font-size:12px;color:var(--accent)}
+.guide-btn{font-size:12px;padding:2px 10px}
+.guide{margin:0 10px 8px 42px;padding:10px 14px;background:var(--todo-soft);border-radius:8px;font-size:14px}
+.guide p{margin:0 0 4px}
+.guide ol{margin:4px 0 0;padding-left:20px}
+.guide a, dd a{color:var(--accent)}
+.flash{outline:2px solid var(--accent);outline-offset:2px;background:var(--accent-soft)}
+@media (max-width:560px){.row{grid-template-columns:22px 1fr}.row .badge,.row .guide-btn{grid-column:2;justify-self:start}.guide{margin-left:10px}}
+/* guias completas */
+.guide{padding:12px 16px}
+.guide p{margin:0 0 7px}
+.guide ul.lista-antes{margin:0 0 8px;padding-left:20px}
+.guide ol.lista-hacer{margin:0 0 8px;padding-left:22px}
+.guide li{margin-bottom:3px}
+.guide .sirve{font-size:14px;color:var(--muted)}
+.guide .ejemplo{border-left:3px solid var(--accent);padding-left:10px;background:var(--surface);border-radius:0 6px 6px 0;padding-top:6px;padding-bottom:6px}
+.guide .evidencia{font-size:14px}
+.guide .ojo{margin-top:6px;padding:6px 10px;border-radius:6px;background:var(--warn-soft);color:var(--warn);font-size:14px}
+</style>
+</head>
+<body>
+<main>
+  <h1>Checklist: guía para construir un VASP profesional</h1>
+  <p class="lede">Versión en checklist de <code>Docs/guia-construir-vasp-profesional-v1.0-2026-10-14</code>: proceso en 9 fases para montar un proveedor de servicios de activos virtuales, desde decidir si lo necesitas hasta operar con cumplimiento y tecnología institucional, más el equipo mínimo. Cada guía indica qué pasos del plan cubre.</p>
+  <p class="meta">Actualizado: 14 de octubre de 2026 · Es una guía general: no es asesoría legal ni fiscal y los requisitos cambian por país y por año.</p>
+
+  <div class="summary" aria-live="polite">
+    <strong id="total-label">Avance total</strong>
+    <div class="bar" role="progressbar" aria-labelledby="total-label" aria-valuemin="0" aria-valuemax="100" id="total-bar"><span style="width:0"></span></div>
+    <span id="total-text"></span>
+    <div class="tools">
+      <button type="button" id="toggle-done">Ocultar lo hecho</button>
+      <button type="button" id="reset">Volver al estado registrado</button>
+    </div>
+    <p class="note" style="margin-top:6px">Toca un paso: si ya tiene resultado, te lleva a su análisis; si no, abre su guía. El botón Guía muestra el sitio y los pasos. Escribe las direcciones a mano en el navegador: hay sitios falsos que imitan exchanges y billeteras.</p>
+    <div class="legend">
+      <span><span class="badge b-hecho">hecho</span> registrado como terminado</span>
+      <span><span class="badge b-curso">en curso</span> empezado, no terminado</span>
+      <span><span class="badge b-pend">pendiente</span> sin iniciar</span>
+    </div>
+    <p class="note" style="margin-top:10px">Las marcas que hagas se guardan solo en este navegador. El estado oficial se actualiza en este archivo, en el repositorio, a medida que avanzamos.</p>
+  </div>
+
+  <div id="phases"></div>
+
+  <section class="analisis" aria-labelledby="analisis-title">
+    <h2 id="analisis-title">Análisis de resultados</h2>
+    <p>Cada vez que se complete un paso o un grupo de pasos con un efecto real, se agrega aquí un resultado numerado. Cada resultado responde las mismas cinco preguntas, para que se vea qué se logró y no solo qué tareas se hicieron.</p>
+
+    <div class="example">
+      <h3>Ejemplo de cómo leer un resultado</h3>
+      <dl>
+        <dt>Qué se logró</dt><dd>Se aprobó el documento de alcance de dos páginas: servicios, clientes, activo USDT, red y países permitidos.</dd>
+        <dt>Evidencia</dt><dd>El documento firmado por los socios y guardado en el repositorio.</dd>
+        <dt>Qué habilita</dt><dd>Comparar jurisdicciones y preparar el paquete de solicitud (fases 1 y 3).</dd>
+        <dt>Qué falta o qué riesgo queda</dt><dd>Los países prohibidos todavía no están definidos.</dd>
+        <dt>Pasos del checklist</dt><dd>V0.1 a V0.5.</dd>
+      </dl>
+      <p class="note" style="margin:10px 0 0">La lógica: un resultado no es "terminé una tarea", sino "esto ya existe, así se prueba, esto destraba y esto sigue en riesgo".</p>
+    </div>
+
+    <ol class="results">
+      <li data-pasos="">
+        <h3>Guía VASP incorporada y comparada con el proyecto</h3>
+        <dl>
+          <dt>Qué se logró</dt><dd>La guía se copió a <code>Docs/</code>, se generó su <code>.md</code> y se convirtió en este checklist de 53 pasos, con el estado de cada uno frente a lo que ya tiene el proyecto: 1 hecho, 6 en curso y 46 pendientes.</dd>
+          <dt>Evidencia</dt><dd><code>Docs/guia-construir-vasp-profesional-v1.0-2026-10-14.html</code> y su <code>.md</code>, y este checklist con sus guías.</dd>
+          <dt>Qué habilita</dt><dd>Ver qué le falta al proyecto para parecerse a un VASP profesional. En cada guía se indica qué pasos del plan cubre.</dd>
+          <dt>Qué falta o qué riesgo queda</dt><dd><strong>1.</strong> Según la guía, convertir y mover cripto de otros como servicio hace de la empresa un VASP: este proyecto lo es (equivale al modelo A del estándar). <strong>2.</strong> La guía pide comparar jurisdicciones antes de licenciar, y los documentos del proyecto asumen una SAS colombiana, donde no hay licencia disponible hoy. <strong>3.</strong> Pasos que el plan no tenía y se agregaron: países permitidos y prohibidos (0.15), comparación de jurisdicciones (0.16), gobierno con comité, políticas, seguros y auditoría independiente (6.7), prueba de penetración externa y auditoría de código (7.32), y plan de recuperación con monitoreo permanente (7.33). <strong>4.</strong> La guía es general y no es asesoría legal.</dd>
+          <dt>Pasos del checklist</dt><dd class="pasos">Todo el documento.</dd>
+        </dl>
+      </li>
+    </ol>
+  </section>
+</main>
+
+<script>
+const KEY = 'checklist-guia-vasp-v1';
+// estado: 'hecho' | 'curso' | 'pend'. Es el estado registrado; tus marcas lo sobrescriben solo en tu navegador.
+const FASES = [
+  { id:'V0', titulo:'Fase 0. Modelo de negocio y alcance', nota:'Decidir qué servicios se prestan, a quién y en qué países. Entregable: documento de alcance de una o dos páginas.', items:[
+    ['V0.1','Listar los servicios que se prestarán: cobro, conversión de cripto a pesos, custodia, transferencias, intercambio','Socios','hecho'],
+    ['V0.2','Definir el cliente: personas, comercios o empresas (B2B)','Socios','curso'],
+    ['V0.3','Definir los activos permitidos (empezar solo con USDT) y las redes','Socios','curso'],
+    ['V0.4','Definir los países de los pagadores y los países prohibidos','Socios y abogado','pend'],
+    ['V0.5','Decidir si se custodian fondos de clientes o solo se orquesta el pago, y dejar el documento de alcance escrito','Socios','curso'],
+  ]},
+  { id:'V1', titulo:'Fase 1. Jurisdicción', nota:'Dónde se licencia y opera la entidad. Hoy los documentos del proyecto asumen una SAS colombiana, y en Colombia no hay licencia disponible.', items:[
+    ['V1.1','Comparar jurisdicciones: licencia operativa, tiempos, capital mínimo, presencia local exigida y reputación frente a bancos','Socios y abogado','pend'],
+    ['V1.2','Verificar si el regulador exige que los clientes estén en esa jurisdicción o permite servir a otros países','Abogado','pend'],
+    ['V1.3','Revisar el régimen tributario de la entidad y de los dividendos hacia los socios','Contador','pend'],
+    ['V1.4','Consultar a un abogado local el estado actual y dejar una matriz de 2 o 3 jurisdicciones con la decisión justificada','Abogado','pend'],
+  ]},
+  { id:'V2', titulo:'Fase 2. Estructura societaria', nota:'La entidad que será titular de la licencia, los fondos y los contratos. Equivale a la fase 1 del plan.', items:[
+    ['V2.1','Constituir la sociedad en la jurisdicción elegida; separar la entidad regulada de la que desarrolla tecnología si conviene','Abogado','pend'],
+    ['V2.2','Definir socios, beneficiarios finales y directores, y documentar el origen de fondos de los fundadores','Abogado','pend'],
+    ['V2.3','Capitalizar según el mínimo exigido y el colchón operativo','Socios','pend'],
+    ['V2.4','Firmar los acuerdos entre socios, de propiedad intelectual y de servicios entre empresas; dejar el certificado, el registro de accionistas y el diagrama de estructura','Abogado','pend'],
+  ]},
+  { id:'V3', titulo:'Fase 3. Licencia o registro', nota:'En Colombia no hay hoy una estructura que expida licencias a PSAV (proyecto de ley 510 de 2025). Se prepara todo como si existiera.', items:[
+    ['V3.1','Preparar el paquete de solicitud: plan de negocio, proyecciones, organigrama, perfiles de directores, políticas AML, descripción tecnológica y de custodia','Socios y abogado','pend'],
+    ['V3.2','Pasar la evaluación de idoneidad (fit and proper) de directores y accionistas relevantes','Abogado','pend'],
+    ['V3.3','Describir cómo se cumplirá la Travel Rule y con qué proveedor','Oficial de cumplimiento','pend'],
+    ['V3.4','Responder las preguntas del regulador y ajustar los documentos','Abogado','pend'],
+    ['V3.5','Recibir la licencia o registro y cumplir sus condiciones previas','Socios','pend'],
+  ]},
+  { id:'V4', titulo:'Fase 4. Programa de cumplimiento (AML/CFT)', nota:'Es el corazón de un VASP: sin esto no hay banco, licencia ni negocio sostenible. Equivale a la fase 3 del plan.', items:[
+    ['V4.1','Evaluación de riesgos de la empresa: clientes, productos, geografías y canales','Oficial de cumplimiento','pend'],
+    ['V4.2','Oficial de cumplimiento con independencia y recursos reales','Socios','pend'],
+    ['V4.3','KYC y KYB: identidad, beneficiario final, origen de fondos, listas sancionatorias y personas expuestas políticamente','Oficial de cumplimiento','pend'],
+    ['V4.4','Monitoreo de transacciones con analítica on-chain: reglas, alertas y escalamiento','Oficial de cumplimiento','pend'],
+    ['V4.5','Reporte de operaciones sospechosas a la UIAF en los plazos exigidos','Oficial de cumplimiento','pend'],
+    ['V4.6','Travel Rule: recolectar, verificar y transmitir datos de originador y beneficiario','Oficial de cumplimiento','pend'],
+    ['V4.7','Sanciones: bloqueo de direcciones y contrapartes sancionadas','Oficial de cumplimiento','pend'],
+    ['V4.8','Conservación de registros por el período legal y capacitación periódica; dejar el manual AML/CFT, la matriz de riesgo y el plan de capacitación','Oficial de cumplimiento','pend'],
+  ]},
+  { id:'V5', titulo:'Fase 5. Tecnología y seguridad', nota:'Una plataforma que protege los fondos y deja trazabilidad completa. Equivale a la fase 7 del plan.', items:[
+    ['V5.1','Arquitectura de custodia: billeteras caliente y fría, multifirma o MPC, límites por operación y aprobaciones de varios roles','Equipo técnico','pend'],
+    ['V5.2','Libro mayor interno con doble entrada y conciliación diaria contra los saldos on-chain','Equipo técnico','curso'],
+    ['V5.3','Seguridad de aplicación: llaves en HSM o KMS, secretos fuera del código, control de acceso por roles y registros inalterables','Equipo técnico','curso'],
+    ['V5.4','Pruebas: pruebas de penetración externas y auditoría de código antes del lanzamiento','Equipo técnico','pend'],
+    ['V5.5','Resiliencia: respaldos, plan de recuperación ante desastres y monitoreo permanente','Equipo técnico','pend'],
+    ['V5.6','Integraciones: análisis on-chain, KYC, Travel Rule, bancos y exchanges de liquidez; dejar la arquitectura documentada y el plan de continuidad','Equipo técnico','pend'],
+  ]},
+  { id:'V6', titulo:'Fase 6. Banca, liquidez y rampas fiat', nota:'Entrar y salir de pesos sin que cierren la cuenta. Equivale a las fases 4 y 5 del plan.', items:[
+    ['V6.1','Preparar el dossier para bancos: licencia, manual AML, estructura, perfil de clientes y volúmenes esperados','Gerencia','pend'],
+    ['V6.2','Abrir cuentas con más de un banco','Gerencia','pend'],
+    ['V6.3','Contratar proveedores de liquidez (exchanges o market makers) con acuerdos escritos','Tesorería','pend'],
+    ['V6.4','Separar los fondos de clientes de los fondos propios y dejar la política de segregación','Gerencia','pend'],
+  ]},
+  { id:'V7', titulo:'Fase 7. Gobierno, seguros y políticas', nota:'Dar estructura de empresa regulada y no de startup improvisada.', items:[
+    ['V7.1','Comité de riesgos y cumplimiento con actas periódicas','Socios','pend'],
+    ['V7.2','Políticas: seguridad de la información, gestión de incidentes, conflictos de interés, proveedores críticos, protección de datos y reclamos de clientes','Oficial de cumplimiento y abogado','pend'],
+    ['V7.3','Términos y condiciones, aviso de riesgos y política de privacidad claros','Abogado','pend'],
+    ['V7.4','Seguro cuando esté disponible: ciberriesgo, crimen y responsabilidad profesional','Gerencia','pend'],
+    ['V7.5','Auditoría independiente (financiera y de cumplimiento) con calendario fijo','Contador','pend'],
+  ]},
+  { id:'V8', titulo:'Fase 8. Lanzamiento por etapas y operación continua', nota:'Salir al mercado limitando el riesgo mientras se aprende. Equivale a la fase 8 del plan.', items:[
+    ['V8.1','Piloto cerrado con pocos clientes verificados, montos bajos y un solo activo','Todos','pend'],
+    ['V8.2','Revisar alertas, falsos positivos y fricciones de KYC, y corregir procedimientos','Oficial de cumplimiento','pend'],
+    ['V8.3','Apertura gradual: aumentar límites y países según los resultados','Socios','pend'],
+    ['V8.4','Operación continua: reportes regulatorios, revisión anual de riesgos, actualización de listas y reentrenamiento del personal','Oficial de cumplimiento','pend'],
+    ['V8.5','Monitorear cambios regulatorios y del FATF; dejar el informe de piloto, el plan de escalamiento y el tablero de indicadores','Abogado','pend'],
+  ]},
+  { id:'V9', titulo:'Equipo mínimo y roles', nota:'En etapa temprana varios roles pueden recaer en pocas personas, pero el oficial de cumplimiento debe tener independencia de las áreas comerciales.', items:[
+    ['V9.1','Representante legal o director: responde ante el regulador y firma las políticas','Socios','pend'],
+    ['V9.2','Oficial de cumplimiento: dirige el programa AML/CFT, reporta operaciones sospechosas y capacita','Socios','pend'],
+    ['V9.3','Responsable de riesgos: evalúa riesgos operativos, de custodia y de contrapartes','Socios','pend'],
+    ['V9.4','Líder técnico y de seguridad: arquitectura, custodia de llaves, pruebas y respuesta a incidentes','Equipo técnico','curso'],
+    ['V9.5','Analista de cumplimiento: revisa alertas, KYC y casos escalados','Oficial de cumplimiento','pend'],
+    ['V9.6','Asesor legal externo: licencias, contratos y cambios regulatorios','Socios','pend'],
+    ['V9.7','Contador y auditor: contabilidad de activos virtuales, tributación y auditoría independiente','Socios','pend'],
+  ]},
+];
+// Guía por paso. e: en simple · s: para qué sirve · a: antes necesitas · d: dónde · u: enlace · p: qué hacer · x: ejemplo · v: evidencia · l: listo cuando · o: ojo con
+const GUIAS = {
+  'V0.1':{e:'Escribir exactamente qué servicios va a prestar el proveedor. Ya está definido: recibe USDT, los convierte a pesos y los dispersa a la empresa cliente.',s:'La guía llama VASP a quien presta servicios con cripto a nombre de terceros. Qué servicios prestas decide si lo eres y qué te exigen.',a:['El flujo decidido (0.11 del plan)'],d:'Documento de alcance y DECISIONES.md',u:'',p:['Confirmar la lista: cobro en USDT, conversión a pesos, transferencia a la empresa cliente','Anotar que no hay intercambio con el público ni billetera para clientes','Dejarlo en el documento de alcance (V0.5)'],x:'El proveedor recibe USDT de un pagador, los vende en un exchange y manda pesos a Hellominus. Eso son tres servicios: cobro, conversión y transferencia. Cumplir este paso significa que la lista está escrita y todos hablan de lo mismo.',v:'La lista de servicios en el documento de alcance.',l:'Ya está hecho: servicios definidos el 14 de octubre de 2026; solo falta incluirlos en el documento de alcance.',o:'La guía advierte que cobrar por tus propios productos no te hace VASP, pero convertir y mover cripto de otros como servicio sí. Este proyecto cae en el segundo caso.'},
+  'V0.2':{e:'Decidir a quién se le presta el servicio: personas, comercios o empresas. Los clientes son empresas (Hellominus y DEVMINUS), pero quienes pagan son personas.',s:'Servir solo a empresas reduce el volumen de KYC y el riesgo. Servir a personas lo sube.',a:['Los clientes directos (0.10 del plan)','Los datos del pagador (0.5 del plan)'],d:'Reunión de socios y abogado',u:'',p:['Confirmar que los clientes son empresas con KYB','Decidir qué se exige a las personas que pagan (0.13 y 3.4 del plan)','Anotarlo en el documento de alcance'],x:'Hellominus es el cliente y se verifica una sola vez; cada viajero que paga es una persona y requiere KYC proporcional. Cumplir este paso significa que está claro quién es cliente y quién solo paga.',v:'La definición escrita en el documento de alcance.',l:'Está escrito quiénes son clientes y quiénes pagadores, y qué se exige a cada uno.',o:'La guía recomienda B2B; este proyecto es B2B en el cliente pero no en el pagador.'},
+  'V0.3':{e:'Elegir con qué activos y por qué redes se empieza. Ya está decidido que se empieza solo con USDT; falta elegir la red.',s:'Cada activo o red extra suma riesgos y trabajo. La guía recomienda empezar solo con USDT o USDC.',a:['Solo USDT (0.6 del plan)'],d:'Reunión de socios',u:'',p:['Confirmar USDT como único activo inicial','Elegir la red entre TRON y Polygon (0.9 del plan)','Anotarlo en el documento de alcance'],x:'El primer mes solo se aceptan USDT por la red TRON. Si alguien envía por otra red, se rechaza o se devuelve según la política. Cumplir este paso significa que activo y red están cerrados.',v:'La decisión en DECISIONES.md.',l:'Activo y red están elegidos y anotados.',o:'La guía advierte que un envío por la red equivocada es irrecuperable.'},
+  'V0.4':{e:'Decidir de qué países se aceptan pagos y cuáles se prohíben.',s:'Pagadores de países sancionados o de alto riesgo hacen que el banco cierre cuentas y exponen a sanciones.',a:['La regla del pagador (0.14 del plan)','El oficial de cumplimiento'],d:'Reunión de socios y abogado',u:'https://www.fatf-gafi.org',p:['Listar los países desde donde se esperan pagos','Definir los países prohibidos, incluidos los sancionados','Definir los países de riesgo alto que exigen revisión reforzada','Reflejarlo en el contrato de la API: se rechaza antes de crear la orden'],x:'Un pagador declara que está en un país prohibido: la API rechaza la orden antes de darle una dirección. Cumplir este paso significa que la lista existe y el sistema la aplica.',v:'La lista de países con su fecha y quién la aprobó.',l:'Hay una lista escrita y aprobada de países permitidos, de riesgo y prohibidos.',o:'Las listas cambian: revisarlas cada cierto tiempo. No está definida hoy en los documentos del proyecto.'},
+  'V0.5':{e:'Decidir si el proveedor custodia el dinero de los clientes o solo organiza el pago. Con el flujo decidido, el proveedor recibe y convierte, así que custodia en tránsito.',s:'Custodiar implica más obligaciones: separar fondos, proteger llaves y responder por ellas.',a:['El flujo decidido (0.11 del plan)'],d:'Documento de alcance',u:'',p:['Escribir que el proveedor recibe los USDT y los mantiene hasta convertirlos','Escribir cuánto tiempo pueden estar en tránsito','Reunir V0.1 a V0.4 en un documento de una o dos páginas','Firmarlo'],x:'El documento dice: servicios, clientes, activo USDT, red TRON, países permitidos y que el proveedor custodia en tránsito hasta convertir. Cumplir este paso significa que existe el documento de alcance firmado.',v:'El documento de alcance de una o dos páginas.',l:'El documento de alcance está escrito y firmado por los socios.',o:'Es el documento que se muestra primero a un banco o a un abogado.'},
+
+  'V1.1':{e:'Comparar dos o tres lugares donde se podría licenciar la empresa. Hoy los documentos asumen una SAS colombiana.',s:'Colombia no tiene hoy licencia para PSAV. Otros países sí la tienen, con requisitos distintos.',a:['El documento de alcance (V0.5)'],d:'Socios y abogado',u:'https://www.fatf-gafi.org',p:['Elegir 2 o 3 jurisdicciones candidatas','Comparar: si hay licencia operativa, tiempos, capital mínimo, presencia local y reputación ante bancos','Anotar el resultado en una tabla'],x:'Se compara Colombia, que no tiene licencia, con otro país que sí expide licencias pero exige oficina y director local. Cumplir este paso significa que hay una tabla comparativa y no una suposición.',v:'La tabla comparativa.',l:'Hay una matriz con 2 o 3 jurisdicciones.',o:'El proyecto ya decidió una SAS colombiana independiente; esta comparación puede confirmarlo o cambiarlo.'},
+  'V1.2':{e:'Comprobar si el regulador permite servir a clientes de otros países o exige que estén en el suyo.',s:'Si los pagadores vienen de todo el mundo, esto puede decidir la jurisdicción.',a:['La lista de países (V0.4)'],d:'Abogado',u:'',p:['Preguntar al abogado local de cada jurisdicción candidata','Anotar la respuesta por escrito'],x:'Un regulador permite servir a empresas de cualquier país; otro exige que los pagadores residan en su territorio. Cumplir este paso significa que se sabe si se puede servir a pagadores del mundo.',v:'La respuesta escrita del abogado.',l:'Hay respuesta escrita para cada jurisdicción candidata.',o:'Los regímenes cambian rápido.'},
+  'V1.3':{e:'Revisar qué impuestos paga la empresa y qué pasa cuando reparte ganancias a los socios.',s:'La jurisdicción cambia cuánto se queda de cada peso ganado.',a:['La comparación (V1.1)','El contador'],d:'Contador',u:'',p:['Pedir al contador la comparación tributaria','Incluir impuesto de renta, ICA o equivalente y dividendos','Anotar el resultado'],x:'En una jurisdicción el impuesto es menor pero la presencia local cuesta más; el contador lo suma y compara. Cumplir este paso significa que hay una cifra comparable.',v:'La comparación del contador.',l:'Hay una comparación tributaria escrita.',o:'No decidir solo por el impuesto.'},
+  'V1.4':{e:'Dejar una decisión justificada sobre dónde se opera.',s:'Es la base de la fase 2 y evita gastar en una estructura que luego hay que cambiar.',a:['V1.1 a V1.3'],d:'Abogado local',u:'',p:['Consultar a un abogado local el estado actual','Reunir la matriz en un documento','Decidir con los socios y anotarlo en DECISIONES.md'],x:'Los socios deciden mantener una SAS colombiana y registrar por qué: no hay licencia disponible y el flujo es entre empresas colombianas. Cumplir este paso significa que la decisión está escrita con sus razones.',v:'La matriz comparativa y la decisión.',l:'La decisión está escrita y justificada.',o:'La guía advierte que no se debe construir la plataforma completa antes de aclarar jurisdicción y licencia.'},
+
+  'V2.1':{e:'Crear la empresa que será titular de la licencia, los fondos y los contratos. Es lo mismo que la fase 1 del plan.',s:'Sin empresa no hay RUT, cuenta bancaria ni cuenta de Binance empresarial.',a:['La jurisdicción elegida (V1.4)'],d:'Cámara de Comercio',u:'https://www.rues.org.co',p:['Ver la fase 1 del plan: nombre, estatutos e inscripción','Decidir si la entidad regulada y la que desarrolla tecnología son distintas'],x:'La SAS del proveedor se constituye aparte de DEVMINUS, que es la que desarrolla tecnología. Cumplir este paso significa que existe el certificado de existencia.',v:'El certificado de constitución.',l:'La empresa está constituida.',o:'Equivale a los pasos 1.1 a 1.7 del plan.'},
+  'V2.2':{e:'Dejar claro quiénes son los dueños y los directores, y de dónde sale el dinero de los fundadores.',s:'Es lo primero que revisan los bancos y los reguladores.',a:['La empresa constituida (V2.1)'],d:'Abogado',u:'',p:['Listar dueños, beneficiarios finales y directores','Documentar el origen de los fondos de cada fundador','Guardarlo en el expediente'],x:'Cada socio entrega documento, porcentaje y una explicación documentada de cómo obtuvo el dinero que aporta. Cumplir este paso significa que el origen de fondos está respaldado.',v:'El registro de accionistas y los soportes de origen de fondos.',l:'Está registrado y documentado.',o:'Equivale a los pasos 1.3, 1.6 y 5.3 del plan.'},
+  'V2.3':{e:'Poner el capital que exige el regulador más un colchón para operar.',s:'Como el proveedor asume la volatilidad, sin capital suficiente una mala racha lo deja sin operar.',a:['Los límites de riesgo (5.4 del plan)'],d:'Socios',u:'',p:['Averiguar el capital mínimo, si lo hay','Sumar el capital de trabajo en pesos y USDT','Hacer el aporte y registrarlo'],x:'El mínimo es cero, pero los socios aportan el equivalente a dos días de volumen más un colchón. Cumplir este paso significa que hay capital depositado y registrado.',v:'Los comprobantes del aporte y su asiento en el libro.',l:'El capital está depositado y registrado.',o:'Los aportes entran por el banco: ver la política de movimientos bancarios (4.6 del plan).'},
+  'V2.4':{e:'Los contratos entre los socios y con las otras empresas, y el diagrama que muestra cómo se relacionan.',s:'Evita conflictos y muestra a bancos y reguladores cómo está armada la estructura.',a:['El acuerdo de proyecto (1.1 del plan)'],d:'Abogado',u:'',p:['Firmar el acuerdo entre socios','Firmar el acuerdo de propiedad intelectual y su cesión a la SAS','Documentar los servicios entre empresas a precio de mercado (6.6 del plan)','Dibujar el diagrama de estructura'],x:'El diagrama muestra a los dos socios como dueños de la SAS del proveedor y de DEVMINUS, con las flechas de los servicios entre ellas. Cumplir este paso significa que la estructura está firmada y dibujada.',v:'El certificado, el registro de accionistas y el diagrama.',l:'Los acuerdos están firmados y el diagrama existe.',o:'Equivale a los pasos 1.1, 1.3, 6.4 y 6.6 del plan.'},
+
+  'V3.1':{e:'Preparar los documentos que se entregarían al regulador para pedir la licencia.',s:'En Colombia hoy no hay licencia, pero preparar el paquete obliga a tener todo ordenado y sirve para un banco.',a:['El documento de alcance (V0.5)','El programa de cumplimiento (fase V4)'],d:'Socios y abogado',u:'',p:['Reunir el plan de negocio y las proyecciones','Reunir el organigrama y los perfiles de los directores','Reunir las políticas AML y la descripción tecnológica y de custodia','Guardarlo como un solo paquete'],x:'El paquete reúne los documentos que ya se hacen para el banco: alcance, organigrama, manual y arquitectura. Cumplir este paso significa que el paquete está completo, aunque todavía no se pueda presentar a nadie.',v:'El paquete de solicitud.',l:'El paquete está armado y revisado por el abogado.',o:'La guía recomienda construir ya el programa de cumplimiento como si la licencia existiera.'},
+  'V3.2':{e:'Una evaluación de si los directores y los dueños importantes son personas idóneas para dirigir una empresa regulada.',s:'Lo exigen los reguladores que otorgan licencia.',a:['Los perfiles de directores (V3.1)'],d:'Abogado',u:'',p:['Reunir hojas de vida, antecedentes y referencias de cada director y socio importante','Revisar que no haya impedimentos','Guardar el resultado'],x:'Cada director entrega su historial profesional y sus certificados de antecedentes, que quedan archivados. Cumplir este paso significa que cada uno está documentado.',v:'El expediente de idoneidad de cada director.',l:'Cada director tiene su expediente.',o:'Hoy no hay quien lo evalúe en Colombia, pero sirve para bancos y Binance.'},
+  'V3.3':{e:'Explicar cómo se cumplirá la Travel Rule y con qué herramienta.',s:'Muchos reguladores lo exigen desde la solicitud de licencia.',a:['El proveedor de análisis (3.5 del plan)'],d:'Oficial de cumplimiento',u:'https://www.elliptic.co/blockchain-basics/what-is-the-travel-rule',p:['Escribir qué datos se intercambian','Escoger el proveedor que ayudará','Describirlo en el manual'],x:'Cuando un exchange manda fondos al proveedor, junto con ellos llegan los datos de quien los envía; el sistema los guarda. Cumplir este paso significa que el procedimiento está descrito.',v:'La sección del manual.',l:'El procedimiento y el proveedor están descritos.',o:'Es el paso 3.6 del plan.'},
+  'V3.4':{e:'Contestar las dudas del regulador y corregir lo que pida.',s:'Es normal que haya varias rondas.',a:['La solicitud presentada'],d:'Abogado',u:'',p:['Responder cada pregunta por escrito','Ajustar los documentos','Guardar la correspondencia'],x:'El regulador pregunta por el origen de fondos de un socio y se entrega el soporte. Cumplir este paso significa que todas las preguntas tienen respuesta.',v:'La correspondencia con el regulador.',l:'No quedan preguntas abiertas.',o:'Hoy no aplica en Colombia: no hay solicitud que presentar.'},
+  'V3.5':{e:'Recibir la licencia o el registro y cumplir sus condiciones. En Colombia hoy no existe una licencia para PSAV.',s:'Es la autorización formal para operar.',a:['La solicitud aceptada'],d:'Socios',u:'',p:['Recibir la licencia o el registro','Cumplir las condiciones previas al inicio','Anotar el calendario de reportes'],x:'Si mañana se aprueba la ley, el proveedor ya tendría el paquete y el manual y solo ajustaría detalles. Cumplir este paso significa tener licencia vigente o, si no existe, estar listo para pedirla.',v:'La licencia o el registro.',l:'Hay licencia o registro vigente; mientras no exista, estar listo para pedirla.',o:'Seguir el proyecto de ley 510 de 2025 (8.7 del plan). La protección actual es el cumplimiento demostrable.'},
+  'V4.1':{e:'Un análisis de qué riesgos de lavado de dinero tiene la empresa: por tipo de cliente, producto, país y canal.',s:'Es la base de todo el programa: define cuánto control hace falta en cada caso.',a:['El documento de alcance (V0.5)','El oficial de cumplimiento (V4.2)'],d:'Oficial de cumplimiento',u:'',p:['Listar clientes, productos, geografías y canales','Puntuar el riesgo de cada uno','Definir los controles que corresponden','Revisarlo al menos una vez al año'],x:'Un pagador que paga montos grandes desde un país de riesgo alto se clasifica con riesgo alto y exige documentos adicionales. Cumplir este paso significa que existe una matriz que lo decide por regla.',v:'La matriz de riesgo.',l:'La matriz está aprobada.',o:'Es parte del paso 3.2 del plan.'},
+  'V4.2':{e:'Una persona responsable del programa, con independencia y recursos reales.',s:'La ley lo exige y los bancos lo piden. Independencia significa que no depende de las áreas comerciales.',a:['La empresa constituida (V2.1)'],d:'Socios',u:'',p:['Elegir a la persona y a su suplente','Dejarlo en un acta','Darle presupuesto y acceso a la información'],x:'La asamblea nombra a una abogada como oficial, con un suplente, y le da acceso al sistema de alertas. Cumplir este paso significa que alguien responde del programa.',v:'El acta de nombramiento.',l:'Hay oficial y suplente nombrados.',o:'Es el paso 3.1 del plan.'},
+  'V4.3':{e:'Verificar quién es cada cliente: identidad, dueños reales, origen de fondos y listas de sanciones.',s:'No tener cliente identificado impide demostrar nada ante una autoridad.',a:['La matriz de riesgo (V4.1)'],d:'Oficial de cumplimiento',u:'',p:['Definir los documentos de las empresas (KYB)','Definir qué se pide a las personas (KYC) según el monto','Consultar listas sancionatorias y de personas expuestas políticamente','Documentar cada aprobación'],x:'Hellominus entrega sus documentos y se revisa que sus dueños no estén en listas; una viajera que paga más de cierto monto entrega además su identificación. Cumplir este paso significa que ningún cliente opera sin verificación.',v:'El expediente de cada cliente.',l:'Hay un procedimiento escrito y probado.',o:'Son los pasos 3.3, 3.4 y 3.8 del plan.'},
+  'V4.4':{e:'Revisar cada operación con reglas y analítica de blockchain, y avisar cuando algo parece raro.',s:'Es lo que detecta operaciones sospechosas a tiempo.',a:['El proveedor de análisis (3.5 del plan)'],d:'Oficial de cumplimiento',u:'',p:['Definir las reglas de alerta','Conectar el análisis de riesgo de cada billetera','Definir quién revisa cada alerta y en cuánto tiempo','Probarlo con casos de ejemplo'],x:'Un pago desde una billetera marcada genera una alerta; el pago se detiene y el oficial revisa el caso. Cumplir este paso significa que las alertas llegan y se atienden.',v:'Las reglas y un registro de alertas de prueba.',l:'Las alertas funcionan y se revisan.',o:'Es parte del paso 7.9 del plan.'},
+  'V4.5':{e:'Informar a la UIAF cuando una operación parece sospechosa, dentro de los plazos.',s:'No reportar es una falta grave.',a:['El registro en SIREL (3.7 del plan)'],d:'Oficial de cumplimiento',u:'https://www.uiaf.gov.co',p:['Definir cuándo una alerta pasa a ser un reporte','Redactar el reporte en el formato de la UIAF','Enviarlo en los plazos','Guardar la constancia'],x:'Una alerta confirmada como sospechosa se reporta de inmediato, y el cliente no es informado. Cumplir este paso significa que el procedimiento existe y se probó con un caso de ejemplo.',v:'El procedimiento y la constancia de una prueba.',l:'El procedimiento está escrito y probado.',o:'Un motivo de cumplimiento no se explica al cliente.'},
+  'V4.6':{e:'Recolectar, verificar y enviar los datos de quien manda y quien recibe cada transferencia.',s:'Es un estándar internacional para que las empresas de cripto se pasen datos entre sí.',a:['Herramienta o proveedor'],d:'Oficial de cumplimiento',u:'https://www.elliptic.co/blockchain-basics/what-is-the-travel-rule',p:['Definir qué datos se piden','Elegir cómo se transmiten','Guardarlos en el expediente','Probarlo'],x:'Un exchange envía fondos y, a la vez, los datos de su cliente; el proveedor los guarda junto a la orden. Cumplir este paso significa que existe el procedimiento y está probado.',v:'La sección del manual y una prueba.',l:'El procedimiento está probado.',o:'Es el paso 3.6 del plan.'},
+  'V4.7':{e:'Bloquear automáticamente las direcciones y contrapartes que están en listas de sanciones.',s:'Recibir fondos sancionados puede costar la cuenta bancaria y sanciones graves.',a:['Las listas de sanciones','El análisis de riesgo (3.5 del plan)'],d:'Oficial de cumplimiento',u:'',p:['Elegir las listas a usar','Conectarlas al análisis de cada pago','Definir qué pasa cuando hay coincidencia','Probar con un caso de ejemplo'],x:'Una dirección que aparece en una lista de sanciones se bloquea y el pago no se acepta. Cumplir este paso significa que el bloqueo está probado.',v:'La configuración y una prueba.',l:'El bloqueo está probado.',o:'Las listas se actualizan: revisarlas con frecuencia.'},
+  'V4.8':{e:'Guardar los registros el tiempo que exige la ley y capacitar al personal cada cierto tiempo.',s:'Ante una inspección, lo que no está documentado no existe.',a:['Los pasos V4.1 a V4.7'],d:'Oficial de cumplimiento',u:'',p:['Definir el período de conservación (al menos 5 años para el reporte de criptoactivos)','Definir dónde y cómo se guarda','Programar la capacitación','Reunir el manual, la matriz de riesgo y el plan de capacitación'],x:'Un expediente de 2026 se puede recuperar completo en 2031. Cumplir este paso significa que la conservación y la capacitación están definidas y documentadas.',v:'El manual AML/CFT, la matriz de riesgo, los procedimientos y el plan de capacitación.',l:'Hay manual, matriz, procedimientos y plan de capacitación.',o:'La conservación mínima de 5 años está en el libro (paso 13.5).'},
+
+  'V5.1':{e:'Cómo se guardan los fondos: una billetera caliente para operar, una fría para la reserva, con dos personas para mover dinero.',s:'Si una sola persona o una sola llave controla todo, un robo o un error lo pierde todo.',a:['La empresa constituida (V2.1)'],d:'Equipo técnico y tesorería',u:'https://safe.global',p:['Separar billeteras caliente y fría','Usar multifirma o MPC','Fijar límites por operación','Exigir aprobación de varios roles'],x:'Para mover 20.000 USDT, una persona propone y otra aprueba, y la caliente solo guarda lo necesario para el día. Cumplir este paso significa que ningún fondo depende de una sola persona.',v:'La política de custodia y la configuración.',l:'La arquitectura de custodia está configurada y probada.',o:'Son los pasos 5.5 y 5.6 del plan.'},
+  'V5.2':{e:'El libro contable con dos lados que deben cuadrar, y una comparación diaria contra los saldos reales en la red.',s:'Es lo que detecta diferencias y fraudes.',a:['El libro (7.4 del plan)'],d:'Libro contable',u:'',p:['Correr las pruebas del libro (7.18 del plan)','Aplicarlo (7.19 del plan)','Programar la conciliación diaria'],x:'Cada noche el saldo del libro se compara con el de la dirección en la red, y una diferencia abre un caso. Cumplir este paso significa que el cuadre diario corre solo.',v:'El reporte diario de conciliación.',l:'El libro está probado y la conciliación corre sola.',o:'El libro ya está escrito, pero sus pruebas todavía no se han podido correr.'},
+  'V5.3':{e:'Que el software proteja los secretos, controle accesos y deje registros que no se puedan alterar.',s:'Es lo que impide que un error o un ataque llegue al dinero.',a:['Un gestor de secretos'],d:'Equipo técnico',u:'',p:['Guardar llaves en un servicio de gestión de llaves, no en el código','Dar a cada rol solo lo que necesita','Mantener la bitácora inalterable','Revisar los accesos cada cierto tiempo'],x:'La llave de Binance está en un gestor y solo puede leer; la bitácora encadenada no permite borrar. Cumplir este paso significa que ningún secreto está en el código.',v:'La revisión de seguridad.',l:'Hay una revisión de seguridad hecha.',o:'La bitácora y la seguridad por filas ya existen; falta lo demás.'},
+  'V5.4':{e:'Contratar a expertos externos que intenten atacar el sistema y revisen el código antes de usar dinero real.',s:'Los errores que ven los de afuera no los ve el equipo que construyó.',a:['El sistema funcionando en pruebas'],d:'Equipo técnico',u:'',p:['Cotizar una prueba de penetración externa y una auditoría de código','Contratarla antes del lanzamiento','Corregir lo que encuentren','Guardar el informe'],x:'Un auditor externo prueba si puede alterar una orden o leer datos de otro cliente; encuentra un fallo y se corrige antes del piloto. Cumplir este paso significa que hay informe y los hallazgos graves están corregidos.',v:'El informe de la prueba y el registro de correcciones.',l:'Hay informe y no quedan hallazgos graves abiertos.',o:'No estaba en el plan: se agregó como paso 7.32.'},
+  'V5.5':{e:'Copias de seguridad, un plan para recuperarse de un desastre y vigilancia permanente del sistema.',s:'Un sistema que maneja dinero no puede caerse sin plan.',a:['El plan Pro de Supabase (7.21 del plan)'],d:'Equipo técnico',u:'',p:['Activar copias y probar la recuperación','Escribir el plan de recuperación ante desastres','Poner monitoreo y alertas','Definir quién responde si hay una caída'],x:'La base cae un domingo: el monitoreo avisa, el responsable restaura la copia y el sistema vuelve con pérdida mínima de datos. Cumplir este paso significa que el plan está escrito y se probó una restauración.',v:'El plan y el registro de una prueba de recuperación.',l:'Hay plan escrito y una recuperación probada.',o:'No estaba en el plan: se agregó como paso 7.33.'},
+  'V5.6':{e:'Conectar todos los servicios externos y dejar documentada la arquitectura.',s:'El sistema depende de muchos proveedores; si uno falla, hay que saberlo.',a:['Los contratos con proveedores'],d:'Equipo técnico',u:'',p:['Conectar el análisis on-chain, el KYC, la Travel Rule, los bancos y los exchanges','Documentar la arquitectura con un diagrama','Anotar qué pasa si cada proveedor falla'],x:'El diagrama muestra de dónde sale cada dato y qué se hace si cae el exchange principal: se usa el segundo. Cumplir este paso significa que todos los proveedores están conectados y documentados.',v:'El diagrama de arquitectura y el plan de continuidad.',l:'Todas las integraciones están hechas y documentadas.',o:'Son los pasos 7.8 al 7.14 del plan.'},
+
+  'V6.1':{e:'La carpeta que se muestra al banco para que confíe en el negocio.',s:'Los bancos desconfían de la cripto y pueden negar o cerrar la cuenta sin ella.',a:['El manual AML (V4.8)','La estructura (V2.4)'],d:'Gerencia',u:'',p:['Reunir licencia (si existe), manual, estructura, perfil de clientes y volúmenes','Revisarlo con el oficial de cumplimiento'],x:'La carpeta explica con un diagrama cómo entra el dinero como cripto y cómo sale en pesos hacia Hellominus. Cumplir este paso significa que está completa.',v:'La carpeta en PDF.',l:'La carpeta está completa y revisada.',o:'Es el paso 4.1 del plan.'},
+  'V6.2':{e:'Abrir cuentas en más de un banco.',s:'Depender de uno solo es un riesgo operativo: si lo cierra, se detiene la operación.',a:['La carpeta del banco (V6.1)'],d:'Gerencia',u:'https://www.bancolombia.com',p:['Abrir la cuenta principal','Abrir una segunda cuenta en otro banco','Probar una transferencia pequeña en cada una'],x:'Un banco cierra la cuenta por revisión y el otro mantiene la operación. Cumplir este paso significa que hay dos cuentas funcionando.',v:'Los certificados de las cuentas.',l:'Hay dos cuentas funcionando.',o:'Son los pasos 4.2 y 4.3 del plan.'},
+  'V6.3':{e:'Firmar contratos con los exchanges o market makers que dan la liquidez.',s:'Sin ellos no hay forma ordenada de convertir USDT a pesos.',a:['La empresa constituida (V2.1)'],d:'Tesorería',u:'https://www.binance.com',p:['Abrir la cuenta institucional en Binance','Firmar un segundo proveedor','Guardar los acuerdos escritos'],x:'Si Binance limita la cuenta, el segundo proveedor mantiene la conversión. Cumplir este paso significa que hay dos contratos firmados.',v:'Los contratos.',l:'Hay contratos firmados con dos proveedores.',o:'Son los pasos 5.1 y 5.2 del plan.'},
+  'V6.4':{e:'Mantener separados los fondos de los clientes y los de la empresa.',s:'Mezclarlos es un error común que puede costar la licencia y la cuenta.',a:['Las cuentas abiertas (V6.2)'],d:'Gerencia',u:'',p:['Abrir cuentas distintas','No mover plata entre ellas sin registro','Escribir la política de segregación'],x:'La comisión se transfiere de la cuenta de clientes a la propia con un asiento; nunca se paga un gasto propio con plata de clientes. Cumplir este paso significa que los saldos están separados.',v:'La política y los certificados de cuentas.',l:'La política está escrita y las cuentas existen.',o:'Es el paso 4.4 del plan.'},
+
+  'V7.1':{e:'Un grupo que se reúne con frecuencia para revisar riesgos y cumplimiento, y deja actas.',s:'Da estructura de empresa regulada y deja constancia de las decisiones.',a:['El oficial de cumplimiento (V4.2)'],d:'Socios',u:'',p:['Definir quiénes lo integran','Fijar la frecuencia','Dejar actas de cada reunión'],x:'Cada mes se reúnen los socios y el oficial, revisan las alertas, ajustan límites y firman el acta. Cumplir este paso significa que hay actas periódicas.',v:'Las actas.',l:'Hay un comité con actas periódicas.',o:'Es parte del paso 8.6 del plan.'},
+  'V7.2':{e:'Las políticas escritas que una empresa regulada debe tener.',s:'Ante una inspección, lo no escrito no existe.',a:['El manual AML (V4.8)'],d:'Oficial de cumplimiento y abogado',u:'',p:['Redactar: seguridad de la información, incidentes, conflictos de interés, proveedores críticos, protección de datos y reclamos','Aprobarlas en asamblea','Revisarlas cada año'],x:'Si un empleado ve un acceso indebido, la política de incidentes dice a quién avisar y en cuánto tiempo. Cumplir este paso significa que cada política está aprobada.',v:'La carpeta de políticas.',l:'Todas las políticas están aprobadas.',o:'No estaba en el plan: se agregó como paso 6.7.'},
+  'V7.3':{e:'Términos de uso, aviso de riesgos y política de privacidad claros para quien paga.',s:'Evitan disputas y cumplen la ley de datos personales.',a:['Las políticas (V7.2)'],d:'Abogado',u:'',p:['Redactarlos en lenguaje claro','Incluir qué redes se aceptan y qué pasa con un envío equivocado','Publicarlos'],x:'Antes de pagar, el viajero ve que un envío por una red no soportada se pierde. Cumplir este paso significa que están publicados.',v:'Los documentos publicados.',l:'Están publicados.',o:'Es el paso 6.5 del plan.'},
+  'V7.4':{e:'Contratar seguros cuando existan: ciberriesgo, crimen y responsabilidad profesional.',s:'Cubren pérdidas por robos o fallos que el negocio no puede absorber.',a:['La operación definida'],d:'Gerencia',u:'',p:['Consultar con un corredor de seguros si existen para cripto','Comparar coberturas','Contratar lo que convenga'],x:'Un corredor informa que existe cobertura de ciberriesgo con ciertos límites, y se contrata. Cumplir este paso significa que hay una decisión tomada.',v:'La póliza o la decisión anotada.',l:'Está contratado o descartado con razón escrita.',o:'Para cripto pueden no existir o ser costosos.'},
+  'V7.5':{e:'Un auditor independiente que revisa cada año la contabilidad y el cumplimiento.',s:'Da confianza a bancos y clientes.',a:['El libro funcionando (V5.2)'],d:'Contador',u:'',p:['Elegir el auditor','Fijar el calendario anual','Entregarle el libro y su verificación de integridad'],x:'El auditor recibe el libro, recorre la cadena de huellas y confirma que nada fue alterado. Cumplir este paso significa que hay calendario.',v:'El contrato y el calendario.',l:'Hay auditor contratado y calendario fijo.',o:'Parte de lo que revisa es la contabilidad de activos virtuales.'},
+
+  'V8.1':{e:'Empezar con pocos clientes verificados, montos bajos y un solo activo.',s:'Los errores del primer mes son los más comunes y aquí cuestan poco.',a:['Todo lo anterior listo'],d:'Clientes piloto',u:'',p:['Elegir 2 o 3 clientes conocidos','Fijar límites bajos','Seguir cada operación de cerca'],x:'Hellominus empieza con pagos de máximo 200 USDT durante el primer mes. Cumplir este paso significa que el sistema opera con riesgo controlado.',v:'El registro del piloto.',l:'El piloto arrancó.',o:'Es el paso 8.1 del plan.'},
+  'V8.2':{e:'Revisar qué alertas fueron falsas, qué fricciones tuvo el KYC y corregir.',s:'Un piloto sirve para ajustar antes de abrir.',a:['El piloto (V8.1)'],d:'Oficial de cumplimiento',u:'',p:['Revisar cada alerta','Contar los falsos positivos','Pedir opinión a los clientes sobre el KYC','Ajustar procedimientos'],x:'Se descubre que muchas alertas eran por billeteras de exchanges conocidos y se ajusta la regla. Cumplir este paso significa que los procedimientos se corrigieron con datos reales.',v:'El informe del piloto.',l:'Los ajustes están hechos.',o:'No suba límites sin esto.'},
+  'V8.3':{e:'Aumentar poco a poco los límites y los países según los resultados.',s:'Reduce el riesgo de crecer demasiado rápido.',a:['El piloto revisado (V8.2)'],d:'Socios',u:'',p:['Definir los criterios para subir límites','Subir en etapas','Registrar cada decisión'],x:'Si el mes termina sin incidentes, el límite sube de 200 a 500 USDT. Cumplir este paso significa que los aumentos tienen una regla.',v:'El registro de ajustes.',l:'Hay un plan de escalamiento.',o:'Si hay un incidente, volver a bajar.'},
+  'V8.4':{e:'Las tareas permanentes: reportes, revisión anual de riesgos, actualización de listas y reentrenamiento.',s:'El cumplimiento es continuo, no un trámite.',a:['La operación en marcha'],d:'Oficial de cumplimiento',u:'https://www.uiaf.gov.co',p:['Fijar el calendario de reportes','Revisar la matriz de riesgo cada año','Actualizar las listas','Capacitar al personal'],x:'Cada mes se envía el reporte a la UIAF, y cada año se revisa la matriz de riesgo. Cumplir este paso significa que el calendario está definido y se cumple.',v:'El calendario y las constancias.',l:'Hay calendario y se cumple.',o:'Los reportes se envían aunque no haya operaciones.'},
+  'V8.5':{e:'Estar atento a cambios de ley y del organismo internacional de lavado de dinero (FATF), y dejar los indicadores a la vista.',s:'Una norma nueva puede cambiar lo que se exige.',a:['La operación en marcha'],d:'Abogado',u:'https://www.fatf-gafi.org',p:['Pedir un resumen mensual al abogado','Revisar las actualizaciones del FATF','Mantener un tablero con alertas, reportes, incidentes y conciliaciones'],x:'El abogado avisa que un proyecto de ley avanzó en el Congreso, y se revisa qué cambiaría. Cumplir este paso significa que el seguimiento es mensual.',v:'Los resúmenes y el tablero.',l:'Hay seguimiento mensual y un tablero.',o:'Es el paso 8.7 del plan.'},
+
+  'V9.1':{e:'La persona que responde ante el regulador y firma las políticas.',s:'Alguien debe dar la cara.',a:['La empresa constituida (V2.1)'],d:'Socios',u:'',p:['Elegir al representante legal y a su suplente','Dejarlo en el certificado de existencia'],x:'Uno de los socios figura como representante legal y firma las políticas. Cumplir este paso significa que está nombrado.',v:'El certificado.',l:'Está nombrado.',o:'Debe tener claro que responde personalmente.'},
+  'V9.2':{e:'La persona que dirige el programa contra el lavado de dinero.',s:'Es el rol más importante del programa.',a:['El programa de cumplimiento (V4)'],d:'Socios',u:'',p:['Elegirlo con independencia','Darle recursos','Nombrar un suplente'],x:'Una profesional externa se nombra oficial; no depende del área comercial. Cumplir este paso significa que está nombrado.',v:'El acta de nombramiento del oficial y de su suplente.',l:'Está nombrado.',o:'Es el paso 3.1 del plan.'},
+  'V9.3':{e:'Quien evalúa los riesgos operativos, de custodia y de contrapartes.',s:'Los riesgos de dinero no son solo de lavado.',a:['Los límites (5.4 del plan)'],d:'Socios',u:'',p:['Elegir a la persona','Definir qué revisa y con qué frecuencia'],x:'Cada semana revisa si la exposición al precio del USDT supera el límite. Cumplir este paso significa que alguien vigila los riesgos.',v:'El nombramiento.',l:'Está nombrado.',o:'Al inicio puede ser uno de los socios.'},
+  'V9.4':{e:'Quien responde de la arquitectura, las llaves, las pruebas y los incidentes técnicos.',s:'Sin responsable, la seguridad se diluye.',a:['El sistema en construcción'],d:'Equipo técnico',u:'',p:['Confirmar quién lo es','Documentar sus responsabilidades'],x:'La persona que construye el sistema también responde de que las llaves estén seguras y de atender un incidente. Cumplir este paso significa que está asignado por escrito.',v:'El documento de roles.',l:'Está asignado por escrito.',o:'Hoy lo cubre el equipo que construye.'},
+  'V9.5':{e:'Quien revisa las alertas, el KYC y los casos que le escalen.',s:'El oficial no puede revisarlo todo.',a:['El volumen de operaciones'],d:'Oficial de cumplimiento',u:'',p:['Decidir cuándo hace falta','Elegir y capacitar a la persona'],x:'Con más pagos, un analista revisa las alertas del día y el oficial solo decide los casos graves. Cumplir este paso significa que hay quien revisa.',v:'El nombramiento.',l:'Está asignado o la necesidad está descartada por ahora.',o:'Al inicio lo hace el oficial.'},
+  'V9.6':{e:'Un abogado externo para licencias, contratos y cambios regulatorios.',s:'Los regímenes de cripto cambian rápido.',a:['Presupuesto'],d:'Socios',u:'',p:['Elegir al abogado','Acordar honorarios y alcance'],x:'El abogado revisa los contratos con clientes y avisa de cambios en la ley. Cumplir este paso significa que está contratado.',v:'El contrato.',l:'Está contratado.',o:'Debe tener experiencia en activos virtuales.'},
+  'V9.7':{e:'El contador y el auditor que llevan la contabilidad de activos virtuales y los impuestos.',s:'La cripto tiene reglas tributarias propias.',a:['Presupuesto'],d:'Socios',u:'',p:['Elegir al contador','Elegir al auditor independiente','Acordar honorarios'],x:'El contador define cómo se valora y declara el USDT, y el auditor revisa el libro cada año. Cumplir este paso significa que ambos están contratados.',v:'Los contratos.',l:'Están contratados.',o:'Son los pasos 1.7 del plan y V7.5.'},
+};
+</script>
+<script>
+(function(){
+  const ETQ = { hecho:['hecho','b-hecho'], curso:['en curso','b-curso'], pend:['pendiente','b-pend'] };
+  let marks = {};
+  try { marks = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { marks = {}; }
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(marks)); } catch (e) {} };
+  const isChecked = (code, estado) => (code in marks) ? marks[code] : estado === 'hecho';
+  const cont = document.getElementById('phases');
+  const tg = document.getElementById('toggle-done');
+  const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const abiertas = new Set();
+  const resultOf = {};
+
+  function goTo(id){
+    let el = document.getElementById(id);
+    if (el && el.offsetParent === null && cont.classList.contains('hide-done')) {
+      cont.classList.remove('hide-done'); tg.textContent = 'Ocultar lo hecho';
+    }
+    el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 2200);
+  }
+
+  // Resultados: id, enlaces de vuelta a sus pasos y mapa paso -> resultado
+  document.querySelectorAll('ol.results > li').forEach((li, i) => {
+    li.id = 'res-' + (i + 1);
+    const pasos = (li.dataset.pasos || '').split(/\s+/).filter(Boolean);
+    pasos.forEach(c => { if (!(c in resultOf)) resultOf[c] = li.id; });
+    const dd = li.querySelector('dd.pasos');
+    if (dd && pasos.length) {
+      dd.textContent = '';
+      pasos.forEach((c, k) => {
+        const a = document.createElement('a');
+        a.href = '#p-' + c; a.textContent = c;
+        a.addEventListener('click', e => { e.preventDefault(); goTo('p-' + c); });
+        dd.append(a);
+        if (k < pasos.length - 1) dd.append(', ');
+      });
+    }
+  });
+
+  function guiaPanel(code){
+    const g = GUIAS[code];
+    if (!g) return null;
+    const box = document.createElement('div');
+    box.className = 'guide'; box.id = 'g-' + code; box.hidden = !abiertas.has(code);
+    const fila = (clase, etiqueta, ...contenido) => {
+      const p = document.createElement('p'); p.className = clase;
+      const b = document.createElement('strong'); b.textContent = etiqueta + ' ';
+      p.append(b, ...contenido); box.append(p); return p;
+    };
+    const lista = (clase, items, ordenada) => {
+      const l = document.createElement(ordenada ? 'ol' : 'ul'); l.className = clase;
+      items.forEach(t => { const li = document.createElement('li'); li.textContent = t; l.append(li); });
+      box.append(l);
+    };
+    fila('simple', 'En simple:', g.e);
+    if (g.s) fila('sirve', 'Para qué sirve:', g.s);
+    if (g.a && g.a.length) { fila('antes', 'Antes necesitas:'); lista('lista-antes', g.a, false); }
+    if (g.u) {
+      const a = document.createElement('a');
+      a.href = g.u; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = g.d;
+      fila('site', 'Dónde:', a, ' (' + new URL(g.u).hostname + ')');
+    } else { fila('site', 'Dónde:', g.d); }
+    fila('hacer', 'Qué hacer:');
+    lista('lista-hacer', g.p, true);
+    if (g.x) fila('ejemplo', 'Ejemplo:', g.x);
+    if (g.v) fila('evidencia', 'Evidencia que se guarda:', g.v);
+    fila('listo', 'Listo cuando:', g.l);
+    if (g.o) fila('ojo', 'Ojo con:', g.o);
+    return box;
+  }
+
+  function toggleGuia(code){
+    const box = document.getElementById('g-' + code);
+    if (!box) return;
+    const abrir = box.hidden;
+    box.hidden = !abrir;
+    if (abrir) abiertas.add(code); else abiertas.delete(code);
+    const btn = document.querySelector('[aria-controls="g-' + code + '"]');
+    if (btn) btn.setAttribute('aria-expanded', String(abrir));
+  }
+
+  function render(){
+    cont.innerHTML = '';
+    let total = 0, done = 0;
+    FASES.forEach(f => {
+      let fd = 0;
+      const sec = document.createElement('section'); sec.className = 'phase';
+      const ul = document.createElement('ul'); ul.className = 'items';
+      f.items.forEach(([code, texto, quien, estado]) => {
+        const chk = isChecked(code, estado);
+        if (chk) fd++;
+        const li = document.createElement('li');
+        li.id = 'p-' + code; if (chk) li.className = 'checked';
+        const row = document.createElement('div'); row.className = 'row';
+        const inp = document.createElement('input');
+        inp.type = 'checkbox'; inp.checked = chk;
+        inp.setAttribute('aria-label', 'Marcar ' + code + ': ' + texto);
+        inp.addEventListener('change', () => { marks[code] = inp.checked; save(); render(); });
+
+        const res = resultOf[code];
+        const title = document.createElement('button');
+        title.type = 'button'; title.className = 'title';
+        title.title = res ? 'Ir al análisis de resultados de este paso' : 'Ver la guía de este paso';
+        const t = document.createElement('span'); t.className = 'txt';
+        const c1 = document.createElement('span'); c1.className = 'code'; c1.textContent = code + ' ';
+        const c2 = document.createElement('span'); c2.className = 'main'; c2.textContent = texto;
+        const c3 = document.createElement('span'); c3.className = 'who'; c3.textContent = quien;
+        t.append(c1, c2, c3);
+        if (res) { const ir = document.createElement('span'); ir.className = 'ir'; ir.textContent = 'Ver resultado ↓'; t.append(ir); }
+        title.append(t);
+        title.addEventListener('click', () => { if (res) goTo(res); else toggleGuia(code); });
+
+        const b = document.createElement('span');
+        const [et, cl] = (chk && estado !== 'hecho') ? ['marcado por ti', 'b-hecho'] : ETQ[estado];
+        b.className = 'badge ' + cl; b.textContent = et;
+        row.append(inp, title, b);
+
+        const panel = guiaPanel(code);
+        if (panel) {
+          const gb = document.createElement('button');
+          gb.type = 'button'; gb.className = 'guide-btn'; gb.textContent = 'Guía';
+          gb.setAttribute('aria-controls', 'g-' + code);
+          gb.setAttribute('aria-expanded', String(abiertas.has(code)));
+          gb.addEventListener('click', () => toggleGuia(code));
+          row.append(gb);
+          li.append(row, panel);
+        } else { li.append(row); }
+        ul.append(li);
+      });
+      total += f.items.length; done += fd;
+      sec.innerHTML = '<div class="phase-head"><h2></h2><small></small></div>' + (f.nota ? '<p class="phase-note"></p>' : '');
+      sec.querySelector('h2').textContent = f.titulo;
+      sec.querySelector('small').textContent = fd + ' de ' + f.items.length;
+      if (f.nota) sec.querySelector('.phase-note').textContent = f.nota;
+      sec.append(ul); cont.append(sec);
+    });
+    const pct = total ? Math.round(done * 100 / total) : 0;
+    const bar = document.getElementById('total-bar');
+    bar.setAttribute('aria-valuenow', pct);
+    bar.querySelector('span').style.width = pct + '%';
+    document.getElementById('total-text').textContent = done + ' de ' + total + ' pasos (' + pct + ' %)';
+  }
+
+  tg.addEventListener('click', () => {
+    const on = cont.classList.toggle('hide-done');
+    tg.textContent = on ? 'Mostrar lo hecho' : 'Ocultar lo hecho';
+  });
+  document.getElementById('reset').addEventListener('click', () => {
+    if (confirm('¿Borrar tus marcas y volver al estado registrado en el archivo?')) { marks = {}; save(); render(); }
+  });
+  render();
+  if (location.hash.length > 1) setTimeout(() => goTo(decodeURIComponent(location.hash.slice(1))), 50);
+})();
+</script>
+</body>
+</html>

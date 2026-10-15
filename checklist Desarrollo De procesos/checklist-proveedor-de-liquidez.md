@@ -6,11 +6,11 @@ Versión en checklist de Docs/plan-paso-a-paso-proveedor-de-liquidez.md . Une la
 
 Actualizado: 14 de octubre de 2026 · Nombre del proveedor: provisional · Lo legal y tributario está sin validar por abogado y contador.
 
-**Avance registrado:** 11 hechos y 2 en curso, de 94 pasos.
+**Avance registrado:** 12 hechos y 2 en curso, de 102 pasos.
 
 Leyenda: `[x]` hecho · `[~]` en curso · `[ ]` pendiente. Cada paso trae su responsable.
 
-## Fase 0. Decisiones previas (sin código) (5/13)
+## Fase 0. Decisiones previas (sin código) (6/16)
 
 _Bloquean lo demás. Socios, abogado y contador._
 
@@ -27,6 +27,9 @@ _Bloquean lo demás. Socios, abogado y contador._
 - [x] **0.11** Pagos entran al proveedor; dispersión a la empresa cliente desde Bancolombia — _Juan_
 - [x] **0.12** El proveedor es una empresa independiente, separada de DEVMINUS — _Juan_
 - [x] **0.13** El pagador debe haber hecho el KYC en un exchange (Binance u otro que cumpla los criterios del proveedor) y pagar desde su cuenta, a su nombre (control 1 del libro v1.8). El KYC propio del proveedor sigue siendo necesario — _Juan_
+- [x] **0.14** Flujo limpio: todo lo que los pagadores le envían al proveedor entra como cripto; por su cuenta bancaria no entra nada de pagadores. El flujo con cuenta bancaria, incluido el de dólares, queda en las otras empresas — _Juan_
+- [ ] **0.15** Países de los pagadores: permitidos, de riesgo y prohibidos (incluidos los sancionados); el sistema rechaza antes de crear la orden — _Socios y abogado_
+- [ ] **0.16** Jurisdicción: comparar 2 o 3 y decidir dónde se licencia y opera la empresa (hoy se asume una SAS colombiana, sin licencia disponible) — _Socios y abogado_
 
 ## Fase 1. Constituir la sociedad (1/11)
 
@@ -70,7 +73,7 @@ _4 a 8 semanas. Oficial de cumplimiento._
 - [ ] **3.9** Revisar los términos de Binance para cuentas de negocio antes de operar: puede cerrar la cuenta si la actividad no corresponde al perfil — _Tesorería_
 - [ ] **3.10** Lista de exchanges aceptados y sus criterios (KYC verificable, regulados), revisada cada cierto tiempo. Por ahora Binance; otros se agregan con el abogado y el oficial de cumplimiento — _Oficial de cumplimiento_
 
-## Fase 4. Bancos y régimen cambiario (0/5)
+## Fase 4. Bancos y régimen cambiario (0/6)
 
 _4 a 12 semanas. Riesgo real: los bancos cierran cuentas cripto con poco aviso._
 
@@ -78,7 +81,8 @@ _4 a 12 semanas. Riesgo real: los bancos cierran cuentas cripto con poco aviso._
 - [ ] **4.2** Cuenta operativa en Bancolombia (la que dispersa) — _Gerencia_
 - [ ] **4.3** Segunda cuenta en otro banco (antes de 6 meses) — _Gerencia_
 - [ ] **4.4** Cuentas separadas: fondos de clientes y fondos propios — _Gerencia_
-- [ ] **4.5** Canal para la pata en dólares, con asesor cambiario — _Gerencia_
+- [ ] **4.5** Pata en dólares: no se usa mientras el proveedor solo reciba cripto. Confirmar con un asesor cambiario que no hay obligaciones cambiarias y reabrir el paso si algún día entran dólares por banco — _Gerencia_
+- [ ] **4.6** Política de movimientos bancarios del proveedor: qué entra y qué sale de su cuenta, con la regla de que ningún pagador paga por banco; se controla en el manual y en la conciliación diaria — _Gerencia y oficial de cumplimiento_
 
 ## Fase 5. Liquidez y tesorería (0/6)
 
@@ -91,7 +95,7 @@ _3 a 6 semanas. Requiere la sociedad constituida._
 - [ ] **5.5** Custodia multifirma o MPC; nunca una sola persona con las llaves — _Tesorería_
 - [ ] **5.6** Billetera fría de reserva con prueba de control documentada — _Tesorería_
 
-## Fase 6. Contratos (0/5)
+## Fase 6. Contratos (0/7)
 
 _2 a 4 semanas. Abogado._
 
@@ -100,6 +104,8 @@ _2 a 4 semanas. Abogado._
 - [ ] **6.3** Política de tarifas y spreads, con impuestos dentro del precio — _Socios y contador_
 - [ ] **6.4** Cesión de lo construido por los socios hacia la SAS y traspaso de las cuentas del proyecto. Sin contrato de licencia con DEVMINUS; si DEVMINUS presta un servicio, contrato a precio de mercado entre vinculados — _Abogado_
 - [ ] **6.5** Términos de redes soportadas y de datos personales (Ley 1581) — _Abogado_
+- [ ] **6.6** Partes vinculadas: con los mismos dueños, las empresas se tratan como vinculadas. Confirmar con contador y abogado el efecto en precios de transferencia, el registro de situación de control o grupo empresarial, la política de precios entre empresas y quién paga la infraestructura compartida — _Contador y abogado_
+- [ ] **6.7** Gobierno: comité de riesgos y cumplimiento con actas, políticas escritas, términos y aviso de riesgos, seguros si existen y auditoría independiente con calendario fijo — _Socios y abogado_
 
 ## Fase 7. Tecnología (lo que construimos) (3/16)
 
@@ -122,7 +128,7 @@ _En paralelo a las fases 1 a 6. Supabase a Pro antes del primer dato real._
 - [ ] **7.15** Seguridad: custodia fuera del libro, secretos, roles, copias de seguridad — _Equipo técnico_
 - [ ] **7.16** Pruebas del ciclo completo en redes de prueba — _Equipo técnico_
 
-## Fase 7 · Infraestructura y bloqueos técnicos (2/15)
+## Fase 7 · Infraestructura y bloqueos técnicos (2/17)
 
 _Situaciones que salieron en el camino. Bloquean pasos de la fase 7._
 
@@ -137,10 +143,12 @@ _Situaciones que salieron en el camino. Bloquean pasos de la fase 7._
 - [ ] **7.25** Decidir si se restaura el proyecto de Supabase pausado (crm-productividad-hello-minus) — _Juan_
 - [x] **7.26** Contexto desde .md: cada HTML tiene su .md gemelo; se lee el .md y se regenera al actualizar el HTML (scripts/sincronizar-md.py) — _Equipo técnico_
 - [x] **7.27** Sincronización automática HTML y .md: gancho de Claude Code al editar un HTML y gancho de git antes de cada commit — _Equipo técnico_
-- [ ] **7.28** Cuentas propias del proyecto, separadas de DEVMINUS: hoy Supabase está en la misma organización que proyectos de Hellominus y de DEVMINUS, y GitHub es una cuenta personal. Crear organización propia y transferirlas a la SAS al constituirla — _Socios y equipo técnico_
+- [ ] **7.28** Cuentas propias del proyecto, separadas de DEVMINUS: la base de datos ya es independiente, pero Supabase está en la misma organización que proyectos de Hellominus y DEVMINUS, y GitHub es una cuenta personal. Hacerlo antes del primer dato real, de dar acceso a alguien que no sea socio o de constituir la SAS — _Socios y equipo técnico_
 - [~] **7.29** Aviso al cliente: el proveedor le envía un correo inmediato a Hellominus (decidido); webhook firmado y consulta como respaldo (recomendación) — _Socios y equipo técnico_
 - [ ] **7.30** Correo de confirmación: dominio de la empresa con SPF, DKIM y DMARC, plantilla con los datos del pago y prueba de entrega — _Equipo técnico_
 - [ ] **7.31** Registrar cada pago confirmado en el libro con hash, fecha y hora exacta, montos, direcciones, orden y análisis de riesgo — _Equipo técnico_
+- [ ] **7.32** Prueba de penetración externa y auditoría de código antes del lanzamiento — _Equipo técnico_
+- [ ] **7.33** Plan de recuperación ante desastres y monitoreo permanente del sistema, con quién responde si hay una caída — _Equipo técnico_
 
 ## Fase 8. Lanzamiento controlado (0/7)
 
@@ -188,7 +196,7 @@ Cada vez que se complete un paso o un grupo de pasos con un efecto real, se agre
 - **Evidencia:** DECISIONES.md y CLAUDE.md del 14 de octubre de 2026.
 - **Qué habilita:** Reescribir el contrato de la API (hecho, borrador 2) y saber a quién se le verifica la cuenta bancaria: una empresa por cliente.
 - **Qué falta o qué riesgo queda:** Es el modelo de mayor carga regulatoria (recibe dinero de personas). Debe validarlo un abogado y un contador antes de mover dinero real.
-- **Pasos del checklist:** 0.6, 0.7, 0.11, 0.12, 0.13, 7.2
+- **Pasos del checklist:** 0.6, 0.7, 0.11, 0.12, 0.13, 0.14, 7.2
 
 ### Resultado 4. Libro contable v1.8 escrito, pendiente de pruebas
 

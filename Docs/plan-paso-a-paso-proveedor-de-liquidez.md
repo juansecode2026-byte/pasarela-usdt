@@ -47,6 +47,9 @@ Bloquean lo demás. Se cierran con los socios, el abogado y el contador.
 | 0.11 | Los pagos entran directo al proveedor y la dispersión va a la empresa cliente desde Bancolombia | **Decidido** (14 oct 2026) |
 | 0.12 | El proveedor es una empresa independiente, separada de DEVMINUS | **Decidido** (14 oct 2026) |
 | 0.13 | El pagador debe haber hecho el KYC en un exchange (Binance u otro que cumpla los criterios del proveedor) y pagar desde su cuenta, a su nombre (control 1 del libro v1.8) | **Decidido** (14 oct 2026) |
+| 0.14 | Flujo limpio: todo lo que los pagadores le envían al proveedor entra como cripto; por su cuenta bancaria no entra nada de pagadores. El flujo con cuenta bancaria, incluido el de dólares, queda en las otras empresas | **Decidido** (14 oct 2026) |
+| 0.15 | Países de los pagadores: permitidos, de riesgo y prohibidos | Pendiente |
+| 0.16 | Jurisdicción: comparar 2 o 3 y decidir dónde se licencia y opera (hoy se asume una SAS colombiana, sin licencia disponible) | Pendiente |
 
 ## Fase 1. Constituir la sociedad
 
@@ -98,7 +101,8 @@ Quién: gerencia y oficial de cumplimiento. 4 a 12 semanas. **Riesgo real: los b
 2. Abrir la cuenta operativa principal en **Bancolombia** (la que dispersa).
 3. Abrir una **segunda cuenta en otro banco** antes de los 6 meses.
 4. Cuentas **separadas** para fondos de clientes y fondos propios desde el primer día.
-5. Pata en dólares: la cripto no es divisa, pero los dólares sí siguen el régimen cambiario. Definir el canal con un asesor cambiario.
+5. Pata en dólares: **no se usa mientras el proveedor solo reciba cripto** (decisión del flujo limpio). Confirmar con un asesor cambiario que no hay obligaciones cambiarias, y reabrir este paso si algún día entran dólares por banco.
+6. **Política de movimientos bancarios** del proveedor: qué entra y qué sale de su cuenta, con la regla de que ningún pagador paga por banco.
 
 ## Fase 5. Liquidez aguas arriba y tesorería
 
@@ -120,6 +124,8 @@ Quién: abogado. 2 a 4 semanas.
 3. Política de tarifas y spreads por escrito, con los impuestos dentro del precio.
 4. **Cesión de lo construido hacia la SAS** y traspaso de las cuentas del proyecto. No hay contrato de licencia con DEVMINUS; si DEVMINUS presta algún servicio en el futuro, contrato a precio de mercado aprobado por escrito por los socios (partes vinculadas).
 5. Términos de redes soportadas y de uso de datos personales (Ley 1581).
+6. **Partes vinculadas**: con los mismos dueños, las empresas se tratan como vinculadas. Confirmar con contador y abogado precios de transferencia, registro de situación de control o grupo empresarial, política de precios entre empresas y quién paga la infraestructura compartida.
+7. **Gobierno**: comité de riesgos y cumplimiento con actas, políticas escritas, términos y aviso de riesgos, seguros si existen y auditoría independiente con calendario fijo.
 
 ## Fase 7. Tecnología (lo que construimos)
 
@@ -161,10 +167,12 @@ Situaciones que salieron en el camino.
 | 7.25 | Decidir si se restaura el proyecto pausado `crm-productividad-hello-minus` | Pendiente |
 | 7.26 | Contexto desde `.md`: cada HTML tiene su `.md` gemelo y se regenera con `scripts/sincronizar-md.py` | **Hecho** |
 | 7.27 | Sincronización automática HTML y `.md`: gancho de Claude Code al editar un HTML y gancho de git antes de cada commit | **Hecho** |
-| 7.28 | Cuentas propias del proyecto, separadas de DEVMINUS: hoy Supabase comparte organización con proyectos de Hellominus y de DEVMINUS, y GitHub es una cuenta personal | Pendiente |
+| 7.28 | Cuentas propias del proyecto, separadas de DEVMINUS: la base ya es independiente, pero la organización de Supabase y la cuenta de GitHub se comparten. Hacerlo antes del primer dato real, de dar acceso a alguien que no sea socio o de constituir la SAS | Pendiente |
 | 7.29 | Aviso al cliente: el proveedor le envía un correo inmediato a Hellominus (decidido); webhook firmado y consulta como respaldo (recomendación) | **En curso** |
 | 7.30 | Correo de confirmación: dominio de la empresa con SPF, DKIM y DMARC, plantilla con los datos del pago y prueba de entrega | Pendiente |
 | 7.31 | Registrar cada pago confirmado en el libro con hash, fecha y hora exacta, montos, direcciones, orden y análisis de riesgo | Pendiente |
+| 7.32 | Prueba de penetración externa y auditoría de código antes del lanzamiento | Pendiente |
+| 7.33 | Plan de recuperación ante desastres y monitoreo permanente | Pendiente |
 
 **Se construye ya, con planes gratuitos y redes de prueba, sin dinero real.** Las herramientas que exigen contrato y empresa (análisis on-chain, custodia institucional, Binance institucional) se cotizan en paralelo para que estén firmadas al llegar el primer cliente. **Supabase debe pasar a Pro antes de guardar el primer dato real.**
 

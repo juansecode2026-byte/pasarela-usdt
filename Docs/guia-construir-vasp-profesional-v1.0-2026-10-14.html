@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía para construir un VASP profesional</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F5F7F3;
+    --ink: #1A2420;
+    --accent: #2F6E62;
+    --accent-soft: #BFD6CF;
+    --warn: #A85C2E;
+    --warn-bg: #F4E8DE;
+    --warn-ink: #5C3A22;
+    --muted: #5B6660;
+    --rule: #DCE3DD;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  .page { max-width: 720px; margin: 0 auto; padding: 56px 28px 80px; }
+
+  header h1 { font-family: 'Lora', Georgia, serif; font-weight: 600; font-size: clamp(27px, 5vw, 38px); line-height: 1.2; margin: 0 0 16px; }
+  header .subhead { font-size: 16px; line-height: 1.6; max-width: 62ch; margin: 0 0 18px; }
+  .version-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 14px; }
+  .version-bar span { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; padding: 4px 10px; border-radius: 5px; background: rgba(47,110,98,0.1); color: var(--accent); }
+  header .meta { font-size: 13px; line-height: 1.6; color: var(--muted); max-width: 64ch; margin: 0; }
+
+  nav.toc { margin: 36px 0 56px; padding: 24px 26px 18px; border: 1px solid var(--rule); border-top: 3px solid var(--accent); background: #fff; }
+  nav.toc .toc-label { font-family: 'Lora', Georgia, serif; font-weight: 600; font-size: 18px; margin: 0 0 14px; }
+  nav.toc ul { list-style: none; margin: 0; padding: 0; }
+  nav.toc > ul > li { margin-bottom: 14px; }
+  nav.toc a { color: var(--ink); text-decoration: none; border-bottom: 1px solid transparent; }
+  nav.toc a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  nav.toc a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  nav.toc .toc-main { font-weight: 600; font-size: 15px; }
+  nav.toc .toc-main .n { font-family: 'IBM Plex Mono', ui-monospace, monospace; color: var(--accent); margin-right: 8px; }
+  nav.toc ul ul { margin: 6px 0 0 30px; }
+  nav.toc ul ul li { margin-bottom: 4px; font-size: 13.5px; }
+  nav.toc ul ul a { color: var(--muted); }
+  nav.toc ul ul a:hover { color: var(--accent); }
+
+  section { margin-bottom: 54px; scroll-margin-top: 20px; }
+  section h2 { font-family: 'Lora', Georgia, serif; font-weight: 600; font-size: clamp(21px, 3vw, 25px); border-bottom: 2px solid var(--accent); padding-bottom: 10px; margin: 0 0 22px; }
+  section h3 { font-weight: 600; font-size: 16px; color: var(--accent); margin: 28px 0 10px; scroll-margin-top: 20px; }
+  section p { font-size: 15.5px; line-height: 1.65; max-width: 64ch; margin: 0 0 14px; }
+  section ul, section ol.steps { padding-left: 22px; margin: 0 0 16px; }
+  section li { font-size: 15.5px; line-height: 1.6; max-width: 60ch; margin-bottom: 8px; }
+  .back-link { margin: 22px 0 0; }
+  section p.back-link { font-size: 13px; }
+  .back-link a { color: var(--muted); text-decoration: none; border-bottom: 1px solid var(--rule); }
+  .back-link a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .tech { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 0.88em; background: rgba(47,110,98,0.09); padding: 1px 6px; border-radius: 3px; color: var(--accent); }
+
+  .callout { border-left: 3px solid var(--warn); background: var(--warn-bg); padding: 16px 20px; margin: 22px 0; }
+  .callout .callout-label { display: block; font-weight: 600; color: var(--warn); margin-bottom: 5px; font-size: 14px; }
+  .callout p { margin: 0; font-size: 14.5px; color: var(--warn-ink); max-width: none; }
+
+  /* Fases */
+  .phase { background: #fff; border: 1px solid var(--rule); border-left: 4px solid var(--accent); padding: 18px 22px 8px; margin: 0 0 26px; }
+  .phase h3 { margin: 0 0 10px; display: flex; align-items: baseline; gap: 12px; color: var(--ink); font-family: 'Lora', Georgia, serif; font-size: 18px; }
+  .phase h3 .badge { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #fff; background: var(--accent); padding: 3px 9px; border-radius: 4px; white-space: nowrap; }
+  .phase .goal { font-size: 14.5px; color: var(--muted); margin: 0 0 12px; }
+  .phase h4 { font-size: 13px; letter-spacing: .02em; color: var(--accent); margin: 14px 0 6px; font-weight: 600; }
+  .phase .out { font-size: 14px; background: rgba(47,110,98,0.07); padding: 10px 14px; margin: 12px 0 14px; max-width: none; }
+
+  table.compare, table.versions { width: 100%; border-collapse: collapse; margin: 6px 0 26px; font-size: 14.5px; }
+  table.compare th, table.compare td, table.versions th, table.versions td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  table.compare th, table.versions th { font-weight: 600; font-size: 13px; color: var(--accent); }
+  table.compare td.label { font-weight: 600; white-space: nowrap; }
+  table.versions td.ver { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; color: var(--accent); white-space: nowrap; }
+  table.versions td.date { white-space: nowrap; }
+
+  ul.check { list-style: none; padding-left: 0; }
+  ul.check li { padding-left: 26px; position: relative; }
+  ul.check li::before { content: "☐"; position: absolute; left: 0; color: var(--accent); }
+
+  .sources li { font-size: 14px; }
+  .sources a { color: var(--accent); }
+
+  footer { margin-top: 58px; padding-top: 24px; border-top: 1px solid var(--rule); }
+  footer p { font-size: 13px; line-height: 1.65; color: var(--muted); max-width: 64ch; margin: 0 0 10px; }
+
+  @media (max-width: 600px) {
+    .page { padding: 40px 20px 64px; }
+    nav.toc { padding: 20px 18px 14px; }
+    nav.toc ul ul { margin-left: 22px; }
+    .phase { padding: 16px 16px 6px; }
+    table.compare, table.versions { font-size: 13.5px; }
+    table.compare th, table.compare td, table.versions th, table.versions td { padding: 9px 8px; }
+  }
+</style>
+</head>
+<body>
+  <div class="page" id="inicio">
+
+    <header>
+      <h1>Guía para construir un VASP profesional</h1>
+      <p class="subhead">Proceso paso a paso para montar un Proveedor de Servicios de Activos Virtuales (PSAV): desde decidir si realmente lo necesitas, hasta operar con licencia, cumplimiento y tecnología de nivel institucional.</p>
+      <div class="version-bar">
+        <span>Versión 1.0</span>
+        <span>14 de octubre de 2026</span>
+      </div>
+      <p class="meta">No es asesoría legal ni fiscal. Los requisitos cambian por país y por año; valida cada fase con un abogado especializado en activos virtuales antes de invertir.</p>
+    </header>
+
+    <nav class="toc" aria-label="Índice">
+      <p class="toc-label">Índice</p>
+      <ul>
+        <li>
+          <a class="toc-main" href="#que-es"><span class="n">1</span>Qué es un VASP y cuándo aplica</a>
+          <ul>
+            <li><a href="#s1-1">1.1 Definición y actividades cubiertas</a></li>
+            <li><a href="#s1-2">1.2 ¿Recibir USDT para tu proyecto te hace VASP?</a></li>
+            <li><a href="#s1-3">1.3 Tres caminos posibles</a></li>
+          </ul>
+        </li>
+        <li>
+          <a class="toc-main" href="#colombia"><span class="n">2</span>Contexto: estándar global y situación en Colombia</a>
+        </li>
+        <li>
+          <a class="toc-main" href="#pasos"><span class="n">3</span>Paso a paso: de la idea a la operación</a>
+          <ul>
+            <li><a href="#f0">Fase 0 — Modelo de negocio y alcance</a></li>
+            <li><a href="#f1">Fase 1 — Jurisdicción</a></li>
+            <li><a href="#f2">Fase 2 — Estructura societaria</a></li>
+            <li><a href="#f3">Fase 3 — Licencia o registro</a></li>
+            <li><a href="#f4">Fase 4 — Programa de cumplimiento (AML/CFT)</a></li>
+            <li><a href="#f5">Fase 5 — Tecnología y seguridad</a></li>
+            <li><a href="#f6">Fase 6 — Banca, liquidez y rampas fiat</a></li>
+            <li><a href="#f7">Fase 7 — Gobierno, seguros y políticas</a></li>
+            <li><a href="#f8">Fase 8 — Lanzamiento por etapas y operación continua</a></li>
+          </ul>
+        </li>
+        <li>
+          <a class="toc-main" href="#equipo"><span class="n">4</span>Equipo mínimo y roles</a>
+        </li>
+        <li>
+          <a class="toc-main" href="#checklist"><span class="n">5</span>Checklist maestro</a>
+        </li>
+        <li>
+          <a class="toc-main" href="#errores"><span class="n">6</span>Errores comunes</a>
+        </li>
+        <li>
+          <a class="toc-main" href="#versiones"><span class="n">7</span>Control de versiones</a>
+        </li>
+        <li>
+          <a class="toc-main" href="#fuentes"><span class="n">8</span>Fuentes consultadas</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- ============ 1 ============ -->
+    <section id="que-es">
+      <h2>1. Qué es un VASP y cuándo aplica</h2>
+
+      <h3 id="s1-1">1.1 Definición y actividades cubiertas</h3>
+      <p>El estándar internacional del GAFI/FATF (Recomendación 15) llama VASP a toda persona o empresa que, como negocio y a nombre de terceros, realiza alguna de estas actividades con activos virtuales:</p>
+      <ul>
+        <li>Intercambio entre activos virtuales y moneda fiat, o entre distintos activos virtuales.</li>
+        <li>Transferencia de activos virtuales por cuenta de clientes.</li>
+        <li>Custodia o administración de activos virtuales o de las llaves que los controlan.</li>
+        <li>Participación o provisión de servicios financieros ligados a la oferta o venta de un activo virtual.</li>
+      </ul>
+      <p>La clave es <strong>habitualidad + profesionalidad + terceros</strong>: no se trata de usar cripto, sino de prestar servicios sobre cripto a otras personas.</p>
+
+      <h3 id="s1-2">1.2 ¿Recibir USDT para tu proyecto te hace VASP?</h3>
+      <p>Normalmente no. Cobrar por tus propios productos o aceptar aportes para tu proyecto es recibir pagos, no prestar un servicio de activos virtuales. Te conviertes en VASP si empiezas a convertir, custodiar o mover cripto <em>de otros</em> como servicio (por ejemplo, una pasarela que cobra a comercios y les liquida, o una billetera con saldos de clientes).</p>
+
+      <h3 id="s1-3">1.3 Tres caminos posibles</h3>
+      <table class="compare">
+        <tr>
+          <th>Camino</th>
+          <th>Qué implica</th>
+          <th>Cuándo conviene</th>
+        </tr>
+        <tr>
+          <td class="label">A. Integrador sobre un VASP licenciado</td>
+          <td>Usas la infraestructura y licencia de un tercero (procesador de pagos cripto, Binance Pay Merchant, custodio regulado) y tú construyes producto y experiencia encima.</td>
+          <td>Para validar mercado, bajo capital y rápido. Es el camino más lógico para empezar.</td>
+        </tr>
+        <tr>
+          <td class="label">B. VASP con licencia propia</td>
+          <td>Tu empresa obtiene licencia o registro, cumple AML/CFT completo y asume custodia, riesgo y supervisión.</td>
+          <td>Cuando el volumen y el control del flujo justifican el costo fijo regulatorio.</td>
+        </tr>
+        <tr>
+          <td class="label">C. Híbrido</td>
+          <td>Empiezas como integrador (A) y construyes el cumplimiento y la estructura en paralelo para migrar a (B).</td>
+          <td>Cuando ya hay tracción pero la regulación local aún no está definida.</td>
+        </tr>
+      </table>
+      <p class="back-link"><a href="#inicio">↑ Volver al índice</a></p>
+    </section>
+
+    <!-- ============ 2 ============ -->
+    <section id="colombia">
+      <h2>2. Contexto: estándar global y situación en Colombia</h2>
+
+      <p>El FATF extendió a los VASP las reglas de prevención de lavado de activos en 2019, incluida la llamada <span class="tech">Travel Rule</span> (compartir datos de originador y beneficiario en cada transferencia). En julio de 2026 publicó su séptima revisión anual de implementación de la Recomendación 15, que muestra avances en normas pero un licenciamiento efectivo todavía desigual entre países.</p>
+
+      <p>En Colombia, hasta donde alcanzan los análisis publicados a mediados de 2026, aún no existe una estructura que permita expedir licencias a PSAV. El Proyecto de Ley 510 de 2025 Cámara busca regularlos y ha avanzado en debates, pero conviene verificar su estado exacto antes de decidir. Mientras tanto, el cumplimiento se apoya en normas generales: obligaciones antilavado ante la UIAF, tratamiento tributario de la DIAN y conceptos de la Superintendencia Financiera y el Banco de la República.</p>
+
+      <div class="callout">
+        <span class="callout-label">Qué significa esto en la práctica</span>
+        <p>Operar en Colombia sin marco de licencia no te exime de cumplir. Lo prudente es construir <em>ya</em> el programa de cumplimiento como si la licencia existiera: así cuando llegue la regulación solo ajustas, no reconstruyes. Y considera una jurisdicción con licencia operativa si buscas autorización formal hoy.</p>
+      </div>
+      <p class="back-link"><a href="#inicio">↑ Volver al índice</a></p>
+    </section>
+
+    <!-- ============ 3 ============ -->
+    <section id="pasos">
+      <h2>3. Paso a paso: de la idea a la operación</h2>
+      <p>Las fases se solapan en la práctica, pero este orden evita gastar en tecnología antes de saber qué licencia necesitas.</p>
+
+      <div class="phase" id="f0">
+        <h3><span class="badge">Fase 0</span>Modelo de negocio y alcance</h3>
+        <p class="goal">Decidir exactamente qué servicios prestarás, a quién y en qué países.</p>
+        <h4>Pasos</h4>
+        <ol class="steps">
+          <li>Lista los servicios: ¿cobro, conversión cripto↔fiat, custodia, transferencias, intercambio?</li>
+          <li>Define el cliente: personas, comercios o empresas (B2B). B2B reduce volumen de KYC y riesgo.</li>
+          <li>Define activos permitidos (empieza solo con USDT/USDC) y redes (TRC20, ERC20, etc.).</li>
+          <li>Define los países de clientes y los países prohibidos.</li>
+          <li>Decide si custodias fondos de clientes o solo orquestas el pago (no-custodial).</li>
+        </ol>
+        <p class="out"><strong>Entregable:</strong> documento de alcance de una o dos páginas con servicios, clientes, activos, países y modelo custodial o no.</p>
+      </div>
+
+      <div class="phase" id="f1">
+        <h3><span class="badge">Fase 1</span>Jurisdicción</h3>
+        <p class="goal">Elegir dónde se licencia y opera la entidad.</p>
+        <h4>Pasos</h4>
+        <ol class="steps">
+          <li>Compara jurisdicciones por: existencia de licencia operativa, tiempos, capital mínimo, exigencia de presencia local (oficina, directores, oficial de cumplimiento) y reputación frente a bancos.</li>
+          <li>Verifica si el regulador exige que los clientes estén en esa jurisdicción o si permite servir a otros países.</li>
+          <li>Revisa el régimen tributario de la entidad y de los dividendos hacia los socios.</li>
+          <li>Consulta a un abogado local para confirmar el estado actual; los regímenes cambian rápido.</li>
+        </ol>
+        <p class="out"><strong>Entregable:</strong> matriz comparativa de 2–3 jurisdicciones y decisión justificada.</p>
+      </div>
+
+      <div class="phase" id="f2">
+        <h3><span class="badge">Fase 2</span>Estructura societaria</h3>
+        <p class="goal">Crear la entidad que será titular de la licencia, los fondos y los contratos.</p>
+        <h4>Pasos</h4>
+        <ol class="steps">
+          <li>Constituir la sociedad en la jurisdicción elegida (a menudo se separa la entidad regulada de la que desarrolla tecnología).</li>
+          <li>Definir socios, beneficiarios finales y directores; documentar origen de fondos de los fundadores.</li>
+          <li>Capitalizar según el mínimo exigido y el colchón operativo.</li>
+          <li>Firmar acuerdos entre socios, de propiedad intelectual y de servicios intragrupo.</li>
+        </ol>
+        <p class="out"><strong>Entregable:</strong> certificado de constitución, registro de accionistas y directores, estructura societaria en diagrama.</p>
+      </div>
+
+      <div class="phase" id="f3">
+        <h3><span class="badge">Fase 3</span>Licencia o registro</h3>
+        <p class="goal">Obtener autorización formal del regulador.</p>
+        <h4>Pasos</h4>
+        <ol class="steps">
+          <li>Preparar el paquete de solicitud: plan de negocio, proyecciones, organigrama, perfiles de directores, políticas AML/CFT, descripción tecnológica y de custodia.</li>
+          <li>Pasar la evaluación de idoneidad (<em>fit &amp; proper</em>) de directores y accionistas relevantes.</li>
+          <li>Describir cómo cumplirás la Travel Rule y qué proveedor usarás; muchos reguladores lo exigen desde la solicitud.</li>
+          <li>Responder preguntas del regulador y ajustar documentos.</li>
+          <li>Recibir licencia y cumplir condiciones previas al inicio.</li>
+        </ol>
+        <p class="out"><strong>Entregable:</strong> licencia o registro vigente, con condiciones y calendario de reportes.</p>
+      </div>
+
+      <div class="phase" id="f4">
+        <h3><span class="badge">Fase 4</span>Programa de cumplimiento (AML/CFT)</h3>
+        <p class="goal">Es el corazón de un VASP: sin esto no hay banco, licencia ni negocio sostenible.</p>
+        <h4>Componentes</h4>
+        <ul>
+          <li><strong>Evaluación de riesgos</strong> de la empresa: clientes, productos, geografías, canales.</li>
+          <li><strong>Oficial de cumplimiento</strong> con independencia y recursos reales.</li>
+          <li><strong>KYC/KYB</strong>: verificación de identidad, beneficiario final, origen de fondos, listas sancionatorias y PEP.</li>
+          <li><strong>Monitoreo de transacciones</strong> con analítica on-chain (reglas, alertas, escalamiento).</li>
+          <li><strong>Reportes</strong> de operaciones sospechosas a la autoridad competente (en Colombia, la UIAF) en los plazos exigidos.</li>
+          <li><strong>Travel Rule</strong>: recolectar, verificar y transmitir datos de originador y beneficiario; puede apoyarse en un proveedor especializado.</li>
+          <li><strong>Sanciones</strong>: bloqueo de direcciones y contrapartes sancionadas.</li>
+          <li><strong>Conservación de registros</strong> por el periodo legal y capacitación periódica del personal.</li>
+        </ul>
+        <p class="out"><strong>Entregable:</strong> manual AML/CFT, matriz de riesgo, procedimientos KYC, plan de capacitación, proveedor de screening contratado.</p>
+      </div>
+
+      <div class="phase" id="f5">
+        <h3><span class="badge">Fase 5</span>Tecnología y seguridad</h3>
+        <p class="goal">Construir una plataforma que proteja fondos y deje trazabilidad completa.</p>
+        <h4>Pasos</h4>
+        <ol class="steps">
+          <li><strong>Arquitectura de custodia:</strong> separar billeteras caliente y fría, multifirma o MPC, límites por operación, aprobaciones de varios roles.</li>
+          <li><strong>Libro mayor interno</strong> con doble entrada y conciliación diaria contra saldos on-chain.</li>
+          <li><strong>Seguridad de aplicación:</strong> gestión de llaves en HSM o KMS, secretos fuera del código, control de acceso por roles, registros inalterables.</li>
+          <li><strong>Pruebas:</strong> pruebas de penetración externas y auditoría de código antes del lanzamiento.</li>
+          <li><strong>Resiliencia:</strong> respaldos, plan de recuperación ante desastres y monitoreo 24/7.</li>
+          <li><strong>Integraciones:</strong> analítica on-chain, KYC, Travel Rule, bancos y exchanges de liquidez.</li>
+        </ol>
+        <p class="out"><strong>Entregable:</strong> arquitectura documentada, informe de pentest, política de custodia y plan de continuidad.</p>
+      </div>
+
+      <div class="phase" id="f6">
+        <h3><span class="badge">Fase 6</span>Banca, liquidez y rampas fiat</h3>
+        <p class="goal">Poder entrar y salir de pesos u otras monedas sin que te cierren la cuenta.</p>
+        <h4>Pasos</h4>
+        <ol class="steps">
+          <li>Preparar un dossier para bancos: licencia, manual AML, estructura, perfil de clientes y volúmenes esperados.</li>
+          <li>Abrir cuentas con más de un banco; la dependencia de uno solo es riesgo operativo.</li>
+          <li>Contratar proveedores de liquidez (exchanges o market makers) con acuerdos escritos.</li>
+          <li>Separar fondos de clientes de fondos propios.</li>
+        </ol>
+        <p class="out"><strong>Entregable:</strong> cuentas operativas, contratos de liquidez, política de segregación de fondos.</p>
+      </div>
+
+      <div class="phase" id="f7">
+        <h3><span class="badge">Fase 7</span>Gobierno, seguros y políticas</h3>
+        <p class="goal">Dar estructura de empresa regulada, no de startup improvisada.</p>
+        <h4>Pasos</h4>
+        <ol class="steps">
+          <li>Comité de riesgos y cumplimiento con actas periódicas.</li>
+          <li>Políticas: seguridad de la información, gestión de incidentes, conflictos de interés, proveedores críticos, protección de datos, reclamos de clientes.</li>
+          <li>Términos y condiciones, aviso de riesgos y política de privacidad claros.</li>
+          <li>Seguro cuando esté disponible: ciberriesgo, crimen y responsabilidad profesional.</li>
+          <li>Auditoría independiente (financiera y de cumplimiento) con calendario fijo.</li>
+        </ol>
+        <p class="out"><strong>Entregable:</strong> carpeta de gobierno corporativo y calendario anual de revisiones.</p>
+      </div>
+
+      <div class="phase" id="f8">
+        <h3><span class="badge">Fase 8</span>Lanzamiento por etapas y operación continua</h3>
+        <p class="goal">Salir al mercado limitando el riesgo mientras se aprende.</p>
+        <h4>Pasos</h4>
+        <ol class="steps">
+          <li><strong>Piloto cerrado</strong> con pocos clientes verificados, montos bajos y un solo activo.</li>
+          <li>Revisar alertas, falsos positivos y fricciones de KYC; corregir procedimientos.</li>
+          <li><strong>Apertura gradual</strong> aumentando límites y países según resultados.</li>
+          <li>Operación continua: reportes regulatorios, revisión anual de riesgos, actualización de listas y reentrenamiento del personal.</li>
+          <li>Monitorear cambios regulatorios y del FATF; ajustar políticas.</li>
+        </ol>
+        <p class="out"><strong>Entregable:</strong> informe de piloto, plan de escalamiento y tablero de indicadores (alertas, reportes, incidentes, conciliaciones).</p>
+      </div>
+
+      <div class="callout">
+        <span class="callout-label">Orden recomendado</span>
+        <p>No construyas la plataforma completa antes de tener claros jurisdicción y licencia (fases 1 y 3). La tecnología depende de lo que el regulador exija en custodia, reportes y Travel Rule.</p>
+      </div>
+      <p class="back-link"><a href="#inicio">↑ Volver al índice</a></p>
+    </section>
+
+    <!-- ============ 4 ============ -->
+    <section id="equipo">
+      <h2>4. Equipo mínimo y roles</h2>
+      <table class="compare">
+        <tr>
+          <th>Rol</th>
+          <th>Responsabilidad</th>
+        </tr>
+        <tr><td class="label">Representante legal / director</td><td>Responde ante el regulador y firma las políticas.</td></tr>
+        <tr><td class="label">Oficial de cumplimiento</td><td>Dirige el programa AML/CFT, reporta operaciones sospechosas y capacita.</td></tr>
+        <tr><td class="label">Responsable de riesgos</td><td>Evalúa riesgos operativos, de custodia y de contrapartes.</td></tr>
+        <tr><td class="label">Líder técnico / seguridad</td><td>Arquitectura, custodia de llaves, pruebas y respuesta a incidentes.</td></tr>
+        <tr><td class="label">Analista de cumplimiento</td><td>Revisa alertas, KYC y casos escalados.</td></tr>
+        <tr><td class="label">Asesor legal externo</td><td>Licencias, contratos, cambios regulatorios.</td></tr>
+        <tr><td class="label">Contador y auditor</td><td>Contabilidad de activos virtuales, tributación y auditoría independiente.</td></tr>
+      </table>
+      <p>En etapa temprana varios roles pueden recaer en pocas personas, pero el regulador suele exigir que el oficial de cumplimiento tenga independencia de las áreas comerciales.</p>
+      <p class="back-link"><a href="#inicio">↑ Volver al índice</a></p>
+    </section>
+
+    <!-- ============ 5 ============ -->
+    <section id="checklist">
+      <h2>5. Checklist maestro</h2>
+      <ul class="check">
+        <li>Alcance de servicios, clientes, activos y países documentado.</li>
+        <li>Jurisdicción elegida con concepto legal escrito.</li>
+        <li>Entidad constituida, capitalizada y con beneficiarios finales identificados.</li>
+        <li>Solicitud de licencia presentada y aprobada.</li>
+        <li>Manual AML/CFT, matriz de riesgos y oficial de cumplimiento designado.</li>
+        <li>Proveedores de KYC, analítica on-chain y Travel Rule contratados.</li>
+        <li>Arquitectura de custodia con multifirma o MPC y límites operativos.</li>
+        <li>Pentest externo y auditoría de código realizados.</li>
+        <li>Cuentas bancarias y proveedores de liquidez operativos.</li>
+        <li>Políticas de gobierno, términos y avisos de riesgo publicados.</li>
+        <li>Seguros y auditoría independiente programados.</li>
+        <li>Piloto cerrado ejecutado y lecciones incorporadas.</li>
+      </ul>
+      <p class="back-link"><a href="#inicio">↑ Volver al índice</a></p>
+    </section>
+
+    <!-- ============ 6 ============ -->
+    <section id="errores">
+      <h2>6. Errores comunes</h2>
+      <ul>
+        <li><strong>Construir antes de licenciar.</strong> Se gasta en tecnología que luego no cumple lo que exige el regulador.</li>
+        <li><strong>Subestimar cumplimiento.</strong> Es el área con más costo recurrente y la que más cierra bancos y licencias.</li>
+        <li><strong>Mezclar fondos</strong> propios y de clientes, o personales y de la empresa.</li>
+        <li><strong>Depender de un solo banco o un solo proveedor de liquidez.</strong></li>
+        <li><strong>Ignorar la red del activo.</strong> Un envío por la red equivocada es irrecuperable.</li>
+        <li><strong>No documentar decisiones.</strong> Ante una inspección, lo no documentado no existe.</li>
+        <li><strong>Prometer lo que no se puede cumplir</strong> en marketing (rendimientos, "sin riesgo", "regulado" sin serlo).</li>
+      </ul>
+      <p class="back-link"><a href="#inicio">↑ Volver al índice</a></p>
+    </section>
+
+    <!-- ============ 7 ============ -->
+    <section id="versiones">
+      <h2>7. Control de versiones</h2>
+      <table class="versions">
+        <tr>
+          <th>Versión</th>
+          <th>Fecha</th>
+          <th>Cambios</th>
+        </tr>
+        <tr>
+          <td class="ver">1.0</td>
+          <td class="date">14 oct 2026</td>
+          <td>Versión inicial: definición de VASP, caminos posibles, contexto FATF y Colombia, proceso en 9 fases (0–8), equipo, checklist y errores comunes.</td>
+        </tr>
+      </table>
+      <p class="back-link"><a href="#inicio">↑ Volver al índice</a></p>
+    </section>
+
+    <!-- ============ 8 ============ -->
+    <section id="fuentes">
+      <h2>8. Fuentes consultadas</h2>
+      <ul class="sources">
+        <li><a href="https://www.asuntoslegales.com.co/analisis/jorge-mendoza-duque-3770901/regulacion-cripto-el-anacronismo-regional-que-envuelve-a-colombia-4362438">Asuntos Legales — Regulación cripto: el anacronismo regional que envuelve a Colombia</a></li>
+        <li><a href="https://www.forvismazars.com/co/es/acerca-de-nosotros/noticias-publicaciones-y-media/nuestras-noticias-y-publicaciones/governace-compliance-and-risk-management/regulacion-de-criptomonedas">Forvis Mazars — Colombia da pasos firmes hacia la regulación de criptomonedas</a></li>
+        <li><a href="https://www.hklaw.com/en/insights/publications/2025/02/proyecto-de-ley-en-colombia-busca-regular-los-activos-virtuales">Holland &amp; Knight — Proyecto de ley en Colombia busca regular los activos virtuales</a></li>
+        <li><a href="https://coinswitch.co/building-blocks/what-does-fatfs-7th-update-on-r15-implementation-mean-for-the-public-and-private-sectors/">CoinSwitch — Séptima revisión del FATF sobre la Recomendación 15</a></li>
+        <li><a href="https://www.elliptic.co/blockchain-basics/what-is-the-travel-rule">Elliptic — What is the Travel Rule?</a></li>
+      </ul>
+      <p class="back-link"><a href="#inicio">↑ Volver al índice</a></p>
+    </section>
+
+    <footer>
+      <p>Este documento es una guía de referencia general. No sustituye asesoría legal, fiscal, contable ni de cumplimiento profesional; los requisitos exactos dependen de la jurisdicción y cambian con frecuencia. Verifica el estado vigente de la regulación antes de tomar decisiones.</p>
+    </footer>
+
+  </div>
+</body>
+</html>
